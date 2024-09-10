@@ -1,0 +1,32 @@
+﻿@model Department
+
+<div class="col-md-6 grid-margin stretch-card" dir="rtl">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">تحديث </h4>
+            <p class="card-description"> تعديل بيانات القسم  </p>
+            <form method="post" class="forms-sample material-form">
+                <input asp-for="Id"  type="hidden"/>
+
+                <div class="form-group">
+                    <input asp-for="Name" />
+                    <label asp-for="Name" class="control-label">اسم القسم</label>
+                    <i class="bar"></i>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" class="button btn btn-success"><span> حفظ التغييرات</span></button>
+                    <a asp-controller="Department" asp-action="Index" class="button btn btn-light">جميع الأقسام</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

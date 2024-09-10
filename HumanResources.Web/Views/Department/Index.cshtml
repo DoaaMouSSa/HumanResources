@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Department>
+
+<partial name="_Toastr"/>
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">  جميع الأقسام</h4>
+            <a class="btn btn-success btn-rounded btn-fw" asp-controller="Department" asp-action="Create">اضافة قسم</a>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th> # </th>
+                            <th> الاسم </th>
+                            <th> تعديل </th>
+                            <th> حذف </th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in Model)
+                        {
+                            <tr>
+                                <td>@obj.Id</td>
+                                <td> @obj.Name</td>
+                                <td>
+                                    <a asp-controller="Department" asp-action="Update" asp-route-id="@obj.Id">
+                                    <i 
+                                        class="fa fa-pencil-square-o text-primary"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                         <a asp-controller="Department" asp-action="Delete" asp-route-id="@obj.Id">
+                                    <i class="fa fa-trash-o text-danger cursor-pointer text-bold"></i>
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item @(ViewData["HasPreviousPage"] != null && (bool)ViewData["HasPreviousPage"] ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@( (int)ViewData["CurrentPage"] - 1 )" asp-route-pageSize="@(ViewData["PageSize"])">Previous</a>
+                    </li>
+                    <li class="page-item @(ViewData["HasNextPage"] != null && (bool)ViewData["HasNextPage"] ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@( (int)ViewData["CurrentPage"] + 1 )" asp-route-pageSize="@(ViewData["PageSize"])">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
