@@ -20,9 +20,9 @@ namespace HumanResources.Application.DepartmentServices
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Department>> GetAll(int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Department>> GetAll()
         {
-            var data = _departmentRepository.GetAll(d=>d.IsDeleted==false, pageNumber, pageSize);
+            var data = _departmentRepository.GetAll(d=>d.IsDeleted==false);
             return data;
         }
         public async Task Create(Department dto)

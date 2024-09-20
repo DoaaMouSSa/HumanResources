@@ -13,14 +13,10 @@ namespace HumanResources.Web.Controllers
             _departmentService = departmentService;
         }
 
-        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Department> data = await _departmentService.GetAll(pageNumber, pageSize);
-            // Set ViewData for pagination buttons
-            ViewData["HasPreviousPage"] = (pageNumber > 1);
-            ViewData["HasNextPage"] = (data.Count() == pageSize); // Check if more pages exist
-            ViewData["CurrentPage"] = pageNumber;
-            ViewData["PageSize"] = pageSize;
+            IEnumerable<Department> data = await _departmentService.GetAll();
+ 
             return View(data);
         }
         [HttpGet]

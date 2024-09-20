@@ -39,16 +39,6 @@
                     </tbody>
                 </table>
             </div>
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item @(ViewData["HasPreviousPage"] != null && (bool)ViewData["HasPreviousPage"] ? "" : "disabled")">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@( (int)ViewData["CurrentPage"] - 1 )" asp-route-pageSize="@(ViewData["PageSize"])">Previous</a>
-                    </li>
-                    <li class="page-item @(ViewData["HasNextPage"] != null && (bool)ViewData["HasNextPage"] ? "" : "disabled")">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@( (int)ViewData["CurrentPage"] + 1 )" asp-route-pageSize="@(ViewData["PageSize"])">Next</a>
-                    </li>
-                </ul>
-            </nav>
         </div>
     </div>
 </div>

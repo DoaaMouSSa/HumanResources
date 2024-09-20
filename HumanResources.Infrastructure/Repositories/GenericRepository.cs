@@ -19,7 +19,7 @@ namespace HumanResources.Infrastructure.Repositories
             _context = context;
         }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter, int pageNumber = 1, int pageSize = 10)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter)
         {
             IQueryable<T> query = _context.Set<T>();
 
@@ -27,8 +27,6 @@ namespace HumanResources.Infrastructure.Repositories
             {
                 query = query.Where(filter);
             }
-            // Apply pagination
-            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
             return  query.ToList();
          }
 

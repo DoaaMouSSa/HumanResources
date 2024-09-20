@@ -1,4 +1,5 @@
-﻿using HumanResources.Application.DepartmentServices;
+﻿using HumanResources.Application.AuthServices;
+using HumanResources.Application.DepartmentServices;
 
 namespace HumanResources.Web.DendencyInjection
 {

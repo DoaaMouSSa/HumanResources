@@ -10,7 +10,7 @@ using HumanResources.Domain.Entities;
 
 namespace HumanResources.Infrastructure.DbContext
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

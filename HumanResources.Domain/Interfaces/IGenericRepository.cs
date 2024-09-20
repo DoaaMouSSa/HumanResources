@@ -9,7 +9,7 @@ namespace HumanResources.Domain.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
-        IEnumerable<T> GetAll(Expression<Func<T, bool>> filter, int pageNumber, int pageSize);
+        IEnumerable<T> GetAll(Expression<Func<T, bool>> filter);
         T GetById(int id);
         void Add(T entity);
         void Update(T entity);

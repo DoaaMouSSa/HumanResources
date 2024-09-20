@@ -9,7 +9,7 @@ namespace HumanResources.Application.DepartmentServices
 {
     public interface IDepartmentService
     {
-        Task<IEnumerable<Department>> GetAll(int pageNumber, int pageSize);
+        Task<IEnumerable<Department>> GetAll();
         Task Create(Department dto);
         Task Update(Department dto);
         Task Delete(Department dto);
