@@ -1,0 +1,45 @@
+﻿@model Employee
+
+<div class="col-md-6 grid-margin stretch-card" dir="rtl">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">موظف جديد</h4>
+            <p class="card-description"> اضافة موظف جديد </p>
+            <form method="post" class="forms-sample material-form">
+                <div class="form-group">
+                    <input asp-for="Code" />
+                    <label asp-for="Code" class="control-label">كود الموظف</label>
+                    <i class="bar"></i>
+                    <span asp-validation-for="Code" class="text-danger"></span>
+
+                </div>
+              
+                <div class="form-group">
+                    <input asp-for="Name" />
+                    <label asp-for="Name" class="control-label">اسم الموظف</label>
+                    <i class="bar"></i>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+
+                </div>
+                <div class="form-group">
+                    <input type="number" asp-for="NetSalary" />
+                    <label asp-for="NetSalary" class="control-label"> المرتب</label>
+                    <i class="bar"></i>
+                    <span asp-validation-for="NetSalary" class="text-danger"></span>
+
+                </div>
+              
+                <div class="button-container">
+                    <button type="submit" class="button btn btn-success"><span>حفظ</span></button>
+                    <a asp-controller="Employee" asp-action="Index"  class="button btn btn-light">جميع الموظفين</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

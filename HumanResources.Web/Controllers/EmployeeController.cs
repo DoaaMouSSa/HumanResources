@@ -1,22 +1,22 @@
-﻿using HumanResources.Application.DepartmentServices;
+﻿using HumanResources.Application.EmployeeServices;
 using HumanResources.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HumanResources.Web.Controllers
 {
-    public class DepartmentController : Controller
+    public class EmployeeController : Controller
     {
-        private readonly IDepartmentService _departmentService;
+        private readonly IEmployeeService _employeeService;
 
-        public DepartmentController(IDepartmentService departmentService)
+        public EmployeeController(IEmployeeService employeeService)
         {
-            _departmentService = departmentService;
+            _employeeService = employeeService;
         }
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Department> data = await _departmentService.GetAll();
- 
+            IEnumerable<Employee> data = await _employeeService.GetAll();
+
             return View(data);
         }
         [HttpGet]
@@ -25,11 +25,11 @@ namespace HumanResources.Web.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Department dto)
+        public IActionResult Create(Employee dto)
         {
             if (ModelState.IsValid)
             {
-                _departmentService.Create(dto);
+                _employeeService.Create(dto);
                 TempData["Created"] = "تم الاضافة بنجاح";
                 return RedirectToAction("Index");
             }
@@ -37,19 +37,19 @@ namespace HumanResources.Web.Controllers
         }
         public async Task<IActionResult> Update(int id)
         {
-            Department? data = await _departmentService.GetById(id);
-            if(data  == null)
+            Employee? data = await _employeeService.GetById(id);
+            if (data == null)
             {
                 return RedirectToAction("Error", "Home");
             }
             return View(data);
         }
         [HttpPost]
-        public IActionResult Update(Department dto)
+        public IActionResult Update(Employee dto)
         {
             if (ModelState.IsValid)
             {
-                _departmentService.Update(dto);
+                _employeeService.Update(dto);
                 TempData["Updated"] = "تم التحديث بنجاح";
 
                 return RedirectToAction("Index");
@@ -58,7 +58,7 @@ namespace HumanResources.Web.Controllers
         }
         public async Task<IActionResult> Delete(int id)
         {
-            Department? data = await _departmentService.GetById(id);
+            Employee? data = await _employeeService.GetById(id);
             if (data == null)
             {
                 return RedirectToAction("Error", "Home");
@@ -66,12 +66,11 @@ namespace HumanResources.Web.Controllers
             return View(data);
         }
         [HttpPost]
-        public IActionResult Delete(Department dto)
+        public IActionResult Delete(Employee dto)
         {
-
-                _departmentService.Delete(dto);
+            _employeeService.Delete(dto);
             TempData["Deleted"] = "تم الحذف بنجاح";
             return RedirectToAction("Index");
-                    }
+        }
     }
 }

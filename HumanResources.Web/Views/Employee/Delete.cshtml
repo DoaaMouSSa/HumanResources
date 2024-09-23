@@ -1,0 +1,38 @@
+﻿@model Employee
+
+<div class="col-md-6 grid-margin stretch-card" dir="rtl">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">حذف </h4>
+            <p class="card-description"> حذف بيانات الموظف  </p>
+            <form method="post" class="forms-sample material-form">
+                <input asp-for="Id" type="hidden" />
+
+                <div class="form-group">
+                    <input asp-for="Code" readonly />
+                    <label asp-for="Code" class="control-label">كود الموظف</label>
+                    <i class="bar"></i>
+
+                </div>
+                <div class="form-group">
+                    <input asp-for="Name" readonly />
+                    <label asp-for="Name" class="control-label">اسم الموظف</label>
+                    <i class="bar"></i>
+
+                </div>
+       
+
+                <div class="button-container">
+                    <button type="submit" class="button btn btn-danger"><i class="fa fa-trash-o"></i><span> تأكيد الحذف </span></button>
+                    <a asp-controller="Department" asp-action="Index" class="button btn btn-light">جميع الموظفين</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
