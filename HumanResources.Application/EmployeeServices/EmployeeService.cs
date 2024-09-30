@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static HumanResources.Application.Dtos.EmployeeDto;
 
 namespace HumanResources.Application.EmployeeServices
 {
@@ -25,10 +26,29 @@ namespace HumanResources.Application.EmployeeServices
             var data = _employeeRepository.GetAll(d => d.IsDeleted == false);
             return data;
         }
-        public async Task Create(Employee dto)
+        public async Task Create(EmployeeDtoForAdd dto)
         {
-            dto.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-            _employeeRepository.Add(dto);
+            Employee newEmployee = new Employee
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                DepartmentId = dto.DepartmentId,
+                //Address = dto.Address,
+                //BirthOfDate = dto.BirthOfDate,
+                //CheckInTime = dto.CheckInTime,
+                //CheckOutTime = dto.CheckOutTime,
+                //DateOfAppointment=dto.DateOfAppointment,
+                //ExperienceLevel=dto.ExperienceLevel,
+                //Gender=dto.Gender,
+                //Governorate=dto.Governorate,
+                //GrossSalary=dto.GrossSalary,
+                //JobPosition=dto.JobPosition,
+                //MaritalStatus=dto.MaritalStatus,
+                //Phone=dto.Phone,
+                
+                CreatedAt = DateOnly.FromDateTime(DateTime.Now)
+            };
+            _employeeRepository.Add(newEmployee);
             _unitOfWork.SaveChanges();// Assuming SaveChangesAsync is implemented
         }
         public async Task Update(Employee dto)

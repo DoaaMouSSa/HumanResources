@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HumanResources.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initalizedb : Migration
+    public partial class initalizeDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,7 @@ namespace HumanResources.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -56,8 +57,9 @@ namespace HumanResources.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedAt = table.Column<DateOnly>(type: "date", nullable: true),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
                     DeletedAt = table.Column<DateOnly>(type: "date", nullable: true),
@@ -180,9 +182,18 @@ namespace HumanResources.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    NetSalary = table.Column<float>(type: "real", nullable: true),
+                    GrossSalary = table.Column<float>(type: "real", nullable: false),
+                    BirthOfDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    GraduationCertificateUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IdentityUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PersonalImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    YearsOfExperience = table.Column<int>(type: "int", nullable: false),
+                    CheckInTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    CheckOutTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateOnly>(type: "date", nullable: true),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
                     DeletedAt = table.Column<DateOnly>(type: "date", nullable: true),
@@ -195,8 +206,7 @@ namespace HumanResources.Infrastructure.Migrations
                         name: "FK_EmployeeTbl_DepartmentTbl_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "DepartmentTbl",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

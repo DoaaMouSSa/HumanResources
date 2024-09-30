@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240923004318_update-tables")]
-    partial class updatetables
+    [Migration("20240930092302_update-employe-tabe_test2")]
+    partial class updateemployetabe_test2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,6 +94,33 @@ namespace HumanResources.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("AttendanceDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeSpan>("CheckInTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("CheckOutTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("AttendanceTbl");
+                });
+
             modelBuilder.Entity("HumanResources.Domain.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -107,6 +134,12 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -132,17 +165,13 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
                     b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
 
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -151,9 +180,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("NetSalary")
-                        .HasColumnType("real");
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
@@ -298,11 +324,24 @@ namespace HumanResources.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
+                {
+                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
+                        .WithMany("Attendances")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("HumanResources.Domain.Entities.Department", "Department")
                         .WithMany("Employees")
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Department");
                 });
@@ -361,6 +400,11 @@ namespace HumanResources.Infrastructure.Migrations
             modelBuilder.Entity("HumanResources.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
+                {
+                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

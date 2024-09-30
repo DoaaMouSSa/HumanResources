@@ -5,25 +5,24 @@
 namespace HumanResources.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class updateempltables : Migration
+    public partial class updateemployetabe : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "NetSalary",
-                table: "EmployeeTbl");
+            migrationBuilder.RenameColumn(
+                name: "YearsOfExperience",
+                table: "EmployeeTbl",
+                newName: "ExperienceLevel");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<float>(
-                name: "NetSalary",
+            migrationBuilder.RenameColumn(
+                name: "ExperienceLevel",
                 table: "EmployeeTbl",
-                type: "real",
-                nullable: false,
-                defaultValue: 0f);
+                newName: "YearsOfExperience");
         }
     }
 }

@@ -14,7 +14,9 @@ namespace HumanResources.Domain.Entities
         public int EmployeeId { get; set; }
         public Employee Employee { get; set; }
 
-        public DateTime CheckInTime { get; set; }
-        public DateTime CheckOutTime { get; set; }
+        public TimeSpan CheckInTime { get; set; }
+        public TimeSpan CheckOutTime { get; set; }
+        // New property to track the date of attendance
+        public DateOnly AttendanceDate { get; set; }
     }
 }

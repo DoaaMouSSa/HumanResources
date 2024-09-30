@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240923001711_add-employee-table")]
-    partial class addemployeetable
+    [Migration("20240929223222_update-employee-tbl")]
+    partial class updateemployeetbl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,6 +108,12 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -118,9 +124,6 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -135,6 +138,19 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("BirthOfDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeSpan>("CheckInTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("CheckOutTime")
+                        .HasColumnType("time");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -142,27 +158,55 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
+                    b.Property<DateOnly>("DateOfAppointment")
+                        .HasColumnType("date");
+
                     b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
+
+                    b.Property<int>("Governorate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GraduationCertificateUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("GrossSalary")
+                        .HasColumnType("real");
+
+                    b.Property<string>("IdentityUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("JobPosition")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaritalStatus")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("NetSalary")
+                    b.Property<float?>("NetSalary")
                         .HasColumnType("real");
+
+                    b.Property<string>("PersonalImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("YearsOfExperience")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -308,9 +352,7 @@ namespace HumanResources.Infrastructure.Migrations
                 {
                     b.HasOne("HumanResources.Domain.Entities.Department", "Department")
                         .WithMany("Employees")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240922164752_add-attendance-table")]
-    partial class addattendancetable
+    [Migration("20240929232016_add-atteandace-tbl")]
+    partial class addatteandacetbl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,18 +102,16 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CheckInTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("AttendanceDate")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("CheckOutTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("CheckInTime")
+                        .HasColumnType("time");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("CheckOutTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.ToTable("AttendanceTbl");
                 });
@@ -132,6 +130,12 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -142,9 +146,6 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -159,9 +160,18 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CertificatePath")
+                    b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("BirthOfDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeSpan>("CheckInTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("CheckOutTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -170,31 +180,58 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("DateOfBirth")
+                    b.Property<DateOnly>("DateOfAppointment")
                         .HasColumnType("date");
 
                     b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Governorate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GraduationCertificateUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("GrossSalary")
+                        .HasColumnType("real");
+
+                    b.Property<string>("IdentityUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("JobTitle")
+                    b.Property<int>("JobPosition")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaritalStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<float?>("NetSalary")
+                        .HasColumnType("real");
+
+                    b.Property<string>("PersonalImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("YearsOfExperience")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -336,24 +373,11 @@ namespace HumanResources.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
-                {
-                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
-                        .WithMany("Attendances")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("HumanResources.Domain.Entities.Department", "Department")
                         .WithMany("Employees")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });
@@ -412,11 +436,6 @@ namespace HumanResources.Infrastructure.Migrations
             modelBuilder.Entity("HumanResources.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
-                {
-                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

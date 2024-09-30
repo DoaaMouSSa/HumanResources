@@ -6,29 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HumanResources.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class addemployeetable : Migration
+    public partial class addatteandaceemprelationtbl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AttendanceTbl");
-
-            migrationBuilder.AddColumn<float>(
-                name: "NetSalary",
-                table: "EmployeeTbl",
-                type: "real",
-                nullable: false,
-                defaultValue: 0f);
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "NetSalary",
-                table: "EmployeeTbl");
-
             migrationBuilder.CreateTable(
                 name: "AttendanceTbl",
                 columns: table => new
@@ -36,8 +18,9 @@ namespace HumanResources.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    CheckInTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOutTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CheckInTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    CheckOutTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    AttendanceDate = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,6 +37,13 @@ namespace HumanResources.Infrastructure.Migrations
                 name: "IX_AttendanceTbl_EmployeeId",
                 table: "AttendanceTbl",
                 column: "EmployeeId");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "AttendanceTbl");
         }
     }
 }

@@ -18,5 +18,6 @@ namespace HumanResources.Infrastructure.DbContext
         }
         public DbSet<Department> DepartmentTbl { get; set; }
         public DbSet<Employee> EmployeeTbl { get; set; }
+        public DbSet<Attendance> AttendanceTbl { get; set; }
     }
 }

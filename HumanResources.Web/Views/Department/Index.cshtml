@@ -5,8 +5,11 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">  جميع الأقسام</h4>
-            <a class="btn btn-success btn-rounded btn-fw" asp-controller="Department" asp-action="Create"> قسم جديد</a>
+            <a class="btn btn-primary btn-rounded btn-fw" asp-controller="Department" asp-action="Create"> قسم جديد</a>
+              @if(Model.Count()>0)
+                {
             <div class="table-responsive">
+              
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -38,7 +41,14 @@
                         }
                     </tbody>
                 </table>
-            </div>
+                </div>
+            }
+            else
+            {
+                <div class="container justify-center">
+                <partial name="_EmptyData" />
+                </div>
+            }
         </div>
     </div>
 </div>

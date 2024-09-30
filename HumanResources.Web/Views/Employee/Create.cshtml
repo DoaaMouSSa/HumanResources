@@ -1,37 +1,158 @@
-﻿@model Employee
+﻿@using static HumanResources.Domain.Enums.Enums
+@using static HumanResources.Application.Dtos.EmployeeDto
+@model EmployeeDtoForAdd
 
-<div class="col-md-6 grid-margin stretch-card" dir="rtl">
+<div class="col-md-12 grid-margin stretch-card" dir="rtl">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">موظف جديد</h4>
             <p class="card-description"> اضافة موظف جديد </p>
-            <form method="post" class="forms-sample material-form">
-                <div class="form-group">
-                    <input asp-for="Code" />
-                    <label asp-for="Code" class="control-label">كود الموظف</label>
-                    <i class="bar"></i>
-                    <span asp-validation-for="Code" class="text-danger"></span>
+            <form method="post">
+                <div class="row">
+                    <div class="col">
+@*                         <input type="number" asp-for="Id" class="form-control">
+ *@                        <label asp-for="Id" class="label-control">الكود</label>
+                        <input type="text" asp-for="Id" class="form-control">
+                        <span asp-validation-for="Id" class="text-danger"></span>
 
-                </div>
-              
-                <div class="form-group">
-                    <input asp-for="Name" />
-                    <label asp-for="Name" class="control-label">اسم الموظف</label>
-                    <i class="bar"></i>
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <label asp-for="Name" class="label-control">الاسم رباعى</label>
+                        <input asp-for="Name" class="form-control">
+                        <span asp-validation-for="Name" class="text-danger"></span>
 
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="number" asp-for="NetSalary" />
-                    <label asp-for="NetSalary" class="control-label"> المرتب</label>
-                    <i class="bar"></i>
-                    <span asp-validation-for="NetSalary" class="text-danger"></span>
+                <br />
+          @*       <div class="row">
+                    <div class="col">
+                        <label asp-for="Phone" class="label-control">التليفون</label>
+                        <input type="text" asp-for="Phone" class="form-control">
+                        <span asp-validation-for="Phone" class="text-danger"></span>
 
+                    </div>
+                    <div class="col">
+                        <label asp-for="Address" class="label-control">العنوان</label>
+                        <input asp-for="Address" class="form-control" >
+                        <span asp-validation-for="Address" class="text-danger"></span>
+
+                    </div>
                 </div>
-              
+                <br />
+                <div class="row">
+                    <div class="col">
+                        <label asp-for="GrossSalary" class="label-control">اجمالى الراتب</label>
+                        <input type="number" min="1000" max="100000000" asp-for="GrossSalary" class="form-control">
+                        <span asp-validation-for="GrossSalary" class="text-danger"></span>
+
+                    </div>
+                    <div class="col">
+                        <label asp-for="BirthOfDate" class="label-control">تاريخ الميلاد</label>
+                        <input type="date" asp-for="BirthOfDate" class="form-control" >
+                        <span asp-validation-for="BirthOfDate" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col">
+                        <label asp-for="CheckInTime" class="label-control">موعد بدء العمل</label>
+                        <input type="time" asp-for="CheckInTime" class="form-control" >
+                        <span asp-validation-for="CheckInTime" class="text-danger"></span>
+
+                    </div>
+                    <div class="col">
+                        <label asp-for="CheckOutTime" class="label-control">موعد انتهاء العمل</label>
+                        <input type="time" asp-for="CheckOutTime" class="form-control">
+                        <span asp-validation-for="CheckOutTime" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="PersonalImageFile" class="label-control">الصورة الشخصية</label>
+                        <input type="file" asp-for="PersonalImageFile" class="form-control">
+                        <span asp-validation-for="PersonalImageFile" class="text-danger"></span>
+
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="IdentityFile" class="label-control">الصورة الهوية</label>
+                        <input type="file" asp-for="IdentityFile" class="form-control">
+                        <span asp-validation-for="IdentityFile" class="text-danger"></span>
+
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="GraduationCertificateFile" class="label-control">المؤهل الدراسى</label>
+                        <select asp-for="GraduationCertificateFile" class="form-control">
+                            </select>
+                        <span asp-validation-for="GraduationCertificateFile" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="Gender" class="label-control">النوع</label>
+                        <select asp-for="Gender" class="form-control" asp-items="Html.GetEnumSelectList<Gender>()">
+                                                      
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="SalaryFormula" class="label-control">حساب المرتب</label>
+                        <select asp-for="SalaryFormula" class="form-control" asp-items="Html.GetEnumSelectList<SalaryFormula>()">
+                        </select>
+                        <span asp-validation-for="SalaryFormula" class="text-danger"></span>
+
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="ExperienceLevel" class="label-control">مستوى الخبرة</label>
+                        <select asp-for="ExperienceLevel" class="form-control" asp-items="Html.GetEnumSelectList<ExperienceLevel>()">
+                        </select>
+                        <span asp-validation-for="ExperienceLevel" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="MaritalStatus" class="label-control">الحالة الاجتماعية</label>
+                        <select asp-for="MaritalStatus" class="form-control" asp-items="Html.GetEnumSelectList<MaritalStatus>()">
+                        </select>
+                        <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Governorate" class="label-control">المحافظه</label>
+                        <select asp-for="Governorate" class="form-control" asp-items="Html.GetEnumSelectList<Governorate>()">
+                        </select>
+                        <span asp-validation-for="Governorate" class="text-danger"></span>
+
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="JobPosition" class="label-control">مستوى الخبرة</label>
+                        <select asp-for="JobPosition" class="form-control" asp-items="Html.GetEnumSelectList<JobPosition>()">
+                        </select>
+                        <span asp-validation-for="JobPosition" class="text-danger"></span>
+
+                    </div>
+                </div> *@
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="DepartmentId" class="label-control">الأقسام المتاحة</label>
+                        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.DepartmentLst">
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+
+                    </div>
+                
+                </div>
                 <div class="button-container">
                     <button type="submit" class="button btn btn-success"><span>حفظ</span></button>
-                    <a asp-controller="Employee" asp-action="Index"  class="button btn btn-light">جميع الموظفين</a>
+                    <a asp-controller="Employee" asp-action="Index" class="button btn btn-light">جميع الموظفين</a>
                 </div>
             </form>
         </div>
