@@ -1,4 +1,5 @@
-﻿@model Department
+﻿@using static HumanResources.Application.Dtos.DepartementDto
+@model DepartmentDtoForAdd
 
 <div class="col-md-6 grid-margin stretch-card" dir="rtl">
     <div class="card">
@@ -11,6 +12,13 @@
                     <label asp-for="Name" class="control-label">اسم القسم</label>
                     <i class="bar"></i>
                     <span asp-validation-for="Name" class="text-danger"></span>
+
+                </div>
+                <div class="form-group">
+                    <input asp-for="Description" />
+                    <label asp-for="Description" class="control-label">وصف القسم</label>
+                    <i class="bar"></i>
+                    <span asp-validation-for="Description" class="text-danger"></span>
 
                 </div>
 

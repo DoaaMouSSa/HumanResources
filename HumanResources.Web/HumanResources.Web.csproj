@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="7.3.2" />
     <PackageReference Include="ExcelDataReader" Version="3.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
@@ -19,6 +20,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HumanResources.Application\HumanResources.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\excelFiles\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>

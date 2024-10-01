@@ -1,6 +1,7 @@
 ﻿using ExcelDataReader;
 using HumanResources.Domain.Entities;
 using HumanResources.Infrastructure.DbContext;
+using HumanResources.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -9,10 +10,11 @@ namespace HumanResources.Web.Controllers
     public class AttendanceController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+        private readonly ExcelService _excelService;
         public AttendanceController(ApplicationDbContext context)
         {
             _context = context;
+            _excelService = new ExcelService();
         }
         public IActionResult Index()
         {
@@ -79,7 +81,6 @@ namespace HumanResources.Web.Controllers
             {
                 ViewBag.Message = "empty";
             }
-
             return View();
         }
 

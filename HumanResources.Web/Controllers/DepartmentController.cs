@@ -1,6 +1,7 @@
 ﻿using HumanResources.Application.DepartmentServices;
 using HumanResources.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using static HumanResources.Application.Dtos.DepartementDto;
 
 namespace HumanResources.Web.Controllers
 {
@@ -25,7 +26,7 @@ namespace HumanResources.Web.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Department dto)
+        public IActionResult Create(DepartmentDtoForAdd dto)
         {
             if (ModelState.IsValid)
             {

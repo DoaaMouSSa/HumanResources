@@ -10,10 +10,9 @@
             <form method="post">
                 <div class="row">
                     <div class="col">
-@*                         <input type="number" asp-for="Id" class="form-control">
- *@                        <label asp-for="Id" class="label-control">الكود</label>
-                        <input type="text" asp-for="Id" class="form-control">
-                        <span asp-validation-for="Id" class="text-danger"></span>
+                        <label asp-for="Code" class="label-control"> كود الموظف</label>
+                        <input asp-for="Code" class="form-control">
+                        <span asp-validation-for="Code" class="text-danger"></span>
 
                     </div>
                     <div class="col">
@@ -24,7 +23,7 @@
                     </div>
                 </div>
                 <br />
-          @*       <div class="row">
+                 <div class="row">
                     <div class="col">
                         <label asp-for="Phone" class="label-control">التليفون</label>
                         <input type="text" asp-for="Phone" class="form-control">
@@ -84,9 +83,9 @@
                     </div>
                     <div class="col-md-4">
                         <label asp-for="GraduationCertificateFile" class="label-control">المؤهل الدراسى</label>
-                        <select asp-for="GraduationCertificateFile" class="form-control">
-                            </select>
+                        <input type="file" asp-for="GraduationCertificateFile" class="form-control">
                         <span asp-validation-for="GraduationCertificateFile" class="text-danger"></span>
+
 
                     </div>
                 </div>
@@ -138,7 +137,7 @@
                         <span asp-validation-for="JobPosition" class="text-danger"></span>
 
                     </div>
-                </div> *@
+                </div> 
                 <br />
                 <div class="row">
                     <div class="col-md-4">

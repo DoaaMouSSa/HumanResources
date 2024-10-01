@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static HumanResources.Application.Dtos.DepartementDto;
 
 namespace HumanResources.Application.DepartmentServices
 {
@@ -25,10 +26,16 @@ namespace HumanResources.Application.DepartmentServices
             var data = _departmentRepository.GetAll(d=>d.IsDeleted==false);
             return data;
         }
-        public async Task Create(Department dto)
+        public async Task Create(DepartmentDtoForAdd dto)
         {
-            dto.CreatedAt = DateOnly.FromDateTime( DateTime.Now);
-             _departmentRepository.Add(dto);
+            Department newDepartment = new Department()
+            {
+                CreatedAt = DateOnly.FromDateTime(DateTime.Now),
+                Name= dto.Name,
+                Description= dto.Description,
+                ImageUrl=null,
+            };
+             _departmentRepository.Add(newDepartment);
             _unitOfWork.SaveChanges();// Assuming SaveChangesAsync is implemented
         }
         public async Task Update(Department dto)

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HumanResources.Domain.Entities;
+using System.Xml;
 
 namespace HumanResources.Infrastructure.DbContext
 {
@@ -16,6 +17,7 @@ namespace HumanResources.Infrastructure.DbContext
         {
 
         }
+     
         public DbSet<Department> DepartmentTbl { get; set; }
         public DbSet<Employee> EmployeeTbl { get; set; }
         public DbSet<Attendance> AttendanceTbl { get; set; }

@@ -10,69 +10,39 @@ namespace HumanResources.Domain.Enums
     {
         public enum Gender
         {
-            Male = 1,       
-            Female = 2, 
+            ذكر = 1,       
+            أنثى = 2, 
         }
         public enum SalaryFormula
         {
-            full = 1,       //30
-            traditional = 2,   
+            كامل = 1,       //30
+            تقليدى = 2,   
         }
         public enum ExperienceLevel
         {
-            Beginner = 1,       // 1 year or less
-            Intermediate = 2,   // 1-3 years
-            Advanced = 3,       // 3-5 years
-            Expert = 4          // 5+ years
+            مبتدئ = 1,       // 1 year or less
+            متوسط  = 2,   // 1-3 years
+            متقدم = 3,       // 3-5 years
+            خبير = 4          // 5+ years
         }
         public enum MaritalStatus
         {
-            Single,
-            Married,
-            Separated,
+            أعزب,
+            متزوج,
         }
         public enum Governorate
         {
-            Cairo,
-            Alexandria,
-            Giza,
-            Qalyubia,
-            Gharbia,
-            Sharqia,
-            Dakahlia,
-            Minya,
-            Asyut,
-            Sohag,
-            Qena,
-            Luxor,
-            Aswan,
-            RedSea,
-            Matrouh,
-            NorthSinai,
-            SouthSinai,
-            Suez,
-            PortSaid,
-            Ismailia,
-            BeniSuef,
-            NewValley,
-            Damietta
+            القاهرة,
+            الاسكندرية,
+            الجيزة,
+            القليوبيه,
+            
         }
         public enum JobPosition
         {
-            Intern,
-            TeamLead,
-            ProjectManager,
-            ProductOwner,
-            QualityAssurance,
-            BusinessAnalyst,
-            DevOpsEngineer,
-            SystemsArchitect,
-            DatabaseAdministrator,
-            NetworkAdministrator,
-            HumanResources,
-            MarketingSpecialist,
-            SalesRepresentative,
-            CustomerSupport
+            موظف,
+            مدير,
+
         }
     }
     }
