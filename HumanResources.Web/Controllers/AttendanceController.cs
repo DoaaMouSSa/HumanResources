@@ -3,6 +3,7 @@ using HumanResources.Domain.Entities;
 using HumanResources.Infrastructure.DbContext;
 using HumanResources.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace HumanResources.Web.Controllers
@@ -11,15 +12,45 @@ namespace HumanResources.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ExcelService _excelService;
+
         public AttendanceController(ApplicationDbContext context)
         {
             _context = context;
             _excelService = new ExcelService();
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // Generate the dynamic table name, e.g., "Employee_47"
+            int tableNumber = 47;
+            string tableName = $"Employee_{tableNumber}";
+
+            // Create the SQL query to fetch data from the dynamic table
+            string sqlQuery = $"SELECT * FROM {tableName}";
+
+            List<dynamic> employees = new List<dynamic>();
+
+            // Open a connection to the database
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = sqlQuery;
+                _context.Database.OpenConnection();
+
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    while (await result.ReadAsync())
+                    {
+                        var employee = new
+                        {
+                            Id = result["Id"],
+                        };
+                        employees.Add(employee);
+                    }
+                }
+            }
+
+            return View(employees);
         }
+
         public IActionResult Create()
         {
 
@@ -51,38 +82,59 @@ namespace HumanResources.Web.Controllers
                 {
                     using (var reader = ExcelReaderFactory.CreateReader(stream))
                     {
-                        do
-                        {
-                            bool isHeaderSkipped = false;
+                        bool isHeaderSkipped = false;
+                        Attendance previousAttendance = null;
 
-                            while (reader.Read())
+                        while (reader.Read())
+                        {
+                            if (!isHeaderSkipped)
                             {
-                                if (!isHeaderSkipped)
+                                isHeaderSkipped = true;
+                                continue;
+                            }
+
+                            // Extract DateTime and split into date and time
+                            var dateTimeValue = DateTime.Parse(reader.GetValue(1).ToString());
+                            var dateOnly = DateOnly.FromDateTime(dateTimeValue);
+                            var timeOnly = dateTimeValue.TimeOfDay;
+
+                            if (previousAttendance != null && previousAttendance.AttendanceDate == dateOnly)
+                            {
+                                // Same date, update CheckOutTime
+                                previousAttendance.CheckOutTime = timeOnly;
+                                _context.Update(previousAttendance);
+                            }
+                            else
+                            {
+                                var employeeExists = _context.EmployeeTbl.FirstOrDefault(
+                                    e => e.Id == int.Parse(reader.GetValue(0).ToString()));
+
+
+                                // If employee exists, insert the attendance record
+                                if (employeeExists !=null)
                                 {
-                                    isHeaderSkipped = true;
-                                    continue;
+
+                                    // New attendance record for a different date
+                                    previousAttendance = new Attendance
+                                    {
+                                        // Check if the EmployeeId exists in EmployeeTbl
+
+                                        EmployeeId = int.Parse(reader.GetValue(0).ToString()),
+
+                                        CheckInTime = timeOnly,
+                                        AttendanceDate = dateOnly
+                                    };
+                                    _context.Add(previousAttendance);
                                 }
 
-                                Attendance t = new Attendance
-                                {
-                                    EmployeeId = Convert.ToInt32(reader.GetValue(1)?.ToString()),
-                                };
-
-                                _context.Add(t);
                                 await _context.SaveChangesAsync();
                             }
-                        } while (reader.NextResult());
-
-                        ViewBag.Message = "success";
+                        }
                     }
                 }
             }
-            else
-            {
-                ViewBag.Message = "empty";
-            }
+            ViewBag.Message = "success";
             return View();
         }
-
     }
 }
