@@ -15,6 +15,7 @@
                         <tr>
                             <th> # </th>
                             <th> الاسم </th>
+                            <th> التفاصيل </th>
                             <th> تعديل </th>
                             <th> حذف </th>
                          </tr>
@@ -25,6 +26,11 @@
                             <tr>
                                 <td>@obj.Id</td>
                                 <td> @obj.Name</td>
+                                    <td>
+                                        <a asp-controller="Department" asp-action="Details" asp-route-id="@obj.Id">
+                                            <i class="fa-external-link"></i>
+                                        </a>
+                                    </td>
                                 <td>
                                     <a asp-controller="Department" asp-action="Update" asp-route-id="@obj.Id">
                                     <i 

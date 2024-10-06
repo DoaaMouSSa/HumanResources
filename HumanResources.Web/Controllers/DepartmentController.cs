@@ -45,6 +45,15 @@ namespace HumanResources.Web.Controllers
             }
             return View(data);
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            Department? data = await _departmentService.GetById(id);
+            if (data == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            return View(data);
+        }
         [HttpPost]
         public IActionResult Update(Department dto)
         {

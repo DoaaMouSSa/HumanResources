@@ -1,0 +1,27 @@
+﻿@model Department
+
+<div class="col-md-6 grid-margin stretch-card" dir="rtl">
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="~/assets/images/helpers/department.jpg" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Name</h5>
+                    <p class="card-text">@Model.Description</p>
+
+                </div>
+                <div>
+                <a asp-controller="Department" asp-action="Index" class="button btn btn-primary">جميع الأقسام</a>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
