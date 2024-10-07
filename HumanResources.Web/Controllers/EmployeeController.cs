@@ -86,5 +86,15 @@ namespace HumanResources.Web.Controllers
             TempData["Deleted"] = "تم الحذف بنجاح";
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            //EmployeeDtoForShow data = await _departmentService.GetById(id);
+            //if (data == null)
+            //{
+            //    return RedirectToAction("Error", "Home");
+            //}
+            //return View(data);
+            throw new Exception();
+        }
     }
 }

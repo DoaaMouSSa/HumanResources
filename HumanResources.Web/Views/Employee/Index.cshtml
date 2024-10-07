@@ -14,6 +14,8 @@
                             <tr>
                                 <th> الكود </th>
                                 <th> الاسم </th>
+                                <th> اجمالى الراتب </th>
+                                <th> صافى الراتب </th>
                                 <th> تعديل </th>
                                 <th> حذف </th>
                             </tr>
@@ -25,6 +27,8 @@
                                 <tr>
                                     <td>@obj.Code</td>
                                     <td> @obj.Name</td>
+                                    <td> @obj.GrossSalary</td>
+                                    <td> @obj.NetSalary</td>
                                     <td>
                                         <a asp-controller="Employee" asp-action="Update">
                                             <i class="fa fa-pencil-square-o text-primary"></i>

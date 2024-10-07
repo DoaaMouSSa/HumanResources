@@ -1,9 +1,11 @@
-﻿using HumanResources.Domain.Entities;
+﻿using Azure;
+using HumanResources.Domain.Entities;
 using HumanResources.Domain.Interfaces;
 using HumanResources.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,11 +85,34 @@ namespace HumanResources.Application.EmployeeServices
             _unitOfWork.SaveChanges();// Assuming SaveChangesAsync is implemented
         }
 
-        public async Task<Employee> GetById(int id)
-        { 
-            var data = _employeeRepository.GetById(id);
+        public async Task<EmployeeDtoForShow> GetByIdForDetails(int id)
+        {
+            CultureInfo arabicCulture = new CultureInfo("ar-SA");
+
+            var employee = _employeeRepository.GetById(id);
+
+            if (employee == null)
+                return null;
+
+            var data = new EmployeeDtoForShow
+            {
+                Code = employee.Code,
+                Name = employee.Name,
+                Address = employee.Address,
+                Phone = employee.Phone,
+                CheckInTime = employee.CheckInTime?.ToString(),
+                //Age = employee.(birthOfDate.Date > today.AddYears(-age)) ? age - 1 : age,
+                DateOfAppointment = employee.DateOfAppointment.ToString(),
+                CheckOutTime = employee.CheckOutTime.ToString(),
+                 DepartmentName = employee.DateOfAppointment.ToString(),
+
+            };
             return data;
+        }
+
+        public Task<Employee> GetById(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
-

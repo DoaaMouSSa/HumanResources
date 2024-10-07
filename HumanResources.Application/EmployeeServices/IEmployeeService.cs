@@ -15,5 +15,7 @@ namespace HumanResources.Application.EmployeeServices
         Task Update(Employee dto);
         Task Delete(Employee dto);
         Task<Employee> GetById(int id);
+        Task<EmployeeDtoForShow> GetByIdForDetails(int id);
+
     }
 }

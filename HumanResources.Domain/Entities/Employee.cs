@@ -17,12 +17,13 @@ namespace HumanResources.Domain.Entities
         public Gender? Gender { get; set; }
         public float NetSalary { get; set; }//صافى المرتب
         public float? GrossSalary { get; set; }//اجمالى المرتب
+        public MaritalStatus? MaritalStatus { get; set; }
+
         public DateOnly BirthOfDate { get; set; }
         public string? GraduationCertificateUrl { get; set; }
         public string? IdentityUrl { get; set; }
         public string? PersonalImageUrl { get; set; }
         public ExperienceLevel? ExperienceLevel { get; set; }
-        public MaritalStatus? MaritalStatus { get; set; }
         public DateOnly? DateOfAppointment { get; set; } // Date of Appointment
         public Governorate? Governorate { get; set; } // Date of Appointment
         public string? Address { get; set; } // Date of Appointment
