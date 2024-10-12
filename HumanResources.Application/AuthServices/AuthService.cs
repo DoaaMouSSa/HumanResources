@@ -1,71 +1,47 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Identity.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using static HumanResources.Application.Dtos.AuthDto;
+
 namespace HumanResources.Application.AuthServices
 {
     public class AuthService : IAuthService
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly IConfiguration _configuration;
 
-        public AuthService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+        public AuthService(UserManager<IdentityUser> userManager
+            , SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _configuration = configuration;
         }
 
-        public async Task<string> RegisterAsync(string username, string password)
+        public async Task<SignInResult> LoginAsync(Login login)
         {
-            var user = new IdentityUser { UserName = username };
-            var result = await _userManager.CreateAsync(user, password);
+            // Find the user by email
+            var user = await _userManager.FindByEmailAsync(login.Email);
 
-            if (!result.Succeeded)
+            if (user == null)
             {
-                throw new Exception("User registration failed.");
+                // Handle user not found (could return a custom result or throw an exception)
+                return SignInResult.Failed;
             }
 
-            return GenerateJwtToken(user);
+            // Sign in the user
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, login.Password, login.RememberMe, lockoutOnFailure: false);
+            return result;
         }
 
-        public async Task<string> LoginAsync(string username, string password)
+        public async Task<IdentityResult> RegisterAsync(Register request)
         {
-            var result = await _signInManager.PasswordSignInAsync(username, password, false, false);
-
-            if (!result.Succeeded)
-            {
-                throw new Exception("Login failed.");
-            }
-
-            var user = await _userManager.FindByNameAsync(username);
-            return GenerateJwtToken(user);
-        }
-
-        private string GenerateJwtToken(IdentityUser user)
-        {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-            var token = new JwtSecurityToken(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(double.Parse(jwtSettings["ExpiryMinutes"])),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var user = new IdentityUser { UserName = request.Email, Email = request.Email };
+            var result = await _userManager.CreateAsync(user, request.Password);
+            return result;
         }
     }
 

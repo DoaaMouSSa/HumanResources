@@ -9,6 +9,8 @@ namespace HumanResources.Web.DendencyInjection
         public static void AddApiDependencies(this IServiceCollection services)
         {
             // Register services
+            services.AddScoped<IAuthService, AuthService>();
+
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
 

@@ -8,15 +8,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HumanResources.Domain.Entities;
 var builder = WebApplication.CreateBuilder(args);
-// Add application dependencies
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
   .AddEntityFrameworkStores<ApplicationDbContext>()
   .AddDefaultTokenProviders()
   .AddSignInManager();
 builder.Services.AddDbContext<ApplicationDbContext>(o =>
 {
-    o.UseSqlServer(builder.Configuration.GetConnectionString("HRConnection"));
+    o.UseSqlServer(builder.Configuration.GetConnectionString("HRConnection")).LogTo(Console.WriteLine, LogLevel.Information);
 });
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -55,6 +54,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -74,6 +74,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Register}/{id?}");
 
 app.Run();

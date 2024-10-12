@@ -1,51 +1,19 @@
-﻿using HumanResources.Domain.Entities;
+﻿using HumanResources.Application.AuthServices;
+using HumanResources.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static HumanResources.Application.AuthServices.AuthDto;
+using static HumanResources.Application.Dtos.AuthDto;
 
 namespace HumanResources.Web.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IAuthService _authService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _authService = authService;
         }
-
-        // Register Action
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterDto model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email ,DisplayName="test"};
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-            return View(model);
-        }
-
-        // Login Action
         [HttpGet]
         public IActionResult Login()
         {
@@ -53,20 +21,70 @@ namespace HumanResources.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginDto model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(Login model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                var login = new Login
+                {
+                    Email = model.Email,
+                    Password = model.Password,
+                    RememberMe = model.RememberMe
+                };
+
+                var result = await _authService.LoginAsync(login);
 
                 if (result.Succeeded)
                 {
+                    // Redirect to the desired page on success
                     return RedirectToAction("Index", "Home");
                 }
-
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                else if (result.IsLockedOut)
+                {
+                    // Handle lockout
+                    ModelState.AddModelError(string.Empty, "Account is locked out.");
+                    return View(model);
+                }
+                else
+                {
+                    // Handle failure
+                    ModelState.AddModelError(string.Empty, "خطأ فى اسم المستخدم او كلمة السر");
+                    return View(model);
+                }
             }
+
+            // If we got this far, something failed, redisplay form
             return View(model);
+        }
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(Register model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _authService.RegisterAsync(model);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home"); // Redirect on successful registration
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model); // Return the form with validation errors
         }
     }
 }
