@@ -17,9 +17,16 @@ namespace HumanResources.Infrastructure.DbContext
         {
 
         }
-     
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Employee>()
+        //        .HasIndex(e => e.Code)
+        //        .IsUnique();
+         
+        //}
         public DbSet<Department> DepartmentTbl { get; set; }
         public DbSet<Employee> EmployeeTbl { get; set; }
         public DbSet<Attendance> AttendanceTbl { get; set; }
+        public DbSet<AttendancDetails> AttendanceDetailsTbl { get; set; }
     }
 }

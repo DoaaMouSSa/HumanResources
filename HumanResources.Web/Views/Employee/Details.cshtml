@@ -1,0 +1,41 @@
+﻿@model EmployeeDtoForShow
+<div class="card text-right">
+    <div class="card-header">
+        عن الموظف
+    </div>
+    <div class="row">
+    <div class="card-body col-md-4">
+        <h5 class="card-title"> الكود : <span class="text-info">@Model.Code</span></h5>
+        <h5 class="card-title"> الاسم : <span class="text-info">@Model.Name</span></h5>
+        <h5 class="card-title"> القسم : <span class="text-info">@Model.DepartmentName</span></h5>
+
+        <h5 class="card-title"> التليفون : <span class="text-info">@Model.Phone</span></h5>
+        <h5 class="card-title"> العنوان : <span class="text-info">@Model.Address</span></h5>
+        <h5 class="card-title"> المحافظة : <span class="text-info">@Model.Governorate</span></h5>
+        <h5 class="card-title"> النوع : <span class="text-info">@Model.Gender</span></h5>
+        <h5 class="card-title"> الرتب الأساسى : <span class="text-info">@Model.GrossSalary</span></h5>
+            <h5 class="card-title"> صورة الهوية : <img width="250" height="150" src="@Url.Content("~/images/identity/" + @Model.IdentityUrl)" alt="الصورة الهوية" /></h5>
+        </div>
+    <div class="card-body col-md-4">
+        <h5 class="card-title"> تاريخ التعيين : <span class="text-info">@Model.DateOfAppointment</span></h5>
+            <h5 class="card-title"> وقت الحضور : <span class="text-info">@Model.CheckInTime</span></h5>
+            <h5 class="card-title"> وقت الانصراف  : <span class="text-info">@Model.CheckOutTime</span></h5>
+
+            <h5 class="card-title"> الصورة الشخصية : <img width="250" height="150" src="@Url.Content("~/images/personalImages/" + @Model.PersonalImageUrl)" alt="الصورة الشخصية" /></h5>
+            <h5 class="card-title"> صورة المؤهل : <img width="250" height="150" src="@Url.Content("~/images/graduationCertificates/" + @Model.GraduationCertificateUrl)" alt="الصورة المؤهل" /></h5>
+        <p class="card-text"> </p>
+    </div>
+
+    </div>
+    <div class="card-footer text-muted">
+
+    </div>
+    <a asp-controller="Employee" asp-action="Index" class="button btn btn-dark">جميع الموظفين</a>
+
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

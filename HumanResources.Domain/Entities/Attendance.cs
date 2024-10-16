@@ -18,5 +18,7 @@ namespace HumanResources.Domain.Entities
         public TimeSpan CheckOutTime { get; set; }
         // New property to track the date of attendance
         public DateOnly AttendanceDate { get; set; }
+        //public DateOnly AttendanceYear { get; set; }
+        //public int NumberOfAttendanceDays { get; set; }
     }
 }

@@ -2,12 +2,14 @@
 using HumanResources.Domain.Entities;
 using HumanResources.Infrastructure.DbContext;
 using HumanResources.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace HumanResources.Web.Controllers
 {
+   
     public class AttendanceController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,38 +19,6 @@ namespace HumanResources.Web.Controllers
         {
             _context = context;
             _excelService = new ExcelService();
-        }
-        public async Task<IActionResult> Index()
-        {
-            // Generate the dynamic table name, e.g., "Employee_47"
-            int tableNumber = 47;
-            string tableName = $"Employee_{tableNumber}";
-
-            // Create the SQL query to fetch data from the dynamic table
-            string sqlQuery = $"SELECT * FROM {tableName}";
-
-            List<dynamic> employees = new List<dynamic>();
-
-            // Open a connection to the database
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText = sqlQuery;
-                _context.Database.OpenConnection();
-
-                using (var result = await command.ExecuteReaderAsync())
-                {
-                    while (await result.ReadAsync())
-                    {
-                        var employee = new
-                        {
-                            Id = result["Id"],
-                        };
-                        employees.Add(employee);
-                    }
-                }
-            }
-
-            return View(employees);
         }
 
         public IActionResult Create()
@@ -133,6 +103,11 @@ namespace HumanResources.Web.Controllers
                     }
                 }
             }
+            AttendancDetails attendancDetails = new AttendancDetails();
+            //int EmployeeId = 0;
+            //int Month = 0;
+            //int Year = 0;
+            //int DaysPresent = 0;
             // Step 1: Get attendance counts and update NetSalary
             var attendanceCounts = await _context.AttendanceTbl
                 .GroupBy(a => new
@@ -141,12 +116,12 @@ namespace HumanResources.Web.Controllers
                     Month = a.AttendanceDate.Month,  // تجميع حسب الشهر
                     Year = a.AttendanceDate.Year    // تجميع حسب السنة
                 })
-                .Select(g => new
+                .Select(g =>new
                 {
-                    EmployeeId = g.Key.EmployeeId,     // كود الموظف
-                    Month = g.Key.Month,               // الشهر
-                    Year = g.Key.Year,                 // السنة
-                    DaysPresent = g.Count()            // عدد أيام الحضور في هذا الشهر
+                    EmployeeId = g.Key.EmployeeId,
+                    Month = g.Key.Month,            // الشهر
+                    Year = g.Key.Year,            // السنة
+                    DaysPresent = g.Count(),       // عدد أيام الحضور في هذا الشهر
                 })
                 .Join(_context.EmployeeTbl,            // الانضمام مع جدول الموظفين
                       attendance => attendance.EmployeeId,  // شرط الربط باستخدام EmployeeId

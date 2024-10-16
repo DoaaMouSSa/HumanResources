@@ -26,7 +26,6 @@ namespace HumanResources.Application.Dtos
             [DataType(DataType.Password)]
 
             public string Password { get; set; }
-            public bool RememberMe { get; set; }
 
         }
     }

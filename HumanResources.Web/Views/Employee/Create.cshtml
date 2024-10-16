@@ -7,11 +7,12 @@
         <div class="card-body">
             <h4 class="card-title">موظف جديد</h4>
             <p class="card-description"> اضافة موظف جديد </p>
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
+
                 <div class="row">
                     <div class="col">
                         <label asp-for="Code" class="label-control"> كود الموظف</label>
-                        <input asp-for="Code" class="form-control">
+                        <input min="1" max="99999" asp-for="Code" class="form-control">
                         <span asp-validation-for="Code" class="text-danger"></span>
 
                     </div>
@@ -46,9 +47,26 @@
 
                     </div>
                     <div class="col">
-                        <label asp-for="BirthOfDate" class="label-control">تاريخ الميلاد</label>
-                        <input type="date" asp-for="BirthOfDate" class="form-control" >
-                        <span asp-validation-for="BirthOfDate" class="text-danger"></span>
+                        <label asp-for="SalaryFormula" class="label-control">حساب المرتب</label>
+                        <select asp-for="SalaryFormula" class="form-control" asp-items="Html.GetEnumSelectList<SalaryFormula>()">
+                        </select>
+                        <span asp-validation-for="SalaryFormula" class="text-danger"></span>
+
+                    </div>
+                
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col">
+                    <label asp-for="BirthOfDate" class="label-control">تاريخ الميلاد</label>
+                    <input type="date" asp-for="BirthOfDate" class="form-control">
+                    <span asp-validation-for="BirthOfDate" class="text-danger"></span>
+
+                </div>
+                    <div class="col">
+                        <label asp-for="DateOfAppointment" class="label-control">تاريخ التعيين</label>
+                        <input type="date" asp-for="DateOfAppointment" class="form-control">
+                        <span asp-validation-for="DateOfAppointment" class="text-danger"></span>
 
                     </div>
                 </div>
@@ -99,13 +117,7 @@
                         <span asp-validation-for="Gender" class="text-danger"></span>
 
                     </div>
-                    <div class="col-md-4">
-                        <label asp-for="SalaryFormula" class="label-control">حساب المرتب</label>
-                        <select asp-for="SalaryFormula" class="form-control" asp-items="Html.GetEnumSelectList<SalaryFormula>()">
-                        </select>
-                        <span asp-validation-for="SalaryFormula" class="text-danger"></span>
-
-                    </div>
+                  
                     <div class="col-md-4">
                         <label asp-for="ExperienceLevel" class="label-control">مستوى الخبرة</label>
                         <select asp-for="ExperienceLevel" class="form-control" asp-items="Html.GetEnumSelectList<ExperienceLevel>()">

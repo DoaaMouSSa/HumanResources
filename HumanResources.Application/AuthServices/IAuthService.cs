@@ -11,7 +11,7 @@ namespace HumanResources.Application.AuthServices
     public interface IAuthService
     {
         Task<IdentityResult> RegisterAsync(Register register);
-        Task<SignInResult> LoginAsync(Login login);
-
+        Task<bool> LoginAsync(Login login);
+        Task LogoutAsync();
     }
 }

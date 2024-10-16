@@ -1,5 +1,6 @@
 ﻿using HumanResources.Application.AuthServices;
 using HumanResources.Domain.Entities;
+using HumanResources.Web.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static HumanResources.Application.Dtos.AuthDto;
@@ -24,37 +25,33 @@ namespace HumanResources.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(Login model)
         {
+            bool IsAuthenticated = false;
+
             if (ModelState.IsValid)
             {
                 var login = new Login
                 {
                     Email = model.Email,
                     Password = model.Password,
-                    RememberMe = model.RememberMe
                 };
-
                 var result = await _authService.LoginAsync(login);
 
-                if (result.Succeeded)
+                if (result==true)
                 {
+                    GlobalVariables.IsAuthenticated = true;
                     // Redirect to the desired page on success
                     return RedirectToAction("Index", "Home");
-                }
-                else if (result.IsLockedOut)
-                {
-                    // Handle lockout
-                    ModelState.AddModelError(string.Empty, "Account is locked out.");
-                    return View(model);
                 }
                 else
                 {
                     // Handle failure
+                    IsAuthenticated = false;
+
                     ModelState.AddModelError(string.Empty, "خطأ فى اسم المستخدم او كلمة السر");
                     return View(model);
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
         }
         [HttpGet]
@@ -86,5 +83,21 @@ namespace HumanResources.Web.Controllers
 
             return View(model); // Return the form with validation errors
         }
+        // Logout action
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _authService.LogoutAsync();
+            GlobalVariables.IsAuthenticated = false;
+
+            return RedirectToAction("Login");
+        }
+
+        // Access Denied
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
     }
 }

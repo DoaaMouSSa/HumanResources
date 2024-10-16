@@ -1,6 +1,7 @@
 ﻿using HumanResources.Application.AuthServices;
 using HumanResources.Application.DepartmentServices;
 using HumanResources.Application.EmployeeServices;
+using HumanResources.Application.FileServices;
 
 namespace HumanResources.Web.DendencyInjection
 {
@@ -10,6 +11,7 @@ namespace HumanResources.Web.DendencyInjection
         {
             // Register services
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IFileService, FileService>();
 
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IEmployeeService, EmployeeService>();

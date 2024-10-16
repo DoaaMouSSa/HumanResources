@@ -7,12 +7,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HumanResources.Domain.Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
   .AddEntityFrameworkStores<ApplicationDbContext>()
   .AddDefaultTokenProviders()
   .AddSignInManager();
+// Add Authentication and Authorization
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(o =>
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("HRConnection")).LogTo(Console.WriteLine, LogLevel.Information);
@@ -53,8 +57,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -69,11 +71,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Auth}/{action=Register}/{id?}");
+   // pattern: "{controller=Auth}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

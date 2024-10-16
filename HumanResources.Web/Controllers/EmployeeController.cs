@@ -1,6 +1,7 @@
 ﻿using HumanResources.Application.DepartmentServices;
 using HumanResources.Application.EmployeeServices;
 using HumanResources.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static HumanResources.Application.Dtos.EmployeeDto;
@@ -39,7 +40,7 @@ namespace HumanResources.Web.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(EmployeeDtoForAdd dto)
+        public async Task<IActionResult> Create(EmployeeDtoForAdd dto)
         {
             if (ModelState.IsValid)
             {
@@ -47,6 +48,8 @@ namespace HumanResources.Web.Controllers
                 TempData["Created"] = "تم الاضافة بنجاح";
                 return RedirectToAction("Index");
             }
+            IEnumerable<Department> departments = await _departmentService.GetAll();
+            ViewData["DepartmentLst"] = new SelectList(departments, "Id", "Name");
             return View();
         }
         public async Task<IActionResult> Update(int id)
@@ -72,29 +75,16 @@ namespace HumanResources.Web.Controllers
         }
         public async Task<IActionResult> Delete(int id)
         {
-            Employee? data = await _employeeService.GetById(id);
-            if (data == null)
-            {
-                return RedirectToAction("Error", "Home");
-            }
-            return View(data);
-        }
-        [HttpPost]
-        public IActionResult Delete(Employee dto)
-        {
-            _employeeService.Delete(dto);
+          await _employeeService.Delete(id);
             TempData["Deleted"] = "تم الحذف بنجاح";
+
             return RedirectToAction("Index");
         }
+      
         public async Task<IActionResult> Details(int id)
         {
-            //EmployeeDtoForShow data = await _departmentService.GetById(id);
-            //if (data == null)
-            //{
-            //    return RedirectToAction("Error", "Home");
-            //}
-            //return View(data);
-            throw new Exception();
+          EmployeeDtoForShow data=  await _employeeService.GetByIdForDetails(id);
+            return View(data);
         }
     }
 }

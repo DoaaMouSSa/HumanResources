@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Department>
 
 <partial name="_Toastr"/>
+
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
@@ -28,7 +29,7 @@
                                 <td> @obj.Name</td>
                                     <td>
                                         <a asp-controller="Department" asp-action="Details" asp-route-id="@obj.Id">
-                                            <i class="fa-external-link"></i>
+                                            <i class="fa fa-external-link"></i>
                                         </a>
                                     </td>
                                 <td>

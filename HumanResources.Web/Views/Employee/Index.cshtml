@@ -15,9 +15,12 @@
                                 <th> الكود </th>
                                 <th> الاسم </th>
                                 <th> اجمالى الراتب </th>
-                                <th> صافى الراتب </th>
-                                <th> تعديل </th>
-                                <th> حذف </th>
+                                <th> التليفون </th>
+                                <th> المحافظة </th>
+                                <th> النوع </th>
+                                <th> التفاصيل </th>
+@*                                 <th> تعديل </th>
+ *@                                <th> حذف </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,14 +31,20 @@
                                     <td>@obj.Code</td>
                                     <td> @obj.Name</td>
                                     <td> @obj.GrossSalary</td>
-                                    <td> @obj.NetSalary</td>
+                                    <td> @obj.Phone</td>
+                                    <td> @obj.Governorate</td>
+                                    <td> @obj.Gender</td>
                                     <td>
-                                        <a asp-controller="Employee" asp-action="Update">
-                                            <i class="fa fa-pencil-square-o text-primary"></i>
+                                        <a asp-controller="Employee" asp-action="Details" asp-route-id="@obj.Id">
+                                            <i class="fa fa-external-link"></i>
                                         </a>
-                                    </td>
+                                    </td>                                    @*  <td>
+                                         <a asp-controller="Employee" asp-action="Update">
+                                             <i class="fa fa-pencil-square-o text-primary"></i>
+                                         </a>
+                                     </td> *@
                                     <td>
-                                        <a asp-controller="Employee" asp-action="Delete">
+                                        <a asp-controller="Employee" asp-action="Delete" asp-route-id="@obj.Id">
                                             <i class="fa fa-trash-o text-danger cursor-pointer text-bold"></i>
                                         </a>
                                     </td>

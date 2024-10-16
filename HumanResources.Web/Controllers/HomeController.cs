@@ -1,4 +1,6 @@
+using HumanResources.Web.Helpers;
 using HumanResources.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,7 +17,15 @@ namespace HumanResources.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            bool globalValue = GlobalVariables.IsAuthenticated;
+            if (globalValue)
+            {
+                ViewBag.IsAuthenticated = globalValue;
+
+                return View();
+
+            }
+            else { return RedirectToAction("Login", "Auth"); }
         }
 
         public IActionResult Privacy()

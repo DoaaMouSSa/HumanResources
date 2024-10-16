@@ -20,6 +20,7 @@ namespace HumanResources.Domain.Entities
         public MaritalStatus? MaritalStatus { get; set; }
 
         public DateOnly BirthOfDate { get; set; }
+
         public string? GraduationCertificateUrl { get; set; }
         public string? IdentityUrl { get; set; }
         public string? PersonalImageUrl { get; set; }

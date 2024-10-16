@@ -13,7 +13,7 @@ namespace HumanResources.Application.EmployeeServices
         Task<IEnumerable<Employee>> GetAll();
         Task Create(EmployeeDtoForAdd dto);
         Task Update(Employee dto);
-        Task Delete(Employee dto);
+        Task Delete(int id);
         Task<Employee> GetById(int id);
         Task<EmployeeDtoForShow> GetByIdForDetails(int id);
 
