@@ -54,23 +54,51 @@ namespace HumanResources.Web.Controllers
         }
         public async Task<IActionResult> Update(int id)
         {
-            Employee? data = await _employeeService.GetById(id);
+            Employee employee = await _employeeService.GetById(id);
+            EmployeeDtoForUpdate data = new EmployeeDtoForUpdate()
+            {
+                DepartmentId = employee.DepartmentId,
+                Name = employee.Name,
+                Code = employee.Code,
+                Address = employee.Address,
+                Phone = employee.Phone,
+                Gender=employee.Gender,
+                BirthOfDate = employee.BirthOfDate,
+                CheckInTime = employee.CheckInTime,
+                CheckOutTime = employee.CheckOutTime,
+                PersonalImageUrl = employee.PersonalImageUrl,
+                GraduationCertificateUrl = employee.GraduationCertificateUrl,
+                SalaryFormula=employee.SalaryFormula,
+                IdentityUrl = employee.IdentityUrl,
+                DateOfAppointment = employee.DateOfAppointment,
+                ExperienceLevel = employee.ExperienceLevel,
+                GrossSalary = employee.GrossSalary,
+                Governorate = employee.Governorate,
+                JobPosition = employee.JobPosition,
+                MaritalStatus = employee.MaritalStatus,
+            };
+
+
             if (data == null)
             {
                 return RedirectToAction("Error", "Home");
             }
+            IEnumerable<Department> departments = await _departmentService.GetAll();
+            ViewData["DepartmentLst"] = new SelectList(departments, "Id", "Name");
             return View(data);
         }
         [HttpPost]
-        public IActionResult Update(Employee dto)
+        public async Task<IActionResult> Update(EmployeeDtoForUpdate dto)
         {
             if (ModelState.IsValid)
             {
-                _employeeService.Update(dto);
+                await _employeeService.Update(dto);
                 TempData["Updated"] = "تم التحديث بنجاح";
 
                 return RedirectToAction("Index");
             }
+            IEnumerable<Department> departments = await _departmentService.GetAll();
+            ViewData["DepartmentLst"] = new SelectList(departments, "Id", "Name");
             return View();
         }
         public async Task<IActionResult> Delete(int id)

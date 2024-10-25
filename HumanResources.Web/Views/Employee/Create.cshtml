@@ -86,25 +86,25 @@
                     </div>
                 </div>
                 <br />
+                <!-- Image Upload Fields with Previews -->
                 <div class="row">
                     <div class="col-md-4">
                         <label asp-for="PersonalImageFile" class="label-control">الصورة الشخصية</label>
-                        <input type="file" asp-for="PersonalImageFile" class="form-control">
+                        <input type="file" id="personalImageFile" asp-for="PersonalImageFile" class="form-control" onchange="previewImage(event, 'personalImagePreview')">
                         <span asp-validation-for="PersonalImageFile" class="text-danger"></span>
-
+                        <img id="personalImagePreview" class="img-preview mt-2" src="#" alt="No Image Selected" style="display: none; max-width: 100px; max-height: 100px;">
                     </div>
                     <div class="col-md-4">
                         <label asp-for="IdentityFile" class="label-control">الصورة الهوية</label>
-                        <input type="file" asp-for="IdentityFile" class="form-control">
+                        <input type="file" id="identityFile" asp-for="IdentityFile" class="form-control" onchange="previewImage(event, 'identityFilePreview')">
                         <span asp-validation-for="IdentityFile" class="text-danger"></span>
-
+                        <img id="identityFilePreview" class="img-preview mt-2" src="#" alt="No Image Selected" style="display: none; max-width: 100px; max-height: 100px;">
                     </div>
                     <div class="col-md-4">
                         <label asp-for="GraduationCertificateFile" class="label-control">المؤهل الدراسى</label>
-                        <input type="file" asp-for="GraduationCertificateFile" class="form-control">
+                        <input type="file" id="graduationCertificateFile" asp-for="GraduationCertificateFile" class="form-control" onchange="previewImage(event, 'graduationCertificatePreview')">
                         <span asp-validation-for="GraduationCertificateFile" class="text-danger"></span>
-
-
+                        <img id="graduationCertificatePreview" class="img-preview mt-2" src="#" alt="No Image Selected" style="display: none; max-width: 100px; max-height: 100px;">
                     </div>
                 </div>
                 <br />
@@ -170,8 +170,26 @@
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     @{
         <partial name="_ValidationScriptsPartial" />
     }
+    <script type="text/javascript">
+        function previewImage(event, previewId) {
+            const file = event.target.files[0];
+            const preview = document.getElementById(previewId);
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "#";
+                preview.style.display = "none";
+            }
+        }
+    </script>
 }

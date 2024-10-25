@@ -15,7 +15,6 @@ namespace HumanResources.Domain.Entities
         public int Code { get; set; }
         public string Name { get; set; }
         public Gender? Gender { get; set; }
-        public float NetSalary { get; set; }//صافى المرتب
         public float? GrossSalary { get; set; }//اجمالى المرتب
         public MaritalStatus? MaritalStatus { get; set; }
 
@@ -25,11 +24,12 @@ namespace HumanResources.Domain.Entities
         public string? IdentityUrl { get; set; }
         public string? PersonalImageUrl { get; set; }
         public ExperienceLevel? ExperienceLevel { get; set; }
-        public DateOnly? DateOfAppointment { get; set; } // Date of Appointment
-        public Governorate? Governorate { get; set; } // Date of Appointment
-        public string? Address { get; set; } // Date of Appointment
-        public string? Phone { get; set; } // Date of Appointment
-        public JobPosition? JobPosition { get; set; } // Date of Appointment
+        public DateOnly? DateOfAppointment { get; set; } 
+        public Governorate? Governorate { get; set; } 
+        public string? Address { get; set; } 
+        public string? Phone { get; set; } 
+        public JobPosition? JobPosition { get; set; } 
+        public SalaryFormula? SalaryFormula { get; set; } // 
 
         public TimeSpan? CheckInTime { get; set; }
         public TimeSpan CheckOutTime { get; set; }

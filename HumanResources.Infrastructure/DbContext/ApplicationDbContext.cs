@@ -27,6 +27,6 @@ namespace HumanResources.Infrastructure.DbContext
         public DbSet<Department> DepartmentTbl { get; set; }
         public DbSet<Employee> EmployeeTbl { get; set; }
         public DbSet<Attendance> AttendanceTbl { get; set; }
-        public DbSet<AttendancDetails> AttendanceDetailsTbl { get; set; }
+        public DbSet<AttendanceDetails> AttendanceDetailsTbl { get; set; }
     }
 }

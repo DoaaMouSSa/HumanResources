@@ -9,5 +9,7 @@ namespace HumanResources.Domain.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         void SaveChanges();
+        Task<int> SaveChangesAsync();
+
     }
 }

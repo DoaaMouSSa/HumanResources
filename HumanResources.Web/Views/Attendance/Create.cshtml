@@ -1,6 +1,6 @@
-﻿@{
+﻿@* @{
     var attendanceCounts = ViewBag.test;
-}
+} *@
 <partial name="_Toastr" />
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
@@ -10,49 +10,7 @@
                 <input type="file" name="file" />
                 <button class="btn btn-primary" type="submit">Import</button>
             </form>
-            @if (attendanceCounts != null)
-            {
-                <div class="table-responsive">
-
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-            <th>الكود</th>
-            <th>الاسم</th>
-            <th>ايام الحضور</th>
-            <th>اجمالى المرتب</th>
-            <th>صافى المرتب</th>
-            <th>الشهر</th>
-            <th>السنة </th>
-        </tr>
-    </thead>
-                        <tbody>
-                            
-                                @foreach (var item in attendanceCounts)
-                                {
-                                    <tr>
-                                        <td>@item.EmployeeCode</td> <!-- عرض كود الموظف -->
-                                        <td>@item.EmpName</td> <!-- عرض كود الموظف -->
-                                        <td>@item.DaysPresent</td> <!-- عرض كود الموظف -->
-                                        <td>@item.GrossSalary</td> <!-- عرض كود الموظف -->
-                                        <td>@item.netSalary</td>  <!-- عرض عدد أيام الحضور -->
-                                        <td>@item.Month</td>  <!-- عرض عدد أيام الحضور -->
-                                        <td>@item.Year</td>  <!-- عرض عدد أيام الحضور -->
-                                    </tr>
-                                }
-                            
-                           
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                <div class="container justify-center">
-                    <partial name="_EmptyData" />
-                </div>
-            }
-        </div>
+            </div>
     </div>
 </div>
 

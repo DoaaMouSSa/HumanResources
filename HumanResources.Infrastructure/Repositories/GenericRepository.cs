@@ -45,7 +45,11 @@ namespace HumanResources.Infrastructure.Repositories
         {
             _context.Set<T>().Update(entity);
         }
-
+        public async Task UpdateAsync(T entity)
+        {
+            _context.Set<T>().Update(entity);
+            await _context.SaveChangesAsync();
+        }
         public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);

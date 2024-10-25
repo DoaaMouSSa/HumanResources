@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace HumanResources.Domain.Entities
 {
-    public class AttendancDetails
+    public class AttendanceDetails
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
+        public TimeSpan? CheckInTime { get; set; }
+        public TimeSpan? CheckOutTime { get; set; }
+        public TimeSpan? WorkingHoursAday { get; set; }
+        public DateOnly? AttendanceDate { get; set; }
+        public int? AttendanceId { get; set; }
+        public Attendance? Attendance { get; set; } 
 
-        public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
-
-        public int Year { get; set; }
-        public int Month { get; set; }
-        public int NumberOfAttandance { get; set; }
     }
 }

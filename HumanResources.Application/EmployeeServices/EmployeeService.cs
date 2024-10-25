@@ -37,6 +37,12 @@ namespace HumanResources.Application.EmployeeServices
             var data = _employeeRepository.GetAll(d => d.IsDeleted == false);
             return data;
         }
+        public async Task<IEnumerable<Employee>> GetByDepartment(int Departmentid)
+        {
+            var data = _employeeRepository.GetAll(d => d.IsDeleted == false
+            && d.DepartmentId==Departmentid);
+            return data;
+        }
         public async Task Create(EmployeeDtoForAdd dto)
         {
             string GraduationCertificateUrl = "";
@@ -77,26 +83,52 @@ namespace HumanResources.Application.EmployeeServices
                 CreatedAt = DateOnly.FromDateTime(DateTime.Now)
             };
             _employeeRepository.Add(newEmployee);
-            _unitOfWork.SaveChanges();// Assuming SaveChangesAsync is implemented
-                                      // After saving the employee, dynamically create a new table using the Code
-  //          string tableName = $"Employee_{newEmployee.Code}";
-
-  //          // Ensure that the table name is valid
-  //          string createTableQuery = $@"
-  //          CREATE TABLE [{tableName}] (
-  //              Id INT PRIMARY KEY IDENTITY(1,1),
-  //CheckInTime TIME, 
-  //  CheckOutTime TIME,
-  //  AttendanceDate DATE )
-  //          ";
-
-  //          await _context.Database.ExecuteSqlRawAsync(createTableQuery);
+            _unitOfWork.SaveChanges();
         }
-        public async Task Update(Employee dto)
+        public async Task Update(EmployeeDtoForUpdate dto)
         {
-            dto.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
-            _employeeRepository.Update(dto);
-            _unitOfWork.SaveChanges();// Assuming SaveChangesAsync is implemented
+            
+            Employee employee =await GetById(dto.Id);
+            employee.Id = dto.Id;
+            employee.Name=dto.Name;
+            employee.Code = dto.Code;
+            employee.Address=dto.Address;
+            employee.Phone=dto.Phone;
+            employee.BirthOfDate = dto.BirthOfDate;
+            employee.CheckInTime = dto.CheckInTime;
+            employee.CheckOutTime = dto.CheckOutTime;
+            employee.DateOfAppointment = dto.DateOfAppointment;
+            employee.DepartmentId = dto.DepartmentId;
+            employee.Gender = dto.Gender;
+            employee.SalaryFormula = dto.SalaryFormula;
+            employee.MaritalStatus = dto.MaritalStatus;
+            employee.ExperienceLevel = dto.ExperienceLevel;
+            employee.JobPosition = dto.JobPosition;
+            employee.Governorate = dto.Governorate;
+            employee.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+            string GraduationCertificateUrl = "";
+            string IdentityUrl = "";
+            string PersonalImageUrl = "";
+            if (dto.GraduationCertificateFile != null)
+            {
+                GraduationCertificateUrl = _fileService.UploadImage(dto.GraduationCertificateFile, "graduationCertificates");
+                employee.GraduationCertificateUrl = GraduationCertificateUrl;
+            }
+            if (dto.IdentityFile != null)
+            {
+                IdentityUrl = _fileService.UploadImage(dto.IdentityFile, "identity");
+                employee.IdentityUrl = IdentityUrl;
+
+            }
+            if (dto.PersonalImageFile != null)
+            {
+                PersonalImageUrl = _fileService.UploadImage(dto.PersonalImageFile, "personalImages");
+                employee.PersonalImageUrl = PersonalImageUrl;
+
+            }
+
+             _employeeRepository.Update(employee);
+            await _unitOfWork.SaveChangesAsync();// Assuming SaveChangesAsync is implemented
         }
         public async Task Delete(int id)
         {
@@ -138,7 +170,7 @@ namespace HumanResources.Application.EmployeeServices
 
         public Task<Employee> GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.EmployeeTbl.FirstAsync(e=>e.Id==id);
         }
     }
 }

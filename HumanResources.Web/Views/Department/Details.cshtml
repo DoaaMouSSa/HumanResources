@@ -5,12 +5,13 @@
     </div>
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
-        <p class="card-text">وصف القسم</p>
-        <a asp-controller="Department" asp-action="Index" class="button btn btn-dark">جميع الأقسام</a>
+        <p class="card-text">@Model.Description</p>
     </div>
     <div class="card-footer text-muted">
         
     </div>
+    <a asp-controller="Department" asp-action="Index" class="button btn btn-dark">جميع الأقسام</a>
+
 </div>
 
 @section Scripts {

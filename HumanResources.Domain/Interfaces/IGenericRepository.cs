@@ -13,6 +13,7 @@ namespace HumanResources.Domain.Interfaces
         T GetById(int id);
         void Add(T entity);
         void Update(T entity);
+        public Task UpdateAsync(T entity);
         void Delete(T entity);
     }
 }

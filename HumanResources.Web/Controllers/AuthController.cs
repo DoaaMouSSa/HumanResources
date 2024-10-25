@@ -73,7 +73,7 @@ namespace HumanResources.Web.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Home"); // Redirect on successful registration
+                return RedirectToAction("Login", "Auth"); // Redirect on successful registration
             }
 
             foreach (var error in result.Errors)

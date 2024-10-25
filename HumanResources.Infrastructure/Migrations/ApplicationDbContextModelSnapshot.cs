@@ -22,51 +22,27 @@ namespace HumanResources.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HumanResources.Domain.Entities.AttendancDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfAttandance")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("AttendanceDetailsTbl");
-                });
-
             modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
-                    b.Property<DateOnly>("AttendanceDate")
-                        .HasColumnType("date");
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
 
-                    b.Property<TimeSpan>("CheckInTime")
-                        .HasColumnType("time");
+                    b.Property<int?>("Month")
+                        .HasColumnType("int");
 
-                    b.Property<TimeSpan>("CheckOutTime")
-                        .HasColumnType("time");
+                    b.Property<int?>("WorkingDays")
+                        .HasColumnType("int");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<long?>("WorkingHours")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -74,6 +50,36 @@ namespace HumanResources.Infrastructure.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("AttendanceTbl");
+                });
+
+            modelBuilder.Entity("HumanResources.Domain.Entities.AttendanceDetails", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
+
+                    b.Property<DateOnly?>("AttendanceDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("AttendanceId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan?>("CheckInTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("CheckOutTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("WorkingHoursAday")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttendanceId");
+
+                    b.ToTable("AttendanceDetailsTbl");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Department", b =>
@@ -178,14 +184,14 @@ namespace HumanResources.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("NetSalary")
-                        .HasColumnType("real");
-
                     b.Property<string>("PersonalImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SalaryFormula")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
@@ -395,26 +401,20 @@ namespace HumanResources.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("HumanResources.Domain.Entities.AttendancDetails", b =>
-                {
-                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
                 {
-                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
+                    b.HasOne("HumanResources.Domain.Entities.Employee", null)
                         .WithMany("Attendances")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
+                });
 
-                    b.Navigation("Employee");
+            modelBuilder.Entity("HumanResources.Domain.Entities.AttendanceDetails", b =>
+                {
+                    b.HasOne("HumanResources.Domain.Entities.Attendance", "Attendance")
+                        .WithMany("AttendanceDetails")
+                        .HasForeignKey("AttendanceId");
+
+                    b.Navigation("Attendance");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
@@ -477,6 +477,11 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
+                {
+                    b.Navigation("AttendanceDetails");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Department", b =>

@@ -11,8 +11,10 @@ namespace HumanResources.Application.EmployeeServices
     public interface IEmployeeService
     {
         Task<IEnumerable<Employee>> GetAll();
+        Task<IEnumerable<Employee>> GetByDepartment(int Departmentid);
+
         Task Create(EmployeeDtoForAdd dto);
-        Task Update(Employee dto);
+        Task Update(EmployeeDtoForUpdate dto);
         Task Delete(int id);
         Task<Employee> GetById(int id);
         Task<EmployeeDtoForShow> GetByIdForDetails(int id);

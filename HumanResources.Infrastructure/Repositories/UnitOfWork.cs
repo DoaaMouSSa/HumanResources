@@ -21,6 +21,10 @@ namespace HumanResources.Infrastructure.Repositories
         {
             _context.SaveChanges();
         }
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
         // Dispose of the context when no longer needed
         public void Dispose()
         {
