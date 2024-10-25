@@ -55,14 +55,17 @@ namespace HumanResources.Web.Controllers
                         AttendanceDetails previousAttendance = null;
                         decimal workingHoursAMonth = 0;
                         int month=0;
+                        int employeeId;
+                        //int? attendanceId=0;
                         DateOnly dateOnly;
                         string lastDate="";
                         string currentDate;
                       
                         while (reader.Read())
                         {
-              
+
                             // Extract DateTime and split into date and time
+                            employeeId = Convert.ToInt16(reader.GetValue(0));
                             var dateTimeValue = DateTime.Parse(reader.GetValue(1).ToString());
                             dateOnly = DateOnly.FromDateTime(dateTimeValue);
                             currentDate = dateOnly.Month.ToString();
@@ -74,7 +77,7 @@ namespace HumanResources.Web.Controllers
                             { 
                                 int currentMonth= DateOnly.Parse(lastDate).Month;
                                 int currentYear= DateOnly.Parse(lastDate).Year;
-                                test(currentMonth, currentYear);
+                                test(currentMonth, currentYear, employeeId);
                             }
                             // Extract DateTime and split into date and time
                             if (previousAttendance != null && previousAttendance.AttendanceDate == dateOnly)
@@ -93,9 +96,9 @@ namespace HumanResources.Web.Controllers
                                     previousAttendance = new AttendanceDetails
                                     {
                                         CheckInTime = timeOnly,
-                                        AttendanceDate = dateOnly
+                                        AttendanceDate = dateOnly,
                                     };
-
+                                    
                                     _context.Add(previousAttendance);
                                     _context.SaveChanges();
                                 
@@ -111,18 +114,38 @@ namespace HumanResources.Web.Controllers
             return View();
 
         }
-        private void test(int currentMonth,int currentYear)
+        private void test(int currentMonth, int currentYear, int employeeId)
         {
             Attendance attendance = new Attendance();
             attendance.Month = currentMonth;
             attendance.Year = currentYear;
-           // List<AttendanceDetails> attendanceDetails = _context.AttendanceDetailsTbl
-             //   .Where(ad => ad.AttendanceDate.ToString().Contains(currentMonth.ToString())
-               // && ad.AttendanceDate.ToString().Contains(currentYear.ToString())).ToList();
-           // TimeSpan totalWorkingHours = new TimeSpan(attendanceDetails.Sum(a => a.WorkingHoursAday));
+            if(_context.EmployeeTbl.FirstOrDefault(e=>e.Id == employeeId) != null)
+            {
+                attendance.EmployeeId = employeeId;
+
+            }
+            // List<AttendanceDetails> attendanceDetails = _context.AttendanceDetailsTbl
+            //   .Where(ad => ad.AttendanceDate.ToString().Contains(currentMonth.ToString())
+            // && ad.AttendanceDate.ToString().Contains(currentYear.ToString())).ToList();
+            // TimeSpan totalWorkingHours = new TimeSpan(attendanceDetails.Sum(a => a.WorkingHoursAday));
             _context.Add(attendance);
             _context.SaveChanges();
         }
+        //private int? test(int currentMonth,int currentYear,int employeeId)
+        //{
+        //    Attendance attendance = new Attendance();
+        //    attendance.Month = currentMonth;
+        //    attendance.Year = currentYear;
+        //    attendance.EmployeeId = employeeId;
+        //   // List<AttendanceDetails> attendanceDetails = _context.AttendanceDetailsTbl
+        //   //   .Where(ad => ad.AttendanceDate.ToString().Contains(currentMonth.ToString())
+        //   // && ad.AttendanceDate.ToString().Contains(currentYear.ToString())).ToList();
+        //   // TimeSpan totalWorkingHours = new TimeSpan(attendanceDetails.Sum(a => a.WorkingHoursAday));
+        //    _context.Add(attendance);
+        //    _context.SaveChanges();
+        //    int? attendanceId = attendance.Id;
+        //    return attendanceId;
+        //}
         public IActionResult Index()
         {
             IEnumerable<Attendance> data = _context.AttendanceTbl.AsEnumerable();

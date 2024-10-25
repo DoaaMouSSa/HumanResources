@@ -179,12 +179,9 @@ namespace HumanResources.Infrastructure.Migrations
                 name: "EmployeeTbl",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Code = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: true),
-                    NetSalary = table.Column<float>(type: "real", nullable: false),
                     GrossSalary = table.Column<float>(type: "real", nullable: true),
                     MaritalStatus = table.Column<int>(type: "int", nullable: true),
                     BirthOfDate = table.Column<DateOnly>(type: "date", nullable: false),
@@ -197,6 +194,7 @@ namespace HumanResources.Infrastructure.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JobPosition = table.Column<int>(type: "int", nullable: true),
+                    SalaryFormula = table.Column<int>(type: "int", nullable: true),
                     CheckInTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     CheckOutTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
@@ -222,11 +220,11 @@ namespace HumanResources.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    Year = table.Column<int>(type: "int", nullable: false),
-                    Month = table.Column<int>(type: "int", nullable: false),
-                    WorkingDays = table.Column<int>(type: "int", nullable: false),
-                    WorkingHours = table.Column<long>(type: "bigint", nullable: false)
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    Year = table.Column<int>(type: "int", nullable: true),
+                    Month = table.Column<int>(type: "int", nullable: true),
+                    WorkingDays = table.Column<int>(type: "int", nullable: true),
+                    WorkingHours = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -235,8 +233,7 @@ namespace HumanResources.Infrastructure.Migrations
                         name: "FK_AttendanceTbl_EmployeeTbl_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "EmployeeTbl",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -245,9 +242,10 @@ namespace HumanResources.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CheckInTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    CheckOutTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    AttendanceDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    CheckInTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    CheckOutTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    WorkingHoursAday = table.Column<TimeSpan>(type: "time", nullable: true),
+                    AttendanceDate = table.Column<DateOnly>(type: "date", nullable: true),
                     AttendanceId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

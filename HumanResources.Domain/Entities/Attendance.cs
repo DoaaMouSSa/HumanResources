@@ -11,8 +11,8 @@ namespace HumanResources.Domain.Entities
         public int? Id { get; set; }
 
         // العلاقة مع الموظف
-        //public int? EmployeeId { get; set; }
-        //public Employee? Employee { get; set; }
+        public int? EmployeeId { get; set; }
+        public Employee? Employee { get; set; }
         public int? Year { get; set; }
         public int? Month { get; set; }
         public int? WorkingDays { get; set; }  

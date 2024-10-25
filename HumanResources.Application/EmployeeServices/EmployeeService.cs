@@ -62,7 +62,7 @@ namespace HumanResources.Application.EmployeeServices
             }
             Employee newEmployee = new Employee
             {
-                Code = dto.Code,
+                Id=dto.Id,
                 Name = dto.Name,
                 DepartmentId = dto.DepartmentId,
                 Address = dto.Address,
@@ -91,7 +91,6 @@ namespace HumanResources.Application.EmployeeServices
             Employee employee =await GetById(dto.Id);
             employee.Id = dto.Id;
             employee.Name=dto.Name;
-            employee.Code = dto.Code;
             employee.Address=dto.Address;
             employee.Phone=dto.Phone;
             employee.BirthOfDate = dto.BirthOfDate;
@@ -150,7 +149,7 @@ namespace HumanResources.Application.EmployeeServices
             // Calculate the difference in years
             var data = new EmployeeDtoForShow
             {
-                Code = employee.Code,
+                Id=employee.Id,
                 Name = employee.Name,
                 Address = employee.Address,
                 Phone = employee.Phone,

@@ -15,9 +15,10 @@ namespace HumanResources.Application.Dtos
     {
         public class EmployeeDtoForAdd
         {
-            [Required(ErrorMessage = "الكود مطلوب.")]
-            [UniqueIntCode] 
-            public int Code { get; set; }
+            [Required(ErrorMessage = "مطلوب")]
+          
+            public int Id { get; set; }
+            
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
             public string Name { get; set; }
@@ -107,9 +108,20 @@ namespace HumanResources.Application.Dtos
 
             public int DepartmentId { get; set; } // Foreign Key
         }
+        public class EmployeeDtoForTable
+        {
+            public int Id { get; set; }
+            public int Code { get; set; }
+            public string Name { get; set; }
+            public string Phone { get; set; }
+            public float? GrossSalary { get; set; }//اجمالى المرتب
+            public Gender? Gender { get; set; }
+            public Governorate? Governorate { get; set; } 
+
+        }
         public class EmployeeDtoForShow
         {
-            public int Code { get; set; }
+            public int Id { get; set; }
             public string Name { get; set; }
             public string Address { get; set; } // Date of Appointment
             public string Phone { get; set; } // Date of Appointment

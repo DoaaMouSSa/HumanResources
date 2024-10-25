@@ -1,9 +1,12 @@
 ﻿using HumanResources.Application.DepartmentServices;
+using HumanResources.Application.Dtos;
 using HumanResources.Application.EmployeeServices;
 using HumanResources.Domain.Entities;
+using HumanResources.Infrastructure.DbContext;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using static HumanResources.Application.Dtos.EmployeeDto;
 using static HumanResources.Domain.Enums.Enums;
 
@@ -13,18 +16,90 @@ namespace HumanResources.Web.Controllers
     {
         private readonly IEmployeeService _employeeService;
         private readonly IDepartmentService _departmentService;
+        private readonly ApplicationDbContext _context;
 
-        public EmployeeController(IEmployeeService employeeService, IDepartmentService departmentService)
+        public EmployeeController(IEmployeeService employeeService,
+            IDepartmentService departmentService,
+            ApplicationDbContext context)
         {
             _employeeService = employeeService;
             _departmentService= departmentService;
+            _context= context;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            IEnumerable<Employee> data = await _employeeService.GetAll();
+        //public async Task<IActionResult> Index()
+        //{
+        //    IEnumerable<Employee> data = await _employeeService.GetAll();
 
-            return View(data);
+        //    return View(data);
+        //}
+        public async Task<IActionResult> Index(int departmentId,int pageIndex = 1, int pageSize = 5)
+        {
+            IQueryable<EmployeeDtoForTable> query;
+            if (departmentId==0)
+            {
+                query = (from q in _context.EmployeeTbl
+                             where q.IsDeleted == false
+                             select new EmployeeDtoForTable
+                             {
+                                 Id = q.Id,
+                                 Name = q.Name,
+                                 Phone = q.Phone,
+                                 Gender = q.Gender,
+                                 Governorate = q.Governorate,
+                                 GrossSalary = q.GrossSalary,
+                             }).AsQueryable();
+            }
+            else
+            {
+                query = (from q in _context.EmployeeTbl
+                         where q.IsDeleted == false
+                         && q.DepartmentId==departmentId
+                         select new EmployeeDtoForTable
+                         {
+                             Id = q.Id,
+                             Name = q.Name,
+                             Phone = q.Phone,
+                             Gender = q.Gender,
+                             Governorate = q.Governorate,
+                             GrossSalary = q.GrossSalary,
+                         }).AsQueryable();
+            }
+            var totalCount = query.Count();
+            var items =await query.Skip((pageIndex - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
+
+            var paginatedList = new PaginatedList<EmployeeDtoForTable>(items, totalCount, pageIndex, pageSize);
+            IEnumerable<Department> departments = await _departmentService.GetAll();
+            ViewData["DepartmentLst"] = new SelectList(departments, "Id", "Name");
+            if (departmentId != 0)
+            {
+                ViewData["SelectedDepartmentName"] = _context.DepartmentTbl.FirstOrDefault(d => d.Id == departmentId).Name;
+
+            }
+            return View(paginatedList);
+        }
+        public async Task<IActionResult> GetEmployeesByDepartment(int departmentId, int pageIndex = 1, int pageSize = 5)
+        {
+            var query = (from q in _context.EmployeeTbl
+                         where q.IsDeleted == false
+                         && q.DepartmentId== departmentId
+                         select new EmployeeDtoForTable
+                         {
+                             Name = q.Name,
+                             Phone = q.Phone,
+                             Gender = q.Gender,
+                             Governorate = q.Governorate,
+                             GrossSalary = q.GrossSalary,
+                         }).AsEnumerable();
+            var totalCount = query.Count();
+            var items = query.Skip((pageIndex - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToList();
+
+            var paginatedList = new PaginatedList<EmployeeDtoForTable>(items, totalCount, pageIndex, pageSize);
+            return View(paginatedList);
         }
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -59,7 +134,6 @@ namespace HumanResources.Web.Controllers
             {
                 DepartmentId = employee.DepartmentId,
                 Name = employee.Name,
-                Code = employee.Code,
                 Address = employee.Address,
                 Phone = employee.Phone,
                 Gender=employee.Gender,

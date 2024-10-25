@@ -12,7 +12,6 @@ namespace HumanResources.Domain.Entities
 {
     public class Employee:BaseEntity
     {
-        public int Code { get; set; }
         public string Name { get; set; }
         public Gender? Gender { get; set; }
         public float? GrossSalary { get; set; }//اجمالى المرتب

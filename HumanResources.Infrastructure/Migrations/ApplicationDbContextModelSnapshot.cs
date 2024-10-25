@@ -121,10 +121,7 @@ namespace HumanResources.Infrastructure.Migrations
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -137,9 +134,6 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<TimeSpan>("CheckOutTime")
                         .HasColumnType("time");
-
-                    b.Property<int>("Code")
-                        .HasColumnType("int");
 
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
@@ -403,9 +397,11 @@ namespace HumanResources.Infrastructure.Migrations
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
                 {
-                    b.HasOne("HumanResources.Domain.Entities.Employee", null)
+                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
                         .WithMany("Attendances")
                         .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.AttendanceDetails", b =>

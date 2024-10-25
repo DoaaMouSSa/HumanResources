@@ -17,13 +17,18 @@ namespace HumanResources.Infrastructure.DbContext
         {
 
         }
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<Employee>()
-        //        .HasIndex(e => e.Code)
-        //        .IsUnique();
-         
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure additional entity properties if needed
+            modelBuilder.Entity<IdentityUserLogin<string>>()
+                .HasKey(ul => new { ul.LoginProvider, ul.ProviderKey });
+            modelBuilder.Entity<Employee>()
+    .Property(e => e.Id)
+    .ValueGeneratedNever();
+
+        }
         public DbSet<Department> DepartmentTbl { get; set; }
         public DbSet<Employee> EmployeeTbl { get; set; }
         public DbSet<Attendance> AttendanceTbl { get; set; }

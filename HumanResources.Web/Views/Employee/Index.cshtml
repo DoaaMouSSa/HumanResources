@@ -1,13 +1,29 @@
-﻿@model IEnumerable<Employee>
+﻿@using HumanResources.Application.Dtos
+@model PaginatedList<EmployeeDtoForTable>
 
 <partial name="_Toastr" />
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">  جميع الموظفين</h4>
-            <a class="btn btn-primary btn-rounded btn-fw" asp-controller="Employee" asp-action="Create">موظف جديد </a>
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="btn btn-primary btn-rounded btn-fw" asp-controller="Employee" asp-action="Create">موظف جديد </a>
+                </div>
+                <div class="col-md-4">
+                    <h5>@ViewData["SelectedDepartmentName"]</h5>
+                </div>
+                <div class="col-md-2">
+                     <select id="selectDepartment" class="form-control" asp-items="ViewBag.DepartmentLst"
+                            onchange="location.href='@Url.Action("Index", new { pageIndex = 1, pageSize = Model.PageSize })' + '&departmentId=' + this.value">
+                        <option
+                            value="0">اختر قسم</option>
+                    </select>
+                </div>
 
-            @if (Model.Count() > 0){
+            </div>
+        
+            @if (Model.Items.Count() > 0){
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -25,10 +41,10 @@
                         </thead>
                         <tbody>
 
-                            @foreach (var obj in Model)
+                            @foreach (var obj in Model.Items)
                             {
                                 <tr>
-                                    <td>@obj.Code</td>
+                                    <td>@obj.Id</td>
                                     <td> @obj.Name</td>
                                     <td> @obj.GrossSalary</td>
                                     <td> @obj.Phone</td>
@@ -55,19 +71,56 @@
                         </tbody>
                     </table>
                 </div>
-                <nav aria-label="Page navigation example" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">اللاحق</a>
-                        </li>
-                    </ul>
-                </nav>
+
+<nav aria-label="Page navigation example" class="mt-4">
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { pageIndex = Model.PageIndex - 1, pageSize = Model.PageSize })" aria-label="Previous">
+                    <span aria-hidden="true">السابق</span>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (i == Model.PageIndex)
+            {
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="#">@i</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pageIndex = i, pageSize = Model.PageSize })">@i</a>
+                </li>
+            }
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { pageIndex = Model.PageIndex + 1, pageSize = Model.PageSize })" aria-label="Next">
+                    <span aria-hidden="true">اللاحق</span>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">اللاحق</a>
+            </li>
+        }
+    </ul>
+</nav>
             }
             else
             {
@@ -78,3 +131,10 @@
         </div>
     </div>
 </div>
+@* <script>
+    function filterByDepartment(selectElement) {
+        const departmentId = selectElement.value;
+        alert(departmentId)
+        selectElement.value = "2";
+    }
+</script> *@

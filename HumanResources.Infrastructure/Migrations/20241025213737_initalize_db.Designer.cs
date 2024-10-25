@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241020204449_update_attendance3_tbl")]
-    partial class update_attendance3_tbl
+    [Migration("20241025213737_initalize_db")]
+    partial class initalize_db
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,10 +124,7 @@ namespace HumanResources.Infrastructure.Migrations
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -140,9 +137,6 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<TimeSpan>("CheckOutTime")
                         .HasColumnType("time");
-
-                    b.Property<int>("Code")
-                        .HasColumnType("int");
 
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
@@ -187,14 +181,14 @@ namespace HumanResources.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("NetSalary")
-                        .HasColumnType("real");
-
                     b.Property<string>("PersonalImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SalaryFormula")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
@@ -406,9 +400,11 @@ namespace HumanResources.Infrastructure.Migrations
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Attendance", b =>
                 {
-                    b.HasOne("HumanResources.Domain.Entities.Employee", null)
+                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
                         .WithMany("Attendances")
                         .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.AttendanceDetails", b =>
