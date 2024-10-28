@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<Attendance>
-
+@{
+    int? lastEmployeeId = null; // To store the last rendered EmployeeId
+}
 <partial name="_Toastr" />
 
 <div class="col-lg-12 grid-margin stretch-card">
@@ -13,10 +15,14 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th> # </th>
+                                <th style="display:none;"> # </th>
                                   <th> الموظف </th>
                                  <th>السنة </th>
                                 <th> الشهر </th>
+                                <th>المرتب الأساسى</th>
+                                <th> اليومية </th>
+                                <th> ايام الحضور </th>
+                                <th> صافى المرتب </th>
                                 <th> التفاصيل </th>
                             </tr>
                         </thead>
@@ -24,10 +30,25 @@
                             @foreach (var obj in Model)
                             {
                                 <tr>
-                                    <td>@obj.Id</td>
-                                    <td>@obj.EmployeeId</td>
-                                    <td> @obj.Year</td>
+                                    <td style="display:none;">@obj.Id</td>
+ <td class="text-danger text-bold">
+                @if (lastEmployeeId != obj.EmployeeId)
+                {
+                    @obj.Employee.Name
+                    lastEmployeeId = obj.EmployeeId; // Update lastEmployeeId to current one
+                }
+                else
+                {
+                    @* Leave the cell empty for duplicate EmployeeId *@
+                    <span></span>
+                }
+            </td>   
+            <td> @obj.Year</td>
                                     <td> @obj.Month</td>
+                                    <td> @obj.Employee.GrossSalary</td>
+                                    <td> @obj.WorkingDays</td>
+                                    <td> @obj.daySalary</td>
+                                    <td> @obj.NetSalary</td>
                                    <td>
                                         <a asp-controller="Attendance" asp-action="Details" asp-route-id="@obj.Id">
                                             <i class="fa fa-external-link"></i>

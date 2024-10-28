@@ -6,11 +6,26 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">الحضور والانصراف </h4>
-            <form asp-action="Create" asp-controller="Attendance" method="post" enctype="multipart/form-data">
+            <form id="uploadForm" asp-action="Create" asp-controller="Attendance" method="post" enctype="multipart/form-data">
                 <input type="file" name="file" />
                 <button class="btn btn-primary" type="submit">Import</button>
             </form>
+            <div id="loading-spinner" style="display:none;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831" alt="Loading..." />
+                <button class="btn btn-info" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    سيتم تحميل البيانات قريبا...
+                </button>
+            </div>
+           
             </div>
     </div>
 </div>
-
+@section Scripts {
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", function () {
+            // Show the loading spinner
+            document.getElementById("loading-spinner").style.display = "block";
+        });
+    </script>
+}

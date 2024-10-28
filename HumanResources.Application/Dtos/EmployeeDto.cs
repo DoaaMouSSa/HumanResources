@@ -30,7 +30,7 @@ namespace HumanResources.Application.Dtos
             public string Phone { get; set; } // Date of Appointment
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
-            public float GrossSalary { get; set; }//اجمالى المرتب
+            public decimal GrossSalary { get; set; }//اجمالى المرتب
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
             public DateOnly BirthOfDate { get; set; }
@@ -76,7 +76,7 @@ namespace HumanResources.Application.Dtos
             public string Phone { get; set; } // Date of Appointment
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
-            public float? GrossSalary { get; set; }//اجمالى المرتب
+            public decimal? GrossSalary { get; set; }//اجمالى المرتب
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
             public DateOnly BirthOfDate { get; set; }
@@ -114,7 +114,7 @@ namespace HumanResources.Application.Dtos
             public int Code { get; set; }
             public string Name { get; set; }
             public string Phone { get; set; }
-            public float? GrossSalary { get; set; }//اجمالى المرتب
+            public decimal GrossSalary { get; set; }//اجمالى المرتب
             public Gender? Gender { get; set; }
             public Governorate? Governorate { get; set; } 
 
@@ -125,7 +125,7 @@ namespace HumanResources.Application.Dtos
             public string Name { get; set; }
             public string Address { get; set; } // Date of Appointment
             public string Phone { get; set; } // Date of Appointment
-            public float GrossSalary { get; set; }//اجمالى المرتب
+            public decimal GrossSalary { get; set; }//اجمالى المرتب
             public string Age { get; set; }
             public string CheckInTime { get; set; }
             public string CheckOutTime { get; set; }

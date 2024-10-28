@@ -14,7 +14,7 @@ namespace HumanResources.Domain.Entities
     {
         public string Name { get; set; }
         public Gender? Gender { get; set; }
-        public float? GrossSalary { get; set; }//اجمالى المرتب
+        public decimal GrossSalary { get; set; }//اجمالى المرتب
         public MaritalStatus? MaritalStatus { get; set; }
 
         public DateOnly BirthOfDate { get; set; }

@@ -17,6 +17,8 @@ namespace HumanResources.Domain.Entities
         public int? Month { get; set; }
         public int? WorkingDays { get; set; }  
         public long? WorkingHours { get; set; }
+        public decimal daySalary { get; set; }
+        public decimal? NetSalary { get; set; }
         public ICollection<AttendanceDetails>? AttendanceDetails { get; set; } = new List<AttendanceDetails>();
 
 
