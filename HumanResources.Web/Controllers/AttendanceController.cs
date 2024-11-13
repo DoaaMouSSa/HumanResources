@@ -31,162 +31,169 @@ namespace HumanResources.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile file)
         {
-            // Register the code pages encoding provider
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-            if (file != null && file.Length > 0)
+            try
             {
-                var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\uploads\\";
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+                // Register the code pages encoding provider
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-                var filePath = Path.Combine(uploadsFolder, file.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                if (file != null && file.Length > 0)
                 {
-                    await file.CopyToAsync(stream);
-                }
-
-                using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\uploads\\";
+                    if (!Directory.Exists(uploadsFolder))
                     {
-                        AttendanceDetails previousAttendance = null;
-                        string lastDate = "";
-                        var monthlyAttendance = new Dictionary<(int Month, int Year, int EmployeeId), Attendance>();
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
 
-                        while (reader.Read())
+                    var filePath = Path.Combine(uploadsFolder, file.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var reader = ExcelReaderFactory.CreateReader(stream))
                         {
-                            // Get EmployeeCode and DateTime from Excel
-                            var employeeCode =Convert.ToInt16(reader.GetValue(0).ToString());
-                            var employee = await _context.EmployeeTbl.FirstOrDefaultAsync(e => e.Id == employeeCode);
+                            AttendanceDetails previousAttendance = null;
+                            string lastDate = "";
+                            var monthlyAttendance = new Dictionary<(int Month, int Year, int EmployeeId), Attendance>();
 
-                            if (employee == null)
+                            while (reader.Read())
                             {
-                                // Skip if employee code is not found
-                                continue;
-                            }
+                                // Get EmployeeCode and DateTime from Excel
+                                var employeeCode = Convert.ToInt16(reader.GetValue(0).ToString());
+                                var employee = await _context.EmployeeTbl.FirstOrDefaultAsync(e => e.Id == employeeCode);
 
-                            int employeeId = employee.Id;
-                            var dateTimeValue = DateTime.Parse(reader.GetValue(1).ToString());
-                            var dateOnly = DateOnly.FromDateTime(dateTimeValue);
-                            var currentMonthYear = $"{dateOnly.Month}-{dateOnly.Year}";
-                            var timeOnly = dateTimeValue.TimeOfDay;
-
-                            if (lastDate == "") lastDate = currentMonthYear;
-                            int result = string.Compare(currentMonthYear, lastDate);
-
-                            // Check if month has changed, update Attendance if so
-                            if (result != 0)
-                            {
-                                var lastDateParts = lastDate.Split('-');
-                                int lastMonth = int.Parse(lastDateParts[0]);
-                                int lastYear = int.Parse(lastDateParts[1]);
-
-                                if (monthlyAttendance.TryGetValue((lastMonth, lastYear, employeeId), out var attendance))
+                                if (employee == null)
                                 {
-                                    attendance.WorkingDays = attendance.AttendanceDetails
-                                        .Select(ad => ad.AttendanceDate)
-                                        .Distinct()
-                                        .Count();
-                                    //تجميع ساعات العمل
-                                    // Calculate total working hours and assign it to WorkingHours
-                                    attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
+                                    // Skip if employee code is not found
+                                    continue;
+                                }
 
+                                int employeeId = employee.Id;
+                                var dateTimeValue = DateTime.Parse(reader.GetValue(1).ToString());
+                                var dateOnly = DateOnly.FromDateTime(dateTimeValue);
+                                var currentMonthYear = $"{dateOnly.Month}-{dateOnly.Year}";
+                                var timeOnly = dateTimeValue.TimeOfDay;
 
+                                if (lastDate == "") lastDate = currentMonthYear;
+                                int result = string.Compare(currentMonthYear, lastDate);
 
-                                    if (attendance.WorkingHoursTime != null)
+                                // Check if month has changed, update Attendance if so
+                                if (result != 0)
+                                {
+                                    var lastDateParts = lastDate.Split('-');
+                                    int lastMonth = int.Parse(lastDateParts[0]);
+                                    int lastYear = int.Parse(lastDateParts[1]);
+
+                                    if (monthlyAttendance.TryGetValue((lastMonth, lastYear, employeeId), out var attendance))
                                     {
-                                        attendance.WorkingHours = (long?)attendance.WorkingHoursTime.Value.TotalHours;
+                                        attendance.WorkingDays = attendance.AttendanceDetails
+                                            .Select(ad => ad.AttendanceDate)
+                                            .Distinct()
+                                            .Count();
+                                        //تجميع ساعات العمل
+                                        // Calculate total working hours and assign it to WorkingHours
+                                        attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
 
+
+
+                                        if (attendance.WorkingHoursTime != null)
+                                        {
+                                            attendance.WorkingHours = (long?)attendance.WorkingHoursTime.Value.TotalHours;
+
+                                        }
+
+                                        _context.Update(attendance);
+                                    }
+                                }
+
+                                // Check if previousAttendance exists with same date to update CheckOutTime
+                                if (previousAttendance != null && previousAttendance.AttendanceDate == dateOnly && previousAttendance.Attendance.EmployeeId == employeeId)
+                                {
+                                    previousAttendance.CheckOutTime = timeOnly;
+                                    if (previousAttendance.CheckInTime != null)
+                                    {
+                                        previousAttendance.WorkingHoursAday = previousAttendance.CheckOutTime - previousAttendance.CheckInTime;
+                                    }
+                                    _context.Update(previousAttendance);
+                                }
+                                else
+                                {
+                                    // Get or create Attendance record for month and employee
+                                    if (!monthlyAttendance.TryGetValue((dateOnly.Month, dateOnly.Year, employeeId), out var attendance))
+                                    {
+                                        attendance = new Attendance
+                                        {
+                                            EmployeeId = employeeId,
+                                            Month = dateOnly.Month,
+                                            Year = dateOnly.Year
+                                        };
+                                        _context.Add(attendance);
+                                        await _context.SaveChangesAsync();
+                                        monthlyAttendance[(dateOnly.Month, dateOnly.Year, employeeId)] = attendance;
                                     }
 
-                                    _context.Update(attendance);
-                                }
-                            }
-
-                            // Check if previousAttendance exists with same date to update CheckOutTime
-                            if (previousAttendance != null && previousAttendance.AttendanceDate == dateOnly && previousAttendance.Attendance.EmployeeId == employeeId)
-                            {
-                                previousAttendance.CheckOutTime = timeOnly;
-                                if (previousAttendance.CheckInTime != null)
-                                {
-                                    previousAttendance.WorkingHoursAday = previousAttendance.CheckOutTime - previousAttendance.CheckInTime;
-                                }
-                                _context.Update(previousAttendance);
-                            }
-                            else
-                            {
-                                // Get or create Attendance record for month and employee
-                                if (!monthlyAttendance.TryGetValue((dateOnly.Month, dateOnly.Year, employeeId), out var attendance))
-                                {
-                                    attendance = new Attendance
+                                    // Create new AttendanceDetails entry for the day
+                                    previousAttendance = new AttendanceDetails
                                     {
-                                        EmployeeId = employeeId,
-                                        Month = dateOnly.Month,
-                                        Year = dateOnly.Year
+                                        AttendanceId = attendance.Id,
+                                        CheckInTime = timeOnly,
+                                        AttendanceDate = dateOnly,
                                     };
-                                    _context.Add(attendance);
+
+                                    _context.Add(previousAttendance);
                                     await _context.SaveChangesAsync();
-                                    monthlyAttendance[(dateOnly.Month, dateOnly.Year, employeeId)] = attendance;
+
+                                    // Link AttendanceDetails to Attendance
+                                    attendance.AttendanceDetails.Add(previousAttendance);
+                                }
+                                lastDate = currentMonthYear;
+                            }
+
+                            // Final save for last month's attendance
+                            foreach (var attendance in monthlyAttendance.Values)
+                            {
+                                //تجميع ايام الحضور
+                                attendance.WorkingDays = attendance.AttendanceDetails
+                                    .Select(ad => ad.AttendanceDate)
+                                    .Distinct()
+                                    .Count();
+                                //تجميع ساعات العمل
+                                // Calculate total working hours and assign it to WorkingHours
+                                attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
+
+
+
+                                if (attendance.WorkingHoursTime != null)
+                                {
+                                    attendance.WorkingHours = (long?)attendance.WorkingHoursTime.Value.TotalHours;
+
                                 }
 
-                                // Create new AttendanceDetails entry for the day
-                                previousAttendance = new AttendanceDetails
-                                {
-                                    AttendanceId = attendance.Id,
-                                    CheckInTime = timeOnly,
-                                    AttendanceDate = dateOnly,
-                                };
+                                decimal netSalary = 0, daySalary = 0, hourSalary = 0;
 
-                                _context.Add(previousAttendance);
-                                await _context.SaveChangesAsync();
+                                hourSalary = Math.Floor(attendance.Employee.GrossSalary / 48);
+                                daySalary = Math.Floor(attendance.Employee.GrossSalary / 6);
+                                netSalary = Convert.ToDecimal(hourSalary * attendance.WorkingHours);
 
-                                // Link AttendanceDetails to Attendance
-                                attendance.AttendanceDetails.Add(previousAttendance);
-                            }
-                            lastDate = currentMonthYear;
-                        }
-
-                        // Final save for last month's attendance
-                        foreach (var attendance in monthlyAttendance.Values)
-                        {
-                            //تجميع ايام الحضور
-                            attendance.WorkingDays = attendance.AttendanceDetails
-                                .Select(ad => ad.AttendanceDate)
-                                .Distinct()
-                                .Count();
-                            //تجميع ساعات العمل
-                            // Calculate total working hours and assign it to WorkingHours
-                            attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
-
-  
-
-                            if(attendance.WorkingHoursTime != null)
-                            {
-                                attendance.WorkingHours = (long?)attendance.WorkingHoursTime.Value.TotalHours;
-
+                                attendance.hourSalary = hourSalary;
+                                attendance.daySalary = daySalary;
+                                attendance.NetSalary = netSalary;
+                                _context.Update(attendance);
                             }
 
-                            decimal netSalary=0, daySalary = 0, hourSalary = 0;
-
-                            hourSalary = Math.Floor(attendance.Employee.GrossSalary / 48);
-                            daySalary = Math.Floor(attendance.Employee.GrossSalary / 6);
-                            netSalary = Convert.ToDecimal(hourSalary * attendance.WorkingHours);
-                          
-                            attendance.hourSalary = hourSalary;
-                            attendance.daySalary = daySalary;
-                            attendance.NetSalary = netSalary;
-                            _context.Update(attendance);
+                            await _context.SaveChangesAsync();
                         }
-
-                        await _context.SaveChangesAsync();
                     }
                 }
-            }
 
-            return RedirectToAction("Index", "Attendance");
+
+                return RedirectToAction("Index", "Attendance");
+            }catch(Exception ex)
+            {
+                return View();
+            }
         }
         public TimeSpan CalculateTotalWorkingHours(ICollection<AttendanceDetails> attendanceDetails)
         {

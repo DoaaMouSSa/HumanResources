@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumanResources.Web", "HumanResources.Web\HumanResources.Web.csproj", "{B6DF3499-2223-44DC-A90C-33AD05815BCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HumanResources.Web", "HumanResources.Web\HumanResources.Web.csproj", "{B6DF3499-2223-44DC-A90C-33AD05815BCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumanResources.Domain", "HumanResources.Domain\HumanResources.Domain.csproj", "{4629048B-7E3F-4BCC-960A-BFCAA5295B78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HumanResources.Domain", "HumanResources.Domain\HumanResources.Domain.csproj", "{4629048B-7E3F-4BCC-960A-BFCAA5295B78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumanResources.Application", "HumanResources.Application\HumanResources.Application.csproj", "{1417C771-C866-4FA5-9A7D-9A33B602E060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HumanResources.Application", "HumanResources.Application\HumanResources.Application.csproj", "{1417C771-C866-4FA5-9A7D-9A33B602E060}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumanResources.Infrastructure", "HumanResources.Infrastructure\HumanResources.Infrastructure.csproj", "{49D5B44C-B9D1-4C43-B3A6-78E1B0DCE913}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HumanResources.Infrastructure", "HumanResources.Infrastructure\HumanResources.Infrastructure.csproj", "{49D5B44C-B9D1-4C43-B3A6-78E1B0DCE913}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumanResources.RDLC", "HumanResources.RDLC\HumanResources.RDLC.csproj", "{0B67541A-057C-4825-A56F-A5C274F2F99E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{49D5B44C-B9D1-4C43-B3A6-78E1B0DCE913}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49D5B44C-B9D1-4C43-B3A6-78E1B0DCE913}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49D5B44C-B9D1-4C43-B3A6-78E1B0DCE913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B67541A-057C-4825-A56F-A5C274F2F99E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B67541A-057C-4825-A56F-A5C274F2F99E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B67541A-057C-4825-A56F-A5C274F2F99E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B67541A-057C-4825-A56F-A5C274F2F99E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
