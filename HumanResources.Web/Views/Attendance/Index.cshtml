@@ -21,7 +21,9 @@
                                 <th> الشهر </th>
                                 <th>المرتب الأساسى</th>
                                 <th> ايام الحضور </th>
+                                <th> اجمالى الساعات </th>
                                 <th> اليومية </th>
+                                <th> الساعه </th>
                                 <th> صافى المرتب </th>
                                 <th> التفاصيل </th>
                             </tr>
@@ -47,7 +49,9 @@
                                     <td> @obj.Month</td>
                                     <td> @obj.Employee.GrossSalary</td>
                                     <td> @obj.WorkingDays</td>
+                                    <td> @obj.WorkingHoursTime</td>
                                     <td> @obj.daySalary</td>
+                                    <td> @obj.hourSalary</td>
                                     <td> @obj.NetSalary</td>
                                    <td>
                                         <a asp-controller="Attendance" asp-action="Details" asp-route-id="@obj.Id">
