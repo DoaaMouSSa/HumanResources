@@ -55,13 +55,73 @@ namespace HumanResources.Web.Controllers
                         using (var reader = ExcelReaderFactory.CreateReader(stream))
                         {
                             AttendanceDetails previousAttendance = null;
+                            var empCodeGeneral = 0;
                             string lastDate = "";
                             var monthlyAttendance = new Dictionary<(int Month, int Year, int EmployeeId), Attendance>();
-
+                            int? attendanceId = 0;
                             while (reader.Read())
                             {
                                 // Get EmployeeCode and DateTime from Excel
                                 var employeeCode = Convert.ToInt16(reader.GetValue(0).ToString());
+                               
+                                if (empCodeGeneral != employeeCode && empCodeGeneral !=0)
+                                {
+                                    // Final save for last month's attendance
+                                    //foreach (var attendan in monthlyAttendance.Values)
+                                    //{
+                                        //تجميع ايام الحضور
+                                        Attendance attendance=_context.AttendanceTbl.Where(a=>a.Id==attendanceId)
+                                            .FirstOrDefault();
+                                        attendance.WorkingDays = attendance.AttendanceDetails
+                                            .Select(ad => ad.AttendanceDate)
+                                            .Distinct()
+                                            .Count();
+                                    //تجميع ساعات العمل
+                                    // Calculate total working hours and assign it to WorkingHours
+                                    //attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
+
+
+                                    long? workingHours = 0;
+                                        //if (attendance.WorkingHoursTime != null)
+                                        //{
+                                            attendance.WorkingHours = (long?)CalculateTotalWorkingHours(attendance.AttendanceDetails).TotalHours;
+                                        workingHours = attendance.WorkingHours;
+                                        //}
+
+                                        decimal netSalary = 0, daySalary = 0, hourSalary = 0;
+
+                                        hourSalary = Math.Floor(attendance.Employee.GrossSalary / 48);
+                                        daySalary = Math.Floor(attendance.Employee.GrossSalary / 6);
+
+                                        if(attendance.WorkingHours < 48 || attendance.WorkingHours==48)
+                                    {
+                                        netSalary = Convert.ToDecimal(hourSalary * ((decimal)workingHours));
+
+                                    }else if(attendance.WorkingHours > 48)
+                                    {
+                                        netSalary = Convert.ToDecimal(hourSalary * 48);
+
+                                        long? overTimeToGetNetSalary = attendance.WorkingHours - 48;
+                                        decimal overTimeHourSalary = hourSalary * (decimal)1.5;
+                                        decimal overTimeSalary = (decimal)overTimeToGetNetSalary * overTimeHourSalary;
+                                        netSalary += overTimeSalary;
+
+
+                                    }
+                                    else
+                                    {
+                                        netSalary = Convert.ToDecimal(hourSalary * ((decimal)workingHours));
+
+                                    }
+
+                                    attendance.hourSalary = hourSalary;
+                                        attendance.daySalary = daySalary;
+                                        attendance.NetSalary = netSalary;
+                                        _context.Update(attendance);
+                                    //}
+
+                                    await _context.SaveChangesAsync();
+                                }
                                 var employee = await _context.EmployeeTbl.FirstOrDefaultAsync(e => e.Id == employeeCode);
 
                                 if (employee == null)
@@ -69,7 +129,7 @@ namespace HumanResources.Web.Controllers
                                     // Skip if employee code is not found
                                     continue;
                                 }
-
+                                empCodeGeneral = employee.Id;
                                 int employeeId = employee.Id;
                                 var dateTimeValue = DateTime.Parse(reader.GetValue(1).ToString());
                                 var dateOnly = DateOnly.FromDateTime(dateTimeValue);
@@ -130,7 +190,9 @@ namespace HumanResources.Web.Controllers
                                             Year = dateOnly.Year
                                         };
                                         _context.Add(attendance);
+
                                         await _context.SaveChangesAsync();
+                                        attendanceId = attendance.Id;
                                         monthlyAttendance[(dateOnly.Month, dateOnly.Year, employeeId)] = attendance;
                                     }
 
@@ -150,40 +212,7 @@ namespace HumanResources.Web.Controllers
                                 }
                                 lastDate = currentMonthYear;
                             }
-
-                            // Final save for last month's attendance
-                            foreach (var attendance in monthlyAttendance.Values)
-                            {
-                                //تجميع ايام الحضور
-                                attendance.WorkingDays = attendance.AttendanceDetails
-                                    .Select(ad => ad.AttendanceDate)
-                                    .Distinct()
-                                    .Count();
-                                //تجميع ساعات العمل
-                                // Calculate total working hours and assign it to WorkingHours
-                                attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
-
-
-
-                                if (attendance.WorkingHoursTime != null)
-                                {
-                                    attendance.WorkingHours = (long?)attendance.WorkingHoursTime.Value.TotalHours;
-
-                                }
-
-                                decimal netSalary = 0, daySalary = 0, hourSalary = 0;
-
-                                hourSalary = Math.Floor(attendance.Employee.GrossSalary / 48);
-                                daySalary = Math.Floor(attendance.Employee.GrossSalary / 6);
-                                netSalary = Convert.ToDecimal(hourSalary * attendance.WorkingHours);
-
-                                attendance.hourSalary = hourSalary;
-                                attendance.daySalary = daySalary;
-                                attendance.NetSalary = netSalary;
-                                _context.Update(attendance);
-                            }
-
-                            await _context.SaveChangesAsync();
+                            
                         }
                     }
                 }
