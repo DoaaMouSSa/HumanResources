@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241028004926_add-day-salary-emp")]
-    partial class adddaysalaryemp
+    [Migration("20241117172822_updates2")]
+    partial class updates2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,16 +42,31 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<decimal?>("NetSalary")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("OverTimeHourSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("OverTimeHours")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("OverTimeSalary")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int?>("WorkingDays")
                         .HasColumnType("int");
 
                     b.Property<long?>("WorkingHours")
                         .HasColumnType("bigint");
 
+                    b.Property<TimeSpan?>("WorkingHoursTime")
+                        .HasColumnType("time");
+
                     b.Property<int?>("Year")
                         .HasColumnType("int");
 
                     b.Property<decimal>("daySalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("hourSalary")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");

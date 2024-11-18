@@ -30,6 +30,12 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
+                    b.Property<long?>("DelaysHours")
+                        .HasColumnType("bigint");
+
+                    b.Property<TimeSpan?>("DelaysTime")
+                        .HasColumnType("time");
+
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
@@ -37,6 +43,15 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("NetSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OverTimeHourSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("OverTimeHours")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("OverTimeSalary")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("WorkingDays")

@@ -90,8 +90,8 @@ namespace HumanResources.Web.Controllers
 
                                         decimal netSalary = 0, daySalary = 0, hourSalary = 0;
 
-                                        hourSalary = Math.Floor(attendance.Employee.GrossSalary / 48);
-                                        daySalary = Math.Floor(attendance.Employee.GrossSalary / 6);
+                                        hourSalary = Math.Round(attendance.Employee.GrossSalary / 48, 2);
+                                        daySalary = Math.Round(attendance.Employee.GrossSalary / 6, 2);
 
                                         if(attendance.WorkingHours < 48 || attendance.WorkingHours==48)
                                     {
@@ -102,8 +102,11 @@ namespace HumanResources.Web.Controllers
                                         netSalary = Convert.ToDecimal(hourSalary * 48);
 
                                         long? overTimeToGetNetSalary = attendance.WorkingHours - 48;
+                                        attendance.OverTimeHours = overTimeToGetNetSalary;
                                         decimal overTimeHourSalary = hourSalary * (decimal)1.5;
+                                        attendance.OverTimeHourSalary = overTimeHourSalary;
                                         decimal overTimeSalary = (decimal)overTimeToGetNetSalary * overTimeHourSalary;
+                                        attendance.OverTimeSalary = overTimeSalary;
                                         netSalary += overTimeSalary;
 
 

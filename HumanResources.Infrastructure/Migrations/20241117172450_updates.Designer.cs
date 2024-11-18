@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241115004103_add-addition-delay")]
-    partial class addadditiondelay
+    [Migration("20241117172450_updates")]
+    partial class updates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,12 +33,6 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
-                    b.Property<long?>("DelaysHours")
-                        .HasColumnType("bigint");
-
-                    b.Property<TimeSpan?>("DelaysTime")
-                        .HasColumnType("time");
-
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
@@ -47,9 +41,6 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<decimal?>("NetSalary")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<TimeSpan?>("OverTime")
-                        .HasColumnType("time");
 
                     b.Property<long?>("OverTimeHours")
                         .HasColumnType("bigint");
@@ -70,9 +61,6 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("daySalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("deductionSalary")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("hourSalary")

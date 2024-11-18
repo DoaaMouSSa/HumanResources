@@ -182,7 +182,7 @@ namespace HumanResources.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: true),
-                    GrossSalary = table.Column<float>(type: "real", nullable: true),
+                    GrossSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MaritalStatus = table.Column<int>(type: "int", nullable: true),
                     BirthOfDate = table.Column<DateOnly>(type: "date", nullable: false),
                     GraduationCertificateUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -224,7 +224,11 @@ namespace HumanResources.Infrastructure.Migrations
                     Year = table.Column<int>(type: "int", nullable: true),
                     Month = table.Column<int>(type: "int", nullable: true),
                     WorkingDays = table.Column<int>(type: "int", nullable: true),
-                    WorkingHours = table.Column<long>(type: "bigint", nullable: true)
+                    WorkingHours = table.Column<long>(type: "bigint", nullable: true),
+                    WorkingHoursTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    hourSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    daySalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NetSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -5,24 +5,33 @@
 namespace HumanResources.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class addhoursalary : Migration
+    public partial class updates : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<long>(
+                name: "OverTimeHours",
+                table: "AttendanceTbl",
+                type: "bigint",
+                nullable: true);
+
             migrationBuilder.AddColumn<decimal>(
-                name: "hourSalary",
+                name: "OverTimeSalary",
                 table: "AttendanceTbl",
                 type: "decimal(18,2)",
-                nullable: false,
-                defaultValue: 0m);
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "hourSalary",
+                name: "OverTimeHours",
+                table: "AttendanceTbl");
+
+            migrationBuilder.DropColumn(
+                name: "OverTimeSalary",
                 table: "AttendanceTbl");
         }
     }
