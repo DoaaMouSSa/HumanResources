@@ -27,43 +27,45 @@ namespace HumanResources.Web.Controllers
             _context= context;
         }
 
-        //public async Task<IActionResult> Index()
-        //{
-        //    IEnumerable<Employee> data = await _employeeService.GetAll();
-
-        //    return View(data);
-        //}
+     
         public async Task<IActionResult> Index(int departmentId,int pageIndex = 1, int pageSize = 5)
         {
             IQueryable<EmployeeDtoForTable> query;
             if (departmentId==0)
             {
-                query = (from q in _context.EmployeeTbl
-                             where q.IsDeleted == false
-                             select new EmployeeDtoForTable
-                             {
-                                 Id = q.Id,
-                                 Name = q.Name,
-                                 Phone = q.Phone,
-                                 Gender = q.Gender,
-                                 Governorate = q.Governorate,
-                                 GrossSalary = q.GrossSalary,
-                             }).AsQueryable();
+                query = _context.EmployeeTbl
+      .Include(e => e.Department) // Include related Department
+      .Where(e => e.IsDeleted == false) // Filter out deleted employees
+      .Select(e => new EmployeeDtoForTable // Project to EmployeeDtoForTable
+      {
+          Id = e.Id,
+          Code = e.Code,
+          Name = e.Name,
+          Phone = e.Phone,
+          Gender = e.Gender,
+          Department = e.Department.Name,
+          GrossSalary = e.GrossSalary
+      })
+      .AsQueryable();
+
             }
             else
             {
-                query = (from q in _context.EmployeeTbl
-                         where q.IsDeleted == false
-                         && q.DepartmentId==departmentId
-                         select new EmployeeDtoForTable
-                         {
-                             Id = q.Id,
-                             Name = q.Name,
-                             Phone = q.Phone,
-                             Gender = q.Gender,
-                             Governorate = q.Governorate,
-                             GrossSalary = q.GrossSalary,
-                         }).AsQueryable();
+                query = _context.EmployeeTbl
+       .Include(e => e.Department) // Include related Department
+       .Where(e => e.IsDeleted == false) // Filter out deleted employees
+       .Where(e=>e.DepartmentId==departmentId)
+       .Select(e => new EmployeeDtoForTable // Project to EmployeeDtoForTable
+       {
+           Id = e.Id,
+           Code = e.Code,
+           Name = e.Name,
+           Phone = e.Phone,
+           Gender = e.Gender,
+           Department = e.Department.Name,
+           GrossSalary = e.GrossSalary
+       })
+       .AsQueryable();
             }
             var totalCount = query.Count();
             var items =await query.Skip((pageIndex - 1) * pageSize)
@@ -90,7 +92,7 @@ namespace HumanResources.Web.Controllers
                              Name = q.Name,
                              Phone = q.Phone,
                              Gender = q.Gender,
-                             Governorate = q.Governorate,
+                             Department = q.Department.Name,
                              GrossSalary = q.GrossSalary,
                          }).AsEnumerable();
             var totalCount = query.Count();
@@ -117,14 +119,24 @@ namespace HumanResources.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(EmployeeDtoForAdd dto)
         {
+
             if (ModelState.IsValid)
             {
+                // Check for duplicate code
+                var isDuplicate = await _context.EmployeeTbl.AnyAsync(e => e.Code == dto.Code);
+                if (isDuplicate)
+                {
+                    // Add a model validation error
+                    ModelState.AddModelError("Code", "الكود موجود بالفعل سابقا");
+                    IEnumerable<Department> departments = await _departmentService.GetAll();
+                    ViewData["DepartmentLst"] = new SelectList(departments, "Id", "Name");
+                    return View(dto);
+                }
                 _employeeService.Create(dto);
                 TempData["Created"] = "تم الاضافة بنجاح";
                 return RedirectToAction("Index");
             }
-            IEnumerable<Department> departments = await _departmentService.GetAll();
-            ViewData["DepartmentLst"] = new SelectList(departments, "Id", "Name");
+           
             return View();
         }
         public async Task<IActionResult> Update(int id)
@@ -133,6 +145,8 @@ namespace HumanResources.Web.Controllers
             EmployeeDtoForUpdate data = new EmployeeDtoForUpdate()
             {
                 DepartmentId = employee.DepartmentId,
+                Id = employee.Id,
+                Code = employee.Code,
                 Name = employee.Name,
                 Address = employee.Address,
                 Phone = employee.Phone,
@@ -166,6 +180,18 @@ namespace HumanResources.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Check for duplicate code, excluding the code in the dto
+                var isDuplicate = await _context.EmployeeTbl
+                    .Where(e => e.Code != dto.Code)  // Exclude the code in the dto
+                    .AnyAsync(e => e.Code == dto.Code); // Check if any other employee has the same code
+                if (isDuplicate)
+                {
+                    // Add a model validation error
+                    ModelState.AddModelError("Code", "الكود موجود بالفعل سابقا");
+                    IEnumerable<Department> _departments = await _departmentService.GetAll();
+                    ViewData["DepartmentLst"] = new SelectList(_departments, "Id", "Name");
+                    return View(dto);
+                }
                 await _employeeService.Update(dto);
                 TempData["Updated"] = "تم التحديث بنجاح";
 

@@ -23,6 +23,7 @@
                                 <th> وقت الحضور </th>
                                 <th>وقت الانصراف </th>
                                 <th> ساعات العمل </th>
+                                <th>التأخيرات </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,6 +34,7 @@
                                     <td>@(obj.CheckInTime == null ? "-------" : obj.CheckInTime)</td>
                                     <td>@(obj.CheckOutTime == null ? "-------" : obj.CheckOutTime)</td>
                                     <td>@(obj.WorkingHoursAday == null ? "-------" : obj.WorkingHoursAday)</td>
+                                    <td>@(obj.Delay == null ? "-------" : obj.Delay)</td>
                                    
 
                                 </tr>
@@ -42,8 +44,9 @@
                 </div>
                 <br />
                 <div class="row">
-                    <div class="col-md-4"><h4>عدد ساعات العمل : <span class="text-danger text-bold">@Model.WorkingHours</span></h4></div>
-                    <div class="col-md-4"><h4> صافى المرتب : <span class="text-danger text-bold">@Model.NetSalary</span></h4></div>
+                    <div class="col-md-4"><h4>عدد ساعات العمل : <span class="text-danger text-bold">@Model.TotalWorkingHours</span></h4></div>
+                    <div class="col-md-4"><h4> اجمالى المرتب : <span class="text-danger text-bold">@Model.NetSalary</span></h4></div>
+                    <div class="col-md-4"><h4> صافى المرتب : <span class="text-danger text-bold"></span></h4></div>
                     <div class="col-md-4"><h4> عدد الساعات المعتمدة : <span class="text-danger text-bold">48</span></h4></div>
                 </div>
                  <div class="row">

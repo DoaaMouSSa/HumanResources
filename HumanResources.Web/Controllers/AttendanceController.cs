@@ -5,7 +5,10 @@ using HumanResources.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
+using System.Globalization;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using static HumanResources.Domain.Enums.Enums;
 
@@ -28,233 +31,371 @@ namespace HumanResources.Web.Controllers
 
             return View();
         }
+        int employeeCodeGeneral = 0;
+        Employee employee;
+        Attendance attendance = null;
+        Week week = null;
+        AttendanceDetails attendanceDetails = null;
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile file)
         {
             try
             {
-                // Register the code pages encoding provider
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                if (file == null || file.Length <= 0)
+                    return BadRequest("File is not provided or empty.");
 
-                if (file != null && file.Length > 0)
-                {
-                    var uploadsFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\uploads\\";
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    var filePath = Path.Combine(uploadsFolder, file.FileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-
-                    using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
-                    {
-                        using (var reader = ExcelReaderFactory.CreateReader(stream))
-                        {
-                            AttendanceDetails previousAttendance = null;
-                            var empCodeGeneral = 0;
-                            string lastDate = "";
-                            var monthlyAttendance = new Dictionary<(int Month, int Year, int EmployeeId), Attendance>();
-                            int? attendanceId = 0;
-                            while (reader.Read())
-                            {
-                                // Get EmployeeCode and DateTime from Excel
-                                var employeeCode = Convert.ToInt16(reader.GetValue(0).ToString());
-                               
-                                if (empCodeGeneral != employeeCode && empCodeGeneral !=0)
-                                {
-                                    // Final save for last month's attendance
-                                    //foreach (var attendan in monthlyAttendance.Values)
-                                    //{
-                                        //تجميع ايام الحضور
-                                        Attendance attendance=_context.AttendanceTbl.Where(a=>a.Id==attendanceId)
-                                            .FirstOrDefault();
-                                        attendance.WorkingDays = attendance.AttendanceDetails
-                                            .Select(ad => ad.AttendanceDate)
-                                            .Distinct()
-                                            .Count();
-                                    //تجميع ساعات العمل
-                                    // Calculate total working hours and assign it to WorkingHours
-                                    //attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
-
-
-                                    long? workingHours = 0;
-                                        //if (attendance.WorkingHoursTime != null)
-                                        //{
-                                            attendance.WorkingHours = (long?)CalculateTotalWorkingHours(attendance.AttendanceDetails).TotalHours;
-                                        workingHours = attendance.WorkingHours;
-                                        //}
-
-                                        decimal netSalary = 0, daySalary = 0, hourSalary = 0;
-
-                                        hourSalary = Math.Round(attendance.Employee.GrossSalary / 48, 2);
-                                        daySalary = Math.Round(attendance.Employee.GrossSalary / 6, 2);
-
-                                        if(attendance.WorkingHours < 48 || attendance.WorkingHours==48)
-                                    {
-                                        netSalary = Convert.ToDecimal(hourSalary * ((decimal)workingHours));
-
-                                    }else if(attendance.WorkingHours > 48)
-                                    {
-                                        netSalary = Convert.ToDecimal(hourSalary * 48);
-
-                                        long? overTimeToGetNetSalary = attendance.WorkingHours - 48;
-                                        attendance.OverTimeHours = overTimeToGetNetSalary;
-                                        decimal overTimeHourSalary = hourSalary * (decimal)1.5;
-                                        attendance.OverTimeHourSalary = overTimeHourSalary;
-                                        decimal overTimeSalary = (decimal)overTimeToGetNetSalary * overTimeHourSalary;
-                                        attendance.OverTimeSalary = overTimeSalary;
-                                        netSalary += overTimeSalary;
-
-
-                                    }
-                                    else
-                                    {
-                                        netSalary = Convert.ToDecimal(hourSalary * ((decimal)workingHours));
-
-                                    }
-
-                                    attendance.hourSalary = hourSalary;
-                                        attendance.daySalary = daySalary;
-                                        attendance.NetSalary = netSalary;
-                                        _context.Update(attendance);
-                                    //}
-
-                                    await _context.SaveChangesAsync();
-                                }
-                                var employee = await _context.EmployeeTbl.FirstOrDefaultAsync(e => e.Id == employeeCode);
-
-                                if (employee == null)
-                                {
-                                    // Skip if employee code is not found
-                                    continue;
-                                }
-                                empCodeGeneral = employee.Id;
-                                int employeeId = employee.Id;
-                                var dateTimeValue = DateTime.Parse(reader.GetValue(1).ToString());
-                                var dateOnly = DateOnly.FromDateTime(dateTimeValue);
-                                var currentMonthYear = $"{dateOnly.Month}-{dateOnly.Year}";
-                                var timeOnly = dateTimeValue.TimeOfDay;
-
-                                if (lastDate == "") lastDate = currentMonthYear;
-                                int result = string.Compare(currentMonthYear, lastDate);
-
-                                // Check if month has changed, update Attendance if so
-                                if (result != 0)
-                                {
-                                    var lastDateParts = lastDate.Split('-');
-                                    int lastMonth = int.Parse(lastDateParts[0]);
-                                    int lastYear = int.Parse(lastDateParts[1]);
-
-                                    if (monthlyAttendance.TryGetValue((lastMonth, lastYear, employeeId), out var attendance))
-                                    {
-                                        attendance.WorkingDays = attendance.AttendanceDetails
-                                            .Select(ad => ad.AttendanceDate)
-                                            .Distinct()
-                                            .Count();
-                                        //تجميع ساعات العمل
-                                        // Calculate total working hours and assign it to WorkingHours
-                                        attendance.WorkingHoursTime = CalculateTotalWorkingHours(attendance.AttendanceDetails);
-
-
-
-                                        if (attendance.WorkingHoursTime != null)
-                                        {
-                                            attendance.WorkingHours = (long?)attendance.WorkingHoursTime.Value.TotalHours;
-
-                                        }
-
-                                        _context.Update(attendance);
-                                    }
-                                }
-
-                                // Check if previousAttendance exists with same date to update CheckOutTime
-                                if (previousAttendance != null && previousAttendance.AttendanceDate == dateOnly && previousAttendance.Attendance.EmployeeId == employeeId)
-                                {
-                                    previousAttendance.CheckOutTime = timeOnly;
-                                    if (previousAttendance.CheckInTime != null)
-                                    {
-                                        previousAttendance.WorkingHoursAday = previousAttendance.CheckOutTime - previousAttendance.CheckInTime;
-                                    }
-                                    _context.Update(previousAttendance);
-                                }
-                                else
-                                {
-                                    // Get or create Attendance record for month and employee
-                                    if (!monthlyAttendance.TryGetValue((dateOnly.Month, dateOnly.Year, employeeId), out var attendance))
-                                    {
-                                        attendance = new Attendance
-                                        {
-                                            EmployeeId = employeeId,
-                                            Month = dateOnly.Month,
-                                            Year = dateOnly.Year
-                                        };
-                                        _context.Add(attendance);
-
-                                        await _context.SaveChangesAsync();
-                                        attendanceId = attendance.Id;
-                                        monthlyAttendance[(dateOnly.Month, dateOnly.Year, employeeId)] = attendance;
-                                    }
-
-                                    // Create new AttendanceDetails entry for the day
-                                    previousAttendance = new AttendanceDetails
-                                    {
-                                        AttendanceId = attendance.Id,
-                                        CheckInTime = timeOnly,
-                                        AttendanceDate = dateOnly,
-                                    };
-
-                                    _context.Add(previousAttendance);
-                                    await _context.SaveChangesAsync();
-
-                                    // Link AttendanceDetails to Attendance
-                                    attendance.AttendanceDetails.Add(previousAttendance);
-                                }
-                                lastDate = currentMonthYear;
-                            }
-                            
-                        }
-                    }
-                }
-
+                string filePath = SaveUploadedFile(file);
+                await ProcessExcelFile(filePath);
 
                 return RedirectToAction("Index", "Attendance");
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                return View();
+                //message of worng excel sheet
+                throw new Exception($"Error processing file: {ex.Message}");
             }
         }
-        public TimeSpan CalculateTotalWorkingHours(ICollection<AttendanceDetails> attendanceDetails)
+        private string SaveUploadedFile(IFormFile file)
         {
-            var uniqueAttendanceDetails = attendanceDetails.Distinct().ToList();
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            int totalHours = 0;
-            int totalMinutes = 0;
-            int totalSeconds = 0;
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
 
-            // Loop through each attendance detail and sum the hours, minutes, and seconds
-            foreach (var detail in uniqueAttendanceDetails)
+            var filePath = Path.Combine(uploadsFolder, file.FileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+
+            return filePath;
+        }
+        private async Task ProcessExcelFile(string filePath)
+        {
+            using var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read);
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+
+            while (reader.Read())
+            {
+                int employeeCode = Convert.ToInt32(reader.GetValue(0)?.ToString());
+                DateTime dateTimeValue = DateTime.Parse(reader.GetValue(1)?.ToString());
+
+                if (await IsEmployeeExist(employeeCode))
+                {
+                    await AddOrUpdateAttendanceDetails(employeeCode, dateTimeValue);
+                }
+            }
+        }
+        private async Task AddOrUpdateAttendanceDetails(int employeeCode, DateTime dateTimeValue)
+        {
+            var dateOnly = DateOnly.FromDateTime(dateTimeValue);
+            var timeOnly = dateTimeValue.TimeOfDay;
+
+            var employee = await GetEmployeeAsync(employeeCode);
+            var attendance = await GetOrCreateAttendanceAsync(employeeCode, dateTimeValue, employee.GrossSalary);
+
+            await AddOrUpdateAttendanceDetailAsync(attendance, employee, dateOnly, timeOnly);
+
+            // Recalculate working hours for the employee on the specific date
+            await RecalculateMonthlyWorkingHours(employeeCode, dateOnly.Year, dateOnly.Month);
+
+            // **Calculate and update the working days**
+            await CalculateWorkingDays(employeeCode, dateOnly.Year, dateOnly.Month);
+        }
+
+        private async Task RecalculateMonthlyWorkingHours(int employeeCode, int year, int month)
+        {
+            var attendance = await _context.AttendanceTbl
+                .Include(a => a.AttendanceDetails)
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month);
+
+            if (attendance == null || attendance.AttendanceDetails == null)
+                return;
+
+            var detailsForMonth = attendance.AttendanceDetails
+                .Where(detail => detail.AttendanceDate.Value.Year == year && detail.AttendanceDate.Value.Month == month)
+                .ToList();
+
+            if (!detailsForMonth.Any())
+                return;
+
+            // Aggregate total working hours and minutes manually, including delays subtraction
+            double totalHours = 0;
+            long totalMinutes = 0;
+            double totalDelaysHours = attendance.DelaysHours ?? 0; // Get total delays (if any)
+            long totalDelaysMinutes = (long)(attendance.DelaysTime?.TotalMinutes ?? 0); // Get total delay minutes
+
+            foreach (var detail in detailsForMonth)
             {
                 if (detail.WorkingHoursAday.HasValue)
                 {
                     totalHours += detail.WorkingHoursAday.Value.Hours;
                     totalMinutes += detail.WorkingHoursAday.Value.Minutes;
-                    totalSeconds += detail.WorkingHoursAday.Value.Seconds;
                 }
             }
 
-            // Normalize totalSeconds and totalMinutes
-            totalMinutes += totalSeconds / 60;
-            totalSeconds = totalSeconds % 60;
-
+            // Convert total minutes to hours
             totalHours += totalMinutes / 60;
             totalMinutes = totalMinutes % 60;
+            attendance.TotalWorkingHoursBeforeDelays = totalHours;
 
-            // Return the total time as a TimeSpan
-            return new TimeSpan(totalHours, totalMinutes, totalSeconds);
+            // Subtract delays from total hours and minutes
+            totalHours -= totalDelaysHours;
+            totalMinutes -= totalDelaysMinutes;
+
+            // Adjust if total minutes go below 0
+            if (totalMinutes < 0)
+            {
+                totalHours -= 1;
+                totalMinutes += 60;
+            }
+
+            // If the remaining minutes are 41 or more, convert them into 1 hour
+            if (totalMinutes >= 41)
+            {
+                totalHours += 1;
+                totalMinutes -= 60; // Subtract the 60 minutes converted to 1 hour
+            }
+
+            // Calculate DelaysHours based on DelaysTime
+            if (attendance.DelaysTime.HasValue)
+            {
+                // Get the total delay in minutes
+                double delayMinutes = attendance.DelaysTime.Value.TotalMinutes;
+
+                // Convert delay to hours based on the rules
+                if (delayMinutes >= 41)
+                {
+                    attendance.DelaysHours = attendance.DelaysHours+=1; // Round to the nearest hour
+                }
+                else if (delayMinutes >= 21 && delayMinutes < 41)
+                {
+                    attendance.DelaysHours = attendance.DelaysHours += .5;  // Half an hour
+                }
+                else
+                {
+                    attendance.DelaysHours = attendance.DelaysHours += 0; // No delay
+                }
+            }
+
+            // Save the results to the Attendance table
+            attendance.TotalWorkingHours = totalHours; // Total hours (decimal value)
+
+            // Save the delay information
+            await _context.SaveChangesAsync();
+        }
+
+
+        private void UpdateAttendanceDetailCheckOut(AttendanceDetails detail, TimeSpan checkOutTime)
+        {
+            detail.CheckOutTime = checkOutTime;
+            if (detail.CheckInTime.HasValue)
+            {
+                // Calculate the working hours for the day
+                detail.WorkingHoursAday = checkOutTime - detail.CheckInTime.Value;
+            }
+        }
+        private void AddNewAttendanceDetail(Attendance attendance, DateOnly date, TimeSpan checkInTime, TimeSpan? delay)
+        {
+            var newDetail = new AttendanceDetails
+            {
+                AttendanceDate = date,
+                CheckInTime = checkInTime,
+                AttendanceId = attendance.Id,
+                Delay = delay
+            };
+
+            _context.Add(newDetail);
+        }
+        private async Task<Attendance> GetOrCreateAttendanceAsync(int employeeCode, DateTime dateTimeValue, decimal grossSalary)
+        {
+            var attendance = await _context.AttendanceTbl
+                .Include(a => a.AttendanceDetails)
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == dateTimeValue.Year && a.Month == dateTimeValue.Month);
+
+            if (attendance == null)
+            {
+                var newAttendance = CreateNewAttendance(employeeCode, dateTimeValue.Year, dateTimeValue.Month, grossSalary);
+                _context.Add(newAttendance);
+                await _context.SaveChangesAsync(); // Ensure ID is generated
+                return newAttendance;
+            }
+            return attendance;
+        }
+
+        private async Task<Employee> GetEmployeeAsync(int employeeCode)
+        {
+            var employee = await _context.EmployeeTbl.FirstOrDefaultAsync(e => e.Code == employeeCode);
+            if (employee == null)
+            {
+                throw new Exception($"Employee with code {employeeCode} not found.");
+            }
+            return employee;
+        }
+
+
+        private Attendance CreateNewAttendance(int employeeCode, int year, int month, decimal grossSalary)
+        {
+            const int weeklyWorkHours = 48;
+            const int workDaysPerWeek = 6;
+
+            return new Attendance
+            {
+                EmployeeCode = employeeCode,
+                Year = year,
+                Month = month,
+                hourSalary = grossSalary / weeklyWorkHours,
+                daySalary = grossSalary / workDaysPerWeek,
+                DelaysHours = 0,
+                DelaysTime = TimeSpan.Zero,
+                //WorkingHoursTime = TimeSpan.Zero,
+                TotalWorkingHours = 0
+            };
+        }
+
+        private async Task AddOrUpdateAttendanceDetailAsync(Attendance attendance, Employee employee, DateOnly date, TimeSpan time)
+        {
+            var existingDetail = attendance.AttendanceDetails.FirstOrDefault(d => d.AttendanceDate == date);
+
+            if (existingDetail != null)
+            {
+                // Check if it's a Check-Out and update only the working hours
+                UpdateAttendanceDetailCheckOut(existingDetail, time);
+            }
+            else
+            {
+                // It's a new Check-In, calculate delay if applicable
+                var delay = CalculateDelay((TimeSpan)employee.CheckInTime, time);
+                AddNewAttendanceDetail(attendance, date, time, delay);
+                UpdateAttendanceDelays(attendance, delay);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+
+        private TimeSpan? CalculateDelay(TimeSpan expectedCheckInTime, TimeSpan actualCheckInTime)
+        {
+            return actualCheckInTime > expectedCheckInTime
+                ? actualCheckInTime - expectedCheckInTime
+                : null;
+        }
+
+        private async Task UpdateAttendanceDelays(Attendance attendance, TimeSpan? delay)
+        {
+            if (delay.HasValue)
+            {
+                // Update the cumulative delay in the Attendance record
+                attendance.DelaysTime = (attendance.DelaysTime ?? TimeSpan.Zero) + delay.Value;
+                attendance.DelaysHours = (attendance.DelaysHours ?? 0) + (long)delay.Value.TotalHours;
+            }
+        }
+        private async Task CalculateWorkingHoursForEmployee(int employeeCode, int attendanceId)
+        {
+            // Retrieve the attendance record with all related AttendanceDetails
+            var attendance = await _context.AttendanceTbl
+                .Include(a => a.AttendanceDetails)
+                .FirstOrDefaultAsync(a => a.Id == attendanceId && a.EmployeeCode == employeeCode);
+
+            if (attendance == null)
+            {
+                throw new Exception($"Attendance record not found for Employee with code {employeeCode} and Attendance ID {attendanceId}.");
+            }
+
+            // Initialize variables for total working hours and working hours per day
+            TimeSpan totalWorkingHours = TimeSpan.Zero;
+
+            // Loop through each AttendanceDetail to calculate daily working hours
+            foreach (var detail in attendance.AttendanceDetails)
+            {
+                // Skip if CheckInTime or CheckOutTime is null
+                if (detail.CheckInTime.HasValue && detail.CheckOutTime.HasValue)
+                {
+                    // Calculate daily working hours (CheckOutTime - CheckInTime)
+                    TimeSpan workingHours = detail.CheckOutTime.Value - detail.CheckInTime.Value;
+
+                    // Accumulate the working hours for the entire month
+                    totalWorkingHours = totalWorkingHours.Add(workingHours);
+
+                    // Optionally, log or store the working hours for each day (if needed)
+                    Console.WriteLine($"Date: {detail.AttendanceDate}, Working Hours: {workingHours.TotalHours} hours");
+                }
+            }
+
+            // Update the Attendance record with the total working hours
+            //attendance.WorkingHoursTime = totalWorkingHours;
+            attendance.TotalWorkingHours = (long)totalWorkingHours.TotalHours;
+
+            // Save the changes
+            await _context.SaveChangesAsync();
+
+            Console.WriteLine($"Total Working Hours for Attendance ID {attendanceId}: {totalWorkingHours.TotalHours} hours");
+        }
+
+        private async Task CalculateCumulativeDelays(Attendance attendance)
+        {
+            if (attendance.AttendanceDetails == null || !attendance.AttendanceDetails.Any())
+            {
+                return;
+            }
+
+            // Aggregate delays from AttendanceDetails
+            var totalDelaysTime = attendance.AttendanceDetails
+                .Where(d => d.Delay.HasValue)
+                .Select(d => d.Delay.Value)
+                .Aggregate(TimeSpan.Zero, (sum, delay) => sum.Add(delay));
+
+            var totalDelaysHours = (long)totalDelaysTime.TotalHours;
+
+            // Update the Attendance record
+            attendance.DelaysTime = totalDelaysTime;
+
+            // Save changes to update the Attendance record
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task CalculateWorkingDays(int employeeCode, int year, int month)
+        {
+            // Retrieve the attendance record for the employee in the specified year and month
+            var attendance = await _context.AttendanceTbl
+                .Include(a => a.AttendanceDetails)
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month);
+
+            if (attendance == null || attendance.AttendanceDetails == null)
+            {
+                throw new Exception($"Attendance record not found for Employee with code {employeeCode} in {year}-{month}.");
+            }
+
+            // Calculate the total number of unique working days
+            var workingDays = attendance.AttendanceDetails
+                .Where(detail => detail.CheckInTime.HasValue) // Count only days with CheckInTime
+                .Select(detail => detail.AttendanceDate) // Get the dates
+                .Distinct() // Ensure each date is counted only once
+                .Count();
+
+            // Update the Attendance record with the calculated working days
+            attendance.WorkingDays = workingDays;
+
+            // Save changes to update the database
+            await _context.SaveChangesAsync();
+
+            Console.WriteLine($"Working Days for Employee {employeeCode} in {year}-{month}: {workingDays}");
+        }
+
+
+        private async Task<bool> IsEmployeeExist(int employeeCode)
+        {
+            employee = await _context.EmployeeTbl.FirstOrDefaultAsync(e => e.Code == employeeCode);
+            return employee != null;
+        }
+        private DateTime GetStartOfWeek(DateTime date)
+        {
+            // Get the start of the week (Monday)
+            var diff = date.DayOfWeek - DayOfWeek.Monday;
+            if (diff < 0) diff += 7; // Ensure it handles Sunday as the last day of the week
+            var startOfWeek = date.AddDays(-diff).Date;
+            return startOfWeek;
         }
 
 
@@ -265,7 +406,7 @@ namespace HumanResources.Web.Controllers
         }
         public IActionResult Details(int id)
         {
-            Attendance data = _context.AttendanceTbl.Where(att=>att.Id==id).Include("AttendanceDetails").Include("Employee").FirstOrDefault();
+            Attendance data = _context.AttendanceTbl.Where(att => att.Id == id).Include("AttendanceDetails").Include("Employee").FirstOrDefault();
             return View(data);
         }
 

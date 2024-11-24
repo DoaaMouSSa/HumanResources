@@ -21,16 +21,23 @@ namespace HumanResources.Infrastructure.DbContext
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure additional entity properties if needed
-            modelBuilder.Entity<IdentityUserLogin<string>>()
-                .HasKey(ul => new { ul.LoginProvider, ul.ProviderKey });
+            // Configure unique constraint on Employee.Code
             modelBuilder.Entity<Employee>()
-    .Property(e => e.Id)
-    .ValueGeneratedNever();
+                .HasIndex(e => e.Code)
+                .IsUnique();
+
+            // Configure relationship between Employee.Code and Attendance.EmployeeCode
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Employee)
+                .WithMany(e => e.Attendances)
+                .HasForeignKey(a => a.EmployeeCode)
+                .HasPrincipalKey(e => e.Code) // Reference the unique key
+                .OnDelete(DeleteBehavior.Restrict); // Prevent cascading deletes
 
         }
         public DbSet<Department> DepartmentTbl { get; set; }
         public DbSet<Employee> EmployeeTbl { get; set; }
+        public DbSet<Week> WeekTbl { get; set; }
         public DbSet<Attendance> AttendanceTbl { get; set; }
         public DbSet<AttendanceDetails> AttendanceDetailsTbl { get; set; }
     }

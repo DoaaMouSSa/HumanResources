@@ -32,7 +32,7 @@
                                 <th> الاسم </th>
                                 <th> اجمالى الراتب </th>
                                 <th> التليفون </th>
-                                <th> المحافظة </th>
+                                <th> القسم </th>
                                 <th> النوع </th>
                                 <th> التفاصيل </th>
                                  <th> تعديل </th>
@@ -44,11 +44,11 @@
                             @foreach (var obj in Model.Items)
                             {
                                 <tr>
-                                    <td>@obj.Id</td>
+                                    <td>@obj.Code</td>
                                     <td> @obj.Name</td>
                                     <td> @obj.GrossSalary</td>
                                     <td> @obj.Phone</td>
-                                    <td> @obj.Governorate</td>
+                                    <td> @obj.Department</td>
                                     <td> @obj.Gender</td>
                                     <td>
                                         <a asp-controller="Employee" asp-action="Details" asp-route-id="@obj.Id">

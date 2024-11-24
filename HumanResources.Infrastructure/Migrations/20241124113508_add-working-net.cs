@@ -1,25 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace HumanResources.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class updates : Migration
+    public partial class addworkingnet : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "WorkingHoursTime",
+                table: "AttendanceTbl");
+
             migrationBuilder.AddColumn<long>(
-                name: "OverTimeHours",
+                name: "NetWorkingHours",
                 table: "AttendanceTbl",
                 type: "bigint",
-                nullable: true);
-
-            migrationBuilder.AddColumn<decimal>(
-                name: "OverTimeSalary",
-                table: "AttendanceTbl",
-                type: "decimal(18,2)",
                 nullable: true);
         }
 
@@ -27,12 +26,14 @@ namespace HumanResources.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "OverTimeHours",
+                name: "NetWorkingHours",
                 table: "AttendanceTbl");
 
-            migrationBuilder.DropColumn(
-                name: "OverTimeSalary",
-                table: "AttendanceTbl");
+            migrationBuilder.AddColumn<TimeSpan>(
+                name: "WorkingHoursTime",
+                table: "AttendanceTbl",
+                type: "time",
+                nullable: true);
         }
     }
 }

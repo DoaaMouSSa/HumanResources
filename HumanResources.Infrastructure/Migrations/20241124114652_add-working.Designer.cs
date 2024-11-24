@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241117172822_updates2")]
-    partial class updates2
+    [Migration("20241124114652_add-working")]
+    partial class addworking
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,13 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<long?>("DelaysHours")
+                        .HasColumnType("bigint");
+
+                    b.Property<TimeSpan?>("DelaysTime")
+                        .HasColumnType("time");
+
+                    b.Property<int?>("EmployeeCode")
                         .HasColumnType("int");
 
                     b.Property<int?>("Month")
@@ -41,6 +47,9 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<decimal?>("NetSalary")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("NetWorkingHours")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("OverTimeHourSalary")
                         .HasColumnType("decimal(18,2)");
@@ -51,14 +60,20 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<decimal?>("OverTimeSalary")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("WorkingDays")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("WorkingHours")
+                    b.Property<long?>("TotalWorkingHours")
                         .HasColumnType("bigint");
 
-                    b.Property<TimeSpan?>("WorkingHoursTime")
-                        .HasColumnType("time");
+                    b.Property<long?>("TotalWorkingHoursBeforeDelays")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("TotalWorkingMinutes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("WeekId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkingDays")
+                        .HasColumnType("int");
 
                     b.Property<int?>("Year")
                         .HasColumnType("int");
@@ -71,7 +86,9 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("EmployeeCode");
+
+                    b.HasIndex("WeekId");
 
                     b.ToTable("AttendanceTbl");
                 });
@@ -94,6 +111,9 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("CheckOutTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("Delay")
                         .HasColumnType("time");
 
                     b.Property<TimeSpan?>("WorkingHoursAday")
@@ -145,7 +165,10 @@ namespace HumanResources.Infrastructure.Migrations
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -158,6 +181,9 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<TimeSpan>("CheckOutTime")
                         .HasColumnType("time");
+
+                    b.Property<int>("Code")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
@@ -216,9 +242,28 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("EmployeeTbl");
+                });
+
+            modelBuilder.Entity("HumanResources.Domain.Entities.Week", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
+
+                    b.Property<DateTime?>("Code")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WeekTbl");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -423,9 +468,17 @@ namespace HumanResources.Infrastructure.Migrations
                 {
                     b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
                         .WithMany("Attendances")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("EmployeeCode")
+                        .HasPrincipalKey("Code")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("HumanResources.Domain.Entities.Week", "Week")
+                        .WithMany("Attendances")
+                        .HasForeignKey("WeekId");
 
                     b.Navigation("Employee");
+
+                    b.Navigation("Week");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.AttendanceDetails", b =>
@@ -510,6 +563,11 @@ namespace HumanResources.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
+                {
+                    b.Navigation("Attendances");
+                });
+
+            modelBuilder.Entity("HumanResources.Domain.Entities.Week", b =>
                 {
                     b.Navigation("Attendances");
                 });

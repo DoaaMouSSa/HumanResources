@@ -15,8 +15,9 @@ namespace HumanResources.Domain.Enums
         }
         public enum SalaryFormula
         {
-            كامل = 1,       //30
-            تقليدى = 2,   
+            اسبوعى = 1,       //30
+            شهرى_30 = 2,       //30
+            شهرى_26 = 3,   
         }
         public enum ExperienceLevel
         {

@@ -18,29 +18,18 @@ namespace HumanResources.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            bool globalValue = GlobalVariables.IsAuthenticated;
-            if (globalValue)
-            {
-                ViewBag.IsAuthenticated = globalValue;
-
+           
                 IEnumerable<Department> data = await _departmentService.GetAll();
 
                 return View(data);
-            }
-            else { return RedirectToAction("Login", "Auth"); }
           
         }
         [HttpGet]
         public IActionResult Create()
         {
-            bool globalValue = GlobalVariables.IsAuthenticated;
-            if (globalValue)
-            {
-                ViewBag.IsAuthenticated = globalValue;
                 return View();
 
-            }
-            else { return RedirectToAction("Login", "Auth"); }
+            
         }
         [HttpPost]
         public IActionResult Create(DepartmentDtoForAdd dto)
@@ -55,9 +44,7 @@ namespace HumanResources.Web.Controllers
         }
         public async Task<IActionResult> Update(int id)
         {
-            bool globalValue = GlobalVariables.IsAuthenticated;
-            if (globalValue)
-            {
+          
                 Department? data = await _departmentService.GetById(id);
                 if (data == null)
                 {
@@ -65,24 +52,18 @@ namespace HumanResources.Web.Controllers
                 }
                 return View(data);
 
-            }
-            else { return RedirectToAction("Login", "Auth"); }
-           
+                       
         }
         public async Task<IActionResult> Details(int id)
         {
-            bool globalValue = GlobalVariables.IsAuthenticated;
-            if (globalValue)
-            {
+           
                 Department? data = await _departmentService.GetById(id);
                 if (data == null)
                 {
                     return RedirectToAction("Error", "Home");
                 }
                 return View(data);
-            }
-            else { return RedirectToAction("Login", "Auth"); }
-         
+                     
         }
         [HttpPost]
         public IActionResult Update(Department dto)
@@ -98,18 +79,13 @@ namespace HumanResources.Web.Controllers
         }
         public async Task<IActionResult> Delete(int id)
         {
-            bool globalValue = GlobalVariables.IsAuthenticated;
-            if (globalValue)
-            {
                 Department? data = await _departmentService.GetById(id);
                 if (data == null)
                 {
                     return RedirectToAction("Error", "Home");
                 }
                 return View(data);
-            }
-            else { return RedirectToAction("Login", "Auth"); }
-       
+                   
         }
         [HttpPost]
         public IActionResult Delete(Department dto)

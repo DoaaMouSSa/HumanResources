@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -36,7 +36,6 @@
     <Folder Include="wwwroot\images\graduationCertificates\" />
     <Folder Include="wwwroot\images\identity\" />
     <Folder Include="wwwroot\images\personalImages\" />
-    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
   <ItemGroup>

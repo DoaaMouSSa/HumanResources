@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HumanResources.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initalize_db : Migration
+    public partial class initalizeDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,6 +67,19 @@ namespace HumanResources.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DepartmentTbl", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WeekTbl",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WeekTbl", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,7 +192,9 @@ namespace HumanResources.Infrastructure.Migrations
                 name: "EmployeeTbl",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: true),
                     GrossSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -206,6 +221,7 @@ namespace HumanResources.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EmployeeTbl", x => x.Id);
+                    table.UniqueConstraint("AK_EmployeeTbl_Code", x => x.Code);
                     table.ForeignKey(
                         name: "FK_EmployeeTbl_DepartmentTbl_DepartmentId",
                         column: x => x.DepartmentId,
@@ -220,23 +236,35 @@ namespace HumanResources.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    EmployeeCode = table.Column<int>(type: "int", nullable: true),
                     Year = table.Column<int>(type: "int", nullable: true),
                     Month = table.Column<int>(type: "int", nullable: true),
                     WorkingDays = table.Column<int>(type: "int", nullable: true),
                     WorkingHours = table.Column<long>(type: "bigint", nullable: true),
                     WorkingHoursTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     hourSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OverTimeHourSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     daySalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    NetSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    NetSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    OverTimeSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    OverTimeHours = table.Column<long>(type: "bigint", nullable: true),
+                    DelaysHours = table.Column<long>(type: "bigint", nullable: true),
+                    DelaysTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    WeekId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AttendanceTbl", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AttendanceTbl_EmployeeTbl_EmployeeId",
-                        column: x => x.EmployeeId,
+                        name: "FK_AttendanceTbl_EmployeeTbl_EmployeeCode",
+                        column: x => x.EmployeeCode,
                         principalTable: "EmployeeTbl",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AttendanceTbl_WeekTbl_WeekId",
+                        column: x => x.WeekId,
+                        principalTable: "WeekTbl",
                         principalColumn: "Id");
                 });
 
@@ -249,6 +277,7 @@ namespace HumanResources.Infrastructure.Migrations
                     CheckInTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     CheckOutTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     WorkingHoursAday = table.Column<TimeSpan>(type: "time", nullable: true),
+                    Delay = table.Column<TimeSpan>(type: "time", nullable: true),
                     AttendanceDate = table.Column<DateOnly>(type: "date", nullable: true),
                     AttendanceId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -307,9 +336,20 @@ namespace HumanResources.Infrastructure.Migrations
                 column: "AttendanceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttendanceTbl_EmployeeId",
+                name: "IX_AttendanceTbl_EmployeeCode",
                 table: "AttendanceTbl",
-                column: "EmployeeId");
+                column: "EmployeeCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AttendanceTbl_WeekId",
+                table: "AttendanceTbl",
+                column: "WeekId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeTbl_Code",
+                table: "EmployeeTbl",
+                column: "Code",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeTbl_DepartmentId",
@@ -349,6 +389,9 @@ namespace HumanResources.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmployeeTbl");
+
+            migrationBuilder.DropTable(
+                name: "WeekTbl");
 
             migrationBuilder.DropTable(
                 name: "DepartmentTbl");

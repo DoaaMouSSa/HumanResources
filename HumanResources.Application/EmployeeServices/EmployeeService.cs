@@ -62,7 +62,7 @@ namespace HumanResources.Application.EmployeeServices
             }
             Employee newEmployee = new Employee
             {
-                Id=dto.Id,
+                Code=dto.Code,
                 Name = dto.Name,
                 DepartmentId = dto.DepartmentId,
                 Address = dto.Address,
@@ -79,6 +79,7 @@ namespace HumanResources.Application.EmployeeServices
                 Phone = dto.Phone,
                 GraduationCertificateUrl=GraduationCertificateUrl,
                 IdentityUrl=IdentityUrl,
+                SalaryFormula=dto.SalaryFormula,
                 PersonalImageUrl=PersonalImageUrl,
                 CreatedAt = DateOnly.FromDateTime(DateTime.Now)
             };
@@ -89,7 +90,8 @@ namespace HumanResources.Application.EmployeeServices
         {
             
             Employee employee =await GetById(dto.Id);
-            employee.Id = dto.Id;
+
+            employee.Code = dto.Code;
             employee.Name=dto.Name;
             employee.Address=dto.Address;
             employee.Phone=dto.Phone;
@@ -100,6 +102,7 @@ namespace HumanResources.Application.EmployeeServices
             employee.DepartmentId = dto.DepartmentId;
             employee.Gender = dto.Gender;
             employee.SalaryFormula = dto.SalaryFormula;
+            employee.GrossSalary = (decimal)dto.GrossSalary;
             employee.MaritalStatus = dto.MaritalStatus;
             employee.ExperienceLevel = dto.ExperienceLevel;
             employee.JobPosition = dto.JobPosition;

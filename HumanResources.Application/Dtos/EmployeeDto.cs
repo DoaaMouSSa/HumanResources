@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static HumanResources.Domain.Enums.Enums;
-using HumanResources.Application.Validations;
 
 namespace HumanResources.Application.Dtos
 {
@@ -17,7 +16,7 @@ namespace HumanResources.Application.Dtos
         {
             [Required(ErrorMessage = "مطلوب")]
           
-            public int Id { get; set; }
+            public int Code { get; set; }
             
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
@@ -63,7 +62,6 @@ namespace HumanResources.Application.Dtos
         {
             public int Id { get; set; }
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
-            [UniqueIntCode]
             public int Code { get; set; }
             [Required(ErrorMessage = "هذا الحقل مطلوب")]
 
@@ -116,12 +114,13 @@ namespace HumanResources.Application.Dtos
             public string Phone { get; set; }
             public decimal GrossSalary { get; set; }//اجمالى المرتب
             public Gender? Gender { get; set; }
-            public Governorate? Governorate { get; set; } 
+            public string Department { get; set; } 
 
         }
         public class EmployeeDtoForShow
         {
             public int Id { get; set; }
+            public int Code { get; set; }
             public string Name { get; set; }
             public string Address { get; set; } // Date of Appointment
             public string Phone { get; set; } // Date of Appointment

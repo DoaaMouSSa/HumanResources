@@ -24,6 +24,7 @@
                                 <th> اجمالى الساعات </th>
                                 <th> اليومية </th>
                                 <th> الساعه </th>
+                                <th> التأخيرات </th>
                                 <th> صافى المرتب </th>
                                 <th> التفاصيل </th>
                             </tr>
@@ -33,25 +34,15 @@
                             {
                                 <tr>
                                     <td style="display:none;">@obj.Id</td>
- <td class="text-danger text-bold">
-                @if (lastEmployeeId != obj.EmployeeId)
-                {
-                    @obj.Employee.Name
-                    lastEmployeeId = obj.EmployeeId; // Update lastEmployeeId to current one
-                }
-                else
-                {
-                    @* Leave the cell empty for duplicate EmployeeId *@
-                    <span></span>
-                }
-            </td>   
-            <td> @obj.Year</td>
+                                    <td>@obj.EmployeeCode</td>
+                                    <td> @obj.Year</td>
                                     <td> @obj.Month</td>
                                     <td> @obj.Employee.GrossSalary</td>
                                     <td> @obj.WorkingDays</td>
-                                    <td> @obj.WorkingHours</td>
+                                    <td> @obj.TotalWorkingHours</td>
                                     <td> @obj.daySalary</td>
                                     <td> @obj.hourSalary</td>
+                                    <td> @obj.DelaysTime</td>
                                     <td> @obj.NetSalary</td>
                                    <td>
                                         <a asp-controller="Attendance" asp-action="Details" asp-route-id="@obj.Id">
