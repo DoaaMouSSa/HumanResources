@@ -96,13 +96,11 @@ namespace HumanResources.Web.Controllers
             var attendance = await GetOrCreateAttendanceAsync(employeeCode, dateTimeValue, employee.GrossSalary);
 
             await AddOrUpdateAttendanceDetailAsync(attendance, employee, dateOnly, timeOnly);
+           // await RecalculateMonthlyWorkingHours((int)detail.Attendance.EmployeeCode, detail.Attendance.Year.Value, detail.Attendance.Month.Value);
 
-            // Recalculate working hours for the employee on the specific date
-            await RecalculateMonthlyWorkingHours(employeeCode, dateOnly.Year, dateOnly.Month);
-
-            // **Calculate and update the working days**
-            await CalculateWorkingDays(employeeCode, dateOnly.Year, dateOnly.Month);
         }
+
+
 
         private async Task RecalculateMonthlyWorkingHours(int employeeCode, int year, int month)
         {
@@ -124,7 +122,7 @@ namespace HumanResources.Web.Controllers
             double totalHours = 0;
             long totalMinutes = 0;
             double totalDelaysHours = attendance.DelaysHours ?? 0; // Get total delays (if any)
-            long totalDelaysMinutes = (long)(attendance.DelaysTime?.TotalMinutes ?? 0); // Get total delay minutes
+           // long totalDelaysMinutes = (long)(attendance.DelaysTime?.TotalMinutes ?? 0); // Get total delay minutes
 
             foreach (var detail in detailsForMonth)
             {
@@ -134,66 +132,48 @@ namespace HumanResources.Web.Controllers
                     totalMinutes += detail.WorkingHoursAday.Value.Minutes;
                 }
             }
-
-            // Convert total minutes to hours
-            totalHours += totalMinutes / 60;
-            totalMinutes = totalMinutes % 60;
-            attendance.TotalWorkingHoursBeforeDelays = totalHours;
-
-            // Subtract delays from total hours and minutes
-            totalHours -= totalDelaysHours;
-            totalMinutes -= totalDelaysMinutes;
-
-            // Adjust if total minutes go below 0
-            if (totalMinutes < 0)
+            if(totalMinutes >= 20 && totalMinutes <= 49)
             {
-                totalHours -= 1;
-                totalMinutes += 60;
+                attendance.TotalWorkingHoursBeforeDelays = totalHours+.5;
+
+            }else if(totalMinutes >= 50)
+            {
+                attendance.TotalWorkingHoursBeforeDelays = totalHours + 1;
+
+            }
+            else
+            {
+                attendance.TotalWorkingHoursBeforeDelays = totalHours;
             }
 
-            // If the remaining minutes are 41 or more, convert them into 1 hour
-            if (totalMinutes >= 41)
+            double? totalWorkingHours= (attendance.TotalWorkingHoursBeforeDelays)-totalDelaysHours;
+            double? overTimeHours=0;
+            if(totalWorkingHours.HasValue && (totalWorkingHours.Value ==48 ||totalWorkingHours.Value <48))
             {
-                totalHours += 1;
-                totalMinutes -= 60; // Subtract the 60 minutes converted to 1 hour
-            }
+                attendance.TotalWorkingHours = totalWorkingHours;
 
-            // Calculate DelaysHours based on DelaysTime
-            if (attendance.DelaysTime.HasValue)
+            }
+            else if (totalWorkingHours.HasValue && (totalWorkingHours.Value > 48))
             {
-                // Get the total delay in minutes
-                double delayMinutes = attendance.DelaysTime.Value.TotalMinutes;
+                const double WORKING_HOURS= 48;
+                overTimeHours = totalWorkingHours - WORKING_HOURS;
+                attendance.OverTimeHours = overTimeHours;
+                attendance.TotalWorkingHours = WORKING_HOURS;
 
-                // Convert delay to hours based on the rules
-                if (delayMinutes >= 41)
-                {
-                    attendance.DelaysHours = attendance.DelaysHours+=1; // Round to the nearest hour
-                }
-                else if (delayMinutes >= 21 && delayMinutes < 41)
-                {
-                    attendance.DelaysHours = attendance.DelaysHours += .5;  // Half an hour
-                }
-                else
-                {
-                    attendance.DelaysHours = attendance.DelaysHours += 0; // No delay
-                }
             }
-
-            // Save the results to the Attendance table
-            attendance.TotalWorkingHours = totalHours; // Total hours (decimal value)
-
             // Save the delay information
             await _context.SaveChangesAsync();
         }
 
 
-        private void UpdateAttendanceDetailCheckOut(AttendanceDetails detail, TimeSpan checkOutTime)
+        private  async Task UpdateAttendanceDetailCheckOut(AttendanceDetails detail, TimeSpan checkOutTime)
         {
             detail.CheckOutTime = checkOutTime;
             if (detail.CheckInTime.HasValue)
             {
                 // Calculate the working hours for the day
                 detail.WorkingHoursAday = checkOutTime - detail.CheckInTime.Value;
+
             }
         }
         private void AddNewAttendanceDetail(Attendance attendance, DateOnly date, TimeSpan checkInTime, TimeSpan? delay)
@@ -260,20 +240,27 @@ namespace HumanResources.Web.Controllers
 
             if (existingDetail != null)
             {
-                // Check if it's a Check-Out and update only the working hours
+                // Update the Check-Out time and recalculate monthly working hours
                 UpdateAttendanceDetailCheckOut(existingDetail, time);
+
+                // Call RecalculateMonthlyWorkingHours only for updates
+                await RecalculateMonthlyWorkingHours((int)attendance.EmployeeCode, attendance.Year.Value, attendance.Month.Value);
+                await CalculateWorkingDays((int)attendance.EmployeeCode, attendance.Year.Value, attendance.Month.Value);
             }
             else
             {
-                // It's a new Check-In, calculate delay if applicable
+                // Add new detail and calculate delay if applicable
                 var delay = CalculateDelay((TimeSpan)employee.CheckInTime, time);
                 AddNewAttendanceDetail(attendance, date, time, delay);
-                UpdateAttendanceDelays(attendance, delay);
+
+                // Update cumulative delays in the Attendance record only for new details
+                await UpdateAttendanceDelays(attendance, delay);
+
+                // No need to call RecalculateMonthlyWorkingHours here
             }
 
             await _context.SaveChangesAsync();
         }
-
 
         private TimeSpan? CalculateDelay(TimeSpan expectedCheckInTime, TimeSpan actualCheckInTime)
         {
@@ -288,7 +275,22 @@ namespace HumanResources.Web.Controllers
             {
                 // Update the cumulative delay in the Attendance record
                 attendance.DelaysTime = (attendance.DelaysTime ?? TimeSpan.Zero) + delay.Value;
-                attendance.DelaysHours = (attendance.DelaysHours ?? 0) + (long)delay.Value.TotalHours;
+
+                // Add to DelaysHours based on delay calculation logic
+                double delayMinutes = attendance.DelaysTime.Value.Minutes;
+
+                if (delayMinutes >= 20 && delayMinutes <= 49)
+                {
+                    attendance.DelaysHours = attendance.DelaysTime.Value.Hours + .5; // Round to 1 hour
+                }
+                else if (delayMinutes >= 50 && delayMinutes <= 59)
+                {
+                    attendance.DelaysHours = attendance.DelaysTime.Value.Hours + 1; // Half an hour
+                }
+                else
+                {
+                    attendance.DelaysHours = attendance.DelaysTime.Value.Hours + 0; // 0 an hour
+                }
             }
         }
         private async Task CalculateWorkingHoursForEmployee(int employeeCode, int attendanceId)
@@ -342,17 +344,41 @@ namespace HumanResources.Web.Controllers
 
             // Aggregate delays from AttendanceDetails
             var totalDelaysTime = attendance.AttendanceDetails
-                .Where(d => d.Delay.HasValue)
+                .Where(d => d.Delay.HasValue) // Only consider details with a delay
                 .Select(d => d.Delay.Value)
                 .Aggregate(TimeSpan.Zero, (sum, delay) => sum.Add(delay));
 
-            var totalDelaysHours = (long)totalDelaysTime.TotalHours;
-
-            // Update the Attendance record
+            // Update the Attendance record with total delay time
             attendance.DelaysTime = totalDelaysTime;
+
+            // Calculate total delay hours
+            double totalDelayMinutes = totalDelaysTime.TotalMinutes;
+
+            // Convert delay minutes into hours with the correct rounding logic
+            double delayHours = 0;
+            if (totalDelayMinutes > 0)
+            {
+                delayHours = Math.Floor(totalDelayMinutes / 60); // Full hours
+                double remainingMinutes = totalDelayMinutes % 60;
+
+                // Apply the rounding rules for remaining minutes
+                if (remainingMinutes > 30)
+                {
+                    delayHours += 1; // Round up to the next hour
+                }
+                else if (remainingMinutes > 0)
+                {
+                    delayHours += 0.5; // Round up to half an hour
+                }
+            }
+
+            // Update the DelaysHours property
+            attendance.DelaysHours = delayHours;
 
             // Save changes to update the Attendance record
             await _context.SaveChangesAsync();
+
+            Console.WriteLine($"Total Delay Time: {totalDelaysTime}, Total Delay Hours: {delayHours}");
         }
 
         private async Task CalculateWorkingDays(int employeeCode, int year, int month)
