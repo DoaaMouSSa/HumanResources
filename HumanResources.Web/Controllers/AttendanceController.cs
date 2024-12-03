@@ -264,10 +264,22 @@ namespace HumanResources.Web.Controllers
 
         private TimeSpan? CalculateDelay(TimeSpan expectedCheckInTime, TimeSpan actualCheckInTime)
         {
+            // Define the break period
+            var breakStartTime = new TimeSpan(12, 0, 0); // 12:00 PM
+            var breakEndTime = new TimeSpan(13, 0, 0); // 1:00 PM
+
+            // If the actual check-in time is during the break period, treat it as if it were at the break end
+            if (actualCheckInTime >= breakStartTime && actualCheckInTime < breakEndTime)
+            {
+                return breakStartTime - expectedCheckInTime;
+            }
+
+            // Calculate delay only if the adjusted actual check-in time is greater than the expected check-in time
             return actualCheckInTime > expectedCheckInTime
                 ? actualCheckInTime - expectedCheckInTime
                 : null;
         }
+
 
         private async Task UpdateAttendanceDelays(Attendance attendance, TimeSpan? delay)
         {
