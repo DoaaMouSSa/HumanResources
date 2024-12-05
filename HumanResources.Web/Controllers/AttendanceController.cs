@@ -1,15 +1,22 @@
-﻿using ExcelDataReader;
+﻿using AspNetCore.Reporting;
+using ExcelDataReader;
+using HumanResources.Application.AttendanceServices;
+using HumanResources.Application.Dtos;
+using HumanResources.Application.WeekServices;
 using HumanResources.Domain.Entities;
 using HumanResources.Infrastructure.DbContext;
 using HumanResources.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
+using System.Data;
 using System.Globalization;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using static HumanResources.Application.Dtos.AttendanceDto;
 using static HumanResources.Domain.Enums.Enums;
 
 namespace HumanResources.Web.Controllers
@@ -19,11 +26,22 @@ namespace HumanResources.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ExcelService _excelService;
+        private readonly IWeekService _weekService;
+        private readonly IAttendanceService _attendanceService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AttendanceController(ApplicationDbContext context)
+        public AttendanceController(ApplicationDbContext context
+            , IWeekService weekService,
+IWebHostEnvironment webHostEnvironment,
+IAttendanceService attendanceService)
         {
             _context = context;
+            _weekService = weekService;
+            _attendanceService = attendanceService;
             _excelService = new ExcelService();
+            _webHostEnvironment = webHostEnvironment;
+            System.Text.Encoding.RegisterProvider(
+                System.Text.CodePagesEncodingProvider.Instance);
         }
 
         public IActionResult Create()
@@ -34,7 +52,7 @@ namespace HumanResources.Web.Controllers
         int employeeCodeGeneral = 0;
         Employee employee;
         Attendance attendance = null;
-        Week week = null;
+        int? weekId;
         AttendanceDetails attendanceDetails = null;
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile file)
@@ -73,6 +91,16 @@ namespace HumanResources.Web.Controllers
         }
         private async Task ProcessExcelFile(string filePath)
         {
+            DateTime dateTime = DateTime.Now;
+            Week week = new Week()
+            {
+                CreatedDateTime = dateTime,
+                CreatedDate = DateOnly.FromDateTime(dateTime),
+                Date = DateOnly.FromDateTime(dateTime).ToString("dd MMMM yyyy"),
+            };
+            _context.Add(week);
+            _context.SaveChanges();
+            weekId= week.Id;
             using var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read);
             using var reader = ExcelReaderFactory.CreateReader(stream);
 
@@ -229,7 +257,7 @@ namespace HumanResources.Web.Controllers
                 daySalary = grossSalary / workDaysPerWeek,
                 DelaysHours = 0,
                 DelaysTime = TimeSpan.Zero,
-                //WorkingHoursTime = TimeSpan.Zero,
+                WeekId = weekId,
                 TotalWorkingHours = 0
             };
         }
@@ -437,16 +465,50 @@ namespace HumanResources.Web.Controllers
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             IEnumerable<Attendance> data = _context.AttendanceTbl.Include("Employee").AsEnumerable();
+            IEnumerable<WeekDto> weeks = await _weekService.GetAll();
+            ViewData["WeekLst"] = new SelectList(weeks, "Id", "Date");
             return View(data);
         }
+        public IActionResult Print()
+        {
+            var attendanceDT = new DataTable();
+            attendanceDT = GetAttendanceForReport();
+            string mimetype = "";
+            int extension = 1;
+            var path = $"{this._webHostEnvironment.WebRootPath}\\Reports\\attendanceReport.rdlc";
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("prm", "تقرير المرتبات");
+            LocalReport localReport = new LocalReport(path);
+            localReport.AddDataSource("attendanceDataSet", attendanceDT);
+            var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimetype);
+            return File(result.MainStream, "application/pdf");
+        }
+
         public IActionResult Details(int id)
         {
             Attendance data = _context.AttendanceTbl.Where(att => att.Id == id).Include("AttendanceDetails").Include("Employee").FirstOrDefault();
             return View(data);
         }
-
+        public DataTable GetAttendanceForReport()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Id");
+            dt.Columns.Add("Name");
+            dt.Columns.Add("Salary");
+            DataRow row;
+            List<AttendanceDtoForReport> data = _attendanceService.GetForReport();
+            for(int i = 0; i < data.Count(); i++)
+            {
+                row = dt.NewRow();
+                row["Id"] = data[i].Id;
+                row["Name"] = data[i].Name;
+                row["Salary"] = data[i].Salary;
+                dt.Rows.Add(row);
+            }
+            return dt;
+        }
     }
 }

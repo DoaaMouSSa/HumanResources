@@ -4,6 +4,7 @@ using HumanResources.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241204174650_add-created-attedance")]
+    partial class addcreatedattedance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,6 +35,12 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<decimal?>("CalculatedSalary")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Created")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
 
                     b.Property<double?>("DelaysHours")
                         .HasColumnType("float");
@@ -63,9 +72,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<double?>("TotalWorkingHoursBeforeDelays")
                         .HasColumnType("float");
 
-                    b.Property<int?>("WeekId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("WorkingDays")
                         .HasColumnType("int");
 
@@ -81,8 +87,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeCode");
-
-                    b.HasIndex("WeekId");
 
                     b.ToTable("AttendanceTbl");
                 });
@@ -242,28 +246,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("EmployeeTbl");
-                });
-
-            modelBuilder.Entity("HumanResources.Domain.Entities.Week", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
-
-                    b.Property<DateOnly?>("CreatedDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("CreatedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WeekTbl");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -472,13 +454,7 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasPrincipalKey("Code")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("HumanResources.Domain.Entities.Week", "Week")
-                        .WithMany("Attendances")
-                        .HasForeignKey("WeekId");
-
                     b.Navigation("Employee");
-
-                    b.Navigation("Week");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.AttendanceDetails", b =>
@@ -563,11 +539,6 @@ namespace HumanResources.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
-                {
-                    b.Navigation("Attendances");
-                });
-
-            modelBuilder.Entity("HumanResources.Domain.Entities.Week", b =>
                 {
                     b.Navigation("Attendances");
                 });

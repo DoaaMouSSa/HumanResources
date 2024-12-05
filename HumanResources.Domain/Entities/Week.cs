@@ -9,7 +9,9 @@ namespace HumanResources.Domain.Entities
     public class Week
     {
         public int? Id { get; set; }
-        public DateTime? Code { get; set; }
+        public DateTime? CreatedDateTime { get; set; }
+        public DateOnly? CreatedDate { get; set; }
+        public string? Date { get; set; }
         public List<Attendance> Attendances { get; set; } = new List<Attendance>();
     }
 }

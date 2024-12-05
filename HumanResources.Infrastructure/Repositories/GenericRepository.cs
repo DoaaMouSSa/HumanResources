@@ -29,6 +29,11 @@ namespace HumanResources.Infrastructure.Repositories
             }
             return  query.ToList();
          }
+        public IEnumerable<T> GetAllWithNoCondtion()
+        {
+            IQueryable<T> query = _context.Set<T>();
+            return query.ToList();
+        }
 
         public T GetById(int id)
         {

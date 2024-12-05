@@ -1,51 +1,43 @@
-﻿using HumanResources.Domain.Entities;
+﻿using HumanResources.Application.Dtos;
+using HumanResources.Domain.Entities;
+using HumanResources.Domain.Interfaces;
+using HumanResources.Infrastructure.DbContext;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static HumanResources.Application.Dtos.AttendanceDto;
 
 namespace HumanResources.Application.AttendanceServices
 {
     public class AttendanceService : IAttendanceService
     {
-        public void CreateEveryWeek(IFormFile file)
-        {
-            throw new NotImplementedException();
-        }
-        Week week;
-        Attendance attendance;
-        List<AttendanceDetails> details;
-        //private void CreateWeek(int weekId,int month,int year)
-        //{
-        //    week = new Week()
-        //    {
-        //        Code = weekId + "-" + month + "-" + year,
-        //    };
-        //}
-        private decimal CalculateDaySalary()
-        {
-            decimal daysalary = 0;
-            return daysalary;
-        }
-        private decimal CalculateHourSalary()
-        {
-            decimal hoursalary = 0;
-            return hoursalary;
-        }
-        private void CreateAttendance(int attendanceId)
-        {
-            attendance = new Attendance()
-            {
-                daySalary = CalculateDaySalary(),
-                hourSalary= CalculateHourSalary(),
-                
-            };
-        }
-        private void CreateAttendanceDetails()
-        {
+        private readonly IGenericRepository<Attendance> _attendanceRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _context;
 
+        public AttendanceService(IGenericRepository<Attendance> attendanceRepository
+            , IUnitOfWork unitOfWork,
+            ApplicationDbContext context)
+        {
+            _attendanceRepository = attendanceRepository;
+            _unitOfWork = unitOfWork;
+            _context = context;
+        }
+
+        public List<AttendanceDtoForReport> GetForReport()
+        {
+            List<AttendanceDtoForReport> attendanceDtoForReports = (from q in _context.AttendanceTbl.Include("Employee")
+                       select new AttendanceDtoForReport
+                       {
+                           Id = (int)q.Id,
+                           Name = q.Employee.Name,
+                           Salary = q.Employee.GrossSalary,
+                       }).ToList();
+            return attendanceDtoForReports;
         }
     }
 }
