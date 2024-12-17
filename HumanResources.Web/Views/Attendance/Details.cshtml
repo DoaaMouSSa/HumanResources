@@ -44,15 +44,35 @@
                 </div>
                 <br />
                 <div class="row">
-                    <div class="col-md-4"><h4>عدد ساعات العمل : <span class="text-danger text-bold">@Model.TotalWorkingHours</span></h4></div>
-                    <div class="col-md-4"><h4> اجمالى المرتب : <span class="text-danger text-bold">@Model.NetSalary</span></h4></div>
-                    <div class="col-md-4"><h4> صافى المرتب : <span class="text-danger text-bold"></span></h4></div>
-                    <div class="col-md-4"><h4> عدد الساعات المعتمدة : <span class="text-danger text-bold">48</span></h4></div>
+                    <div class="col-md-2"><h6>الساعات المعتمدة:<span class="text-danger text-bold">48</span></h6></div>
+                    <div class="col-md-2"><h6>قبل التأخيرات:<span class="text-danger text-bold">@Model.TotalWorkingHoursBeforeDelays</span></h6></div>
+                    <div class="col-md-2"><h6>ساعات العمل:<span class="text-danger text-bold">@Model.TotalWorkingHours</span></h6></div>
+                    <div class="col-md-2">
+                        <h6>
+                             الاضافى:<span class="text-danger text-bold">
+
+                                @(Model.OverTimeHours.HasValue ? Model.OverTimeHours.ToString() : "---")
+                            </span>
+                        </h6>
+                    </div>
+                    <div class="col-md-2">
+                        <h6>
+                            التأخيرات:<span class="text-danger text-bold">
+
+                                @(Model.DelaysHours.HasValue ? Model.DelaysHours.ToString() : "---")
+                            </span>
+                        </h6>
+                    </div>
                 </div>
                  <div class="row">
-                    <div class="col-md-4"><h4> ساعات العمل الاضافية : <span class="text-danger text-bold">@Model.OverTimeHours</span></h4></div>
-                    <div class="col-md-4"><h4> راتب الساعات الاضافية : <span class="text-danger text-bold">@Model.OverTimeSalary</span></h4></div>
-                    <div class="col-md-4"><h4> الساعة الاضافية : <span class="text-danger text-bold">@Model.OverTimeHourSalary</span></h4></div>
+                    <div class="col-md-4"><h6>اجمالى المرتب:<span class="text-danger text-bold">@Model.CalculatedSalary</span></h6></div>
+                    <div class="col-md-4"><h6>صافى المرتب:<span class="text-danger text-bold">@Model.NetSalary</span></h6></div>
+                    <div class="col-md-4">
+                        <h6>
+                            راتب الساعات الاضافية:<span class="text-danger text-bold">
+                                @(Model.OverTimeSalary.HasValue ? Model.OverTimeSalary.ToString() : "---")
+                        </span></h6></div>
+             
                 </div>
             }
             else

@@ -4,6 +4,7 @@ using HumanResources.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241208164235_update_doubles")]
+    partial class update_doubles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +33,11 @@ namespace HumanResources.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
-                    b.Property<decimal?>("CalculatedSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("CalculatedSalary")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("DelaysHours")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("DelaysHours")
+                        .HasColumnType("float");
 
                     b.Property<TimeSpan?>("DelaysTime")
                         .HasColumnType("time");
@@ -48,23 +51,20 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<int?>("NetSalary")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("OverTimeHourSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("OverTimeHourSalary")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("OverTimeHours")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("OverTimeHours")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("OverTimeSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("OverTimeSalary")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("SalaryBeforeAdditon")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("TotalWorkingHours")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("TotalWorkingHours")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("TotalWorkingHoursBeforeDelays")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("TotalWorkingHoursBeforeDelays")
+                        .HasColumnType("float");
 
                     b.Property<int?>("WeekId")
                         .HasColumnType("int");
@@ -75,11 +75,11 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<int?>("Year")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("daySalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("daySalary")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("hourSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("hourSalary")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -245,8 +245,8 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<string>("GraduationCertificateUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("GrossSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("GrossSalary")
+                        .HasColumnType("float");
 
                     b.Property<string>("IdentityUrl")
                         .HasColumnType("nvarchar(max)");

@@ -40,5 +40,7 @@ namespace HumanResources.Infrastructure.DbContext
         public DbSet<Week> WeekTbl { get; set; }
         public DbSet<Attendance> AttendanceTbl { get; set; }
         public DbSet<AttendanceDetails> AttendanceDetailsTbl { get; set; }
+        public DbSet<Loan> LoanTbl { get; set; }
+        public DbSet<Bonus> BonusTbl { get; set; }
     }
 }

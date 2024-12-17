@@ -1,8 +1,10 @@
 ﻿using HumanResources.Application.AttendanceServices;
 using HumanResources.Application.AuthServices;
+using HumanResources.Application.BonusServices;
 using HumanResources.Application.DepartmentServices;
 using HumanResources.Application.EmployeeServices;
 using HumanResources.Application.FileServices;
+using HumanResources.Application.LoanServices;
 using HumanResources.Application.WeekServices;
 
 namespace HumanResources.Web.DendencyInjection
@@ -19,6 +21,8 @@ namespace HumanResources.Web.DendencyInjection
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IWeekService, WeekService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
+            services.AddScoped<ILoanService, LoanService>();
+            services.AddScoped<IBonusService, BonusService>();
 
             // Other API-specific dependencies can be added here
         }
