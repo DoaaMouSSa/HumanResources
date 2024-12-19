@@ -17,6 +17,7 @@ namespace HumanResources.Domain.Entities
         public int? Month { get; set; }
         public int? WorkingDays { get; set; }  
         public decimal? TotalWorkingHoursBeforeDelays { get; set; }
+        public TimeSpan? TotalWorkingHoursTime { get; set; }
         public decimal? TotalWorkingHours { get; set; }
         public decimal hourSalary { get; set; }
         public decimal OverTimeHourSalary { get; set; }
@@ -30,6 +31,7 @@ namespace HumanResources.Domain.Entities
         public TimeSpan? DelaysTime { get; set; }
         public int? WeekId { get; set; }
         public Week? Week { get; set; }
+
         public List<AttendanceDetails>? AttendanceDetails { get; set; } = new List<AttendanceDetails>();
 
 

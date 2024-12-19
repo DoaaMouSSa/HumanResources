@@ -174,67 +174,74 @@ IAttendanceService attendanceService)
                 attendance.TotalWorkingHoursBeforeDelays = totalHours;
             }
             
-            decimal? totalWorkingHours= (attendance.TotalWorkingHoursBeforeDelays)-totalDelaysHours;
-            decimal? overTimeHours=0;
-            if(totalWorkingHours.HasValue && (totalWorkingHours.Value ==48 ||totalWorkingHours.Value <48))
-            {
-                attendance.TotalWorkingHours = totalWorkingHours;
+            //decimal? totalWorkingHours= (attendance.TotalWorkingHoursBeforeDelays)-totalDelaysHours;
+            //decimal? overTimeHours=0;
+            //if(totalWorkingHours.HasValue && (totalWorkingHours.Value ==48 ||totalWorkingHours.Value <48))
+            //{
+            //    attendance.TotalWorkingHours = totalWorkingHours;
 
-            }
-            else if (totalWorkingHours.HasValue && (totalWorkingHours.Value > 48))
-            {
-                const decimal WORKING_HOURS= 48;
-                overTimeHours = totalWorkingHours - WORKING_HOURS;
-                attendance.OverTimeHours = overTimeHours;
-                attendance.TotalWorkingHours = WORKING_HOURS;
+            //}
+            //else if (totalWorkingHours.HasValue && (totalWorkingHours.Value > 48))
+            //{
+            //    const decimal WORKING_HOURS= 48;
+            //    overTimeHours = totalWorkingHours - WORKING_HOURS;
+            //    attendance.OverTimeHours = overTimeHours;
+            //    attendance.TotalWorkingHours = WORKING_HOURS;
 
-            }
-            attendance.CalculatedSalary = attendance.TotalWorkingHours * attendance.hourSalary;
-            attendance.SalaryBeforeAdditon = (int)attendance.CalculatedSalary;
-            const decimal OVERTIMEHOURSALARY = 1.5m;
-            attendance.OverTimeHourSalary = attendance.hourSalary * OVERTIMEHOURSALARY;
-            attendance.OverTimeSalary = attendance.OverTimeHourSalary * attendance.OverTimeHours;
-            attendance.NetSalary =(int?) (attendance.SalaryBeforeAdditon + attendance.OverTimeSalary);
+            //}
+            //attendance.CalculatedSalary = attendance.TotalWorkingHours * attendance.hourSalary;
+            //attendance.SalaryBeforeAdditon = (int)attendance.CalculatedSalary;
+            //const decimal OVERTIMEHOURSALARY = 1.5m;
+            //attendance.OverTimeHourSalary = attendance.hourSalary * OVERTIMEHOURSALARY;
+            //attendance.OverTimeSalary = attendance.OverTimeHourSalary * attendance.OverTimeHours;
+            //attendance.NetSalary =(int?) (attendance.SalaryBeforeAdditon + attendance.OverTimeSalary);
 
-            if (attendance.NetSalary % 5==0)
-            {
-                //تقريب المرتب
-            }
+            //if (attendance.NetSalary % 5==0)
+            //{
+            //    //تقريب المرتب
+            //}
             // Save the delay information
             await _context.SaveChangesAsync();
         }
 
 
-        private  async Task UpdateAttendanceDetailCheckOut(AttendanceDetails detail, TimeSpan checkOutTime)
+        private async Task UpdateAttendanceDetailCheckOut(AttendanceDetails detail, TimeSpan checkOutTime)
         {
             detail.CheckOutTime = checkOutTime;
+
             if (detail.CheckInTime.HasValue)
             {
-                // Define the excluded time range
-                var excludedStart = new TimeSpan(12, 0, 0); // 12:00 PM
-                var excludedEnd = new TimeSpan(13, 0, 0);  // 1:00 PM
-
-                // Calculate the raw working hours
                 var checkInTime = detail.CheckInTime.Value;
-                var workingHours = checkOutTime - checkInTime;
 
-                // Adjust for the excluded period
-                if (checkInTime < excludedEnd && checkOutTime > excludedStart)
+                // Define the time intervals
+                var noon = new TimeSpan(12, 0, 0); // 12:00 PM
+                var afterNoon = new TimeSpan(13, 0, 0); // 1:00 PM
+
+                // Initialize working hours
+                TimeSpan morningWorkingHours = TimeSpan.Zero;
+                TimeSpan afternoonWorkingHours = TimeSpan.Zero;
+
+                // Calculate working hours before 12:00 PM
+                if (checkInTime < noon)
                 {
-                    // Calculate the overlap duration with the excluded period
-                    var overlapStart = checkInTime > excludedStart ? checkInTime : excludedStart;
-                    var overlapEnd = checkOutTime < excludedEnd ? checkOutTime : excludedEnd;
-                    var excludedDuration = overlapEnd - overlapStart;
-
-                    // Subtract the excluded duration from the total working hours
-                    workingHours -= excludedDuration;
+                    var endMorning = checkOutTime < noon ? checkOutTime : noon;
+                    morningWorkingHours = endMorning - checkInTime;
                 }
 
-                // Assign the adjusted working hours
-                detail.WorkingHoursAday = workingHours;
+                // Calculate working hours after 1:00 PM
+                if (checkOutTime > afterNoon)
+                {
+                    var startAfternoon = checkInTime > afterNoon ? checkInTime : afterNoon;
+                    afternoonWorkingHours = checkOutTime - startAfternoon;
+                }
+
+                // Summing both intervals
+                detail.WorkingHoursAday = morningWorkingHours + afternoonWorkingHours;
+
 
             }
         }
+
         private void AddNewAttendanceDetail(Attendance attendance, DateOnly date, TimeSpan checkInTime, TimeSpan? delay)
         {
             var newDetail = new AttendanceDetails
@@ -369,46 +376,6 @@ IAttendanceService attendanceService)
             }
         
     }
-        private async Task CalculateWorkingHoursForEmployee(int employeeCode, int attendanceId)
-        {
-            // Retrieve the attendance record with all related AttendanceDetails
-            var attendance = await _context.AttendanceTbl
-                .Include(a => a.AttendanceDetails)
-                .FirstOrDefaultAsync(a => a.Id == attendanceId && a.EmployeeCode == employeeCode);
-
-            if (attendance == null)
-            {
-                throw new Exception($"Attendance record not found for Employee with code {employeeCode} and Attendance ID {attendanceId}.");
-            }
-
-            // Initialize variables for total working hours and working hours per day
-            TimeSpan totalWorkingHours = TimeSpan.Zero;
-
-            // Loop through each AttendanceDetail to calculate daily working hours
-            foreach (var detail in attendance.AttendanceDetails)
-            {
-                // Skip if CheckInTime or CheckOutTime is null
-                if (detail.CheckInTime.HasValue && detail.CheckOutTime.HasValue)
-                {
-                    // Calculate daily working hours (CheckOutTime - CheckInTime)
-                    TimeSpan workingHours = detail.CheckOutTime.Value - detail.CheckInTime.Value;
-
-                    // Accumulate the working hours for the entire month
-                    totalWorkingHours = totalWorkingHours.Add(workingHours);
-
-                    // Optionally, log or store the working hours for each day (if needed)
-                    Console.WriteLine($"Date: {detail.AttendanceDate}, Working Hours: {workingHours.TotalHours} hours");
-                }
-            }
-
-            // Update the Attendance record with the total working hours
-            //attendance.WorkingHoursTime = totalWorkingHours;
-            attendance.TotalWorkingHours = attendance.TotalWorkingHoursBeforeDelays-attendance.DelaysHours;
-            // Save the changes
-            await _context.SaveChangesAsync();
-
-            Console.WriteLine($"Total Working Hours for Attendance ID {attendanceId}: {totalWorkingHours.TotalHours} hours");
-        }
 
         private async Task CalculateCumulativeDelays(Attendance attendance)
         {
