@@ -214,9 +214,14 @@ IAttendanceService attendanceService)
                 var checkInTime = detail.CheckInTime.Value;
 
                 // Define the time intervals
+                var defaultCheckInTime = new TimeSpan(8, 0, 0); // 12:00 PM
                 var noon = new TimeSpan(12, 0, 0); // 12:00 PM
                 var afterNoon = new TimeSpan(13, 0, 0); // 1:00 PM
 
+                if(checkInTime < defaultCheckInTime)
+                {
+                    checkInTime = defaultCheckInTime;
+                }
                 // Initialize working hours
                 TimeSpan morningWorkingHours = TimeSpan.Zero;
                 TimeSpan afternoonWorkingHours = TimeSpan.Zero;
