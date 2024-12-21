@@ -263,7 +263,7 @@ IAttendanceService attendanceService)
         {
             var attendance = await _context.AttendanceTbl
                 .Include(a => a.AttendanceDetails)
-                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == dateTimeValue.Year && a.Month == dateTimeValue.Month);
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == dateTimeValue.Year && a.Month == dateTimeValue.Month&&a.WeekId==weekId);
 
             if (attendance == null)
             {
@@ -317,7 +317,6 @@ IAttendanceService attendanceService)
                 UpdateAttendanceDetailCheckOut(existingDetail, time);
 
                 await RecalculateMonthlyWorkingHours((int)attendance.EmployeeCode, attendance.Year.Value, attendance.Month.Value);
-                await CalculateWorkingDays((int)attendance.EmployeeCode, attendance.Year.Value, attendance.Month.Value);
             }
             else
             {
@@ -328,8 +327,10 @@ IAttendanceService attendanceService)
                 // Update cumulative delays in the Attendance record only for new details
              
                     await UpdateAttendanceDelays(attendance, delay);
+
                 
             }
+            await CalculateWorkingDays((int)attendance.EmployeeCode, attendance.Year.Value, attendance.Month.Value);
 
             await _context.SaveChangesAsync();
         }
@@ -433,7 +434,7 @@ IAttendanceService attendanceService)
             // Retrieve the attendance record for the employee in the specified year and month
             var attendance = await _context.AttendanceTbl
                 .Include(a => a.AttendanceDetails)
-                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month);
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month&&a.WeekId==weekId);
 
             if (attendance == null || attendance.AttendanceDetails == null)
             {
@@ -441,11 +442,7 @@ IAttendanceService attendanceService)
             }
 
             // Calculate the total number of unique working days
-            var workingDays = attendance.AttendanceDetails
-                .Where(detail => detail.CheckInTime.HasValue) // Count only days with CheckInTime
-                .Select(detail => detail.AttendanceDate) // Get the dates
-                .Distinct() // Ensure each date is counted only once
-                .Count();
+            var workingDays = attendance.AttendanceDetails.Count();
 
             // Update the Attendance record with the calculated working days
             attendance.WorkingDays = workingDays;

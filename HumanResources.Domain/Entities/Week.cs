@@ -12,6 +12,7 @@ namespace HumanResources.Domain.Entities
         public DateTime? CreatedDateTime { get; set; }
         public DateOnly? CreatedDate { get; set; }
         public string? Date { get; set; }
+        public bool IsDeleted { get; set; }
         public List<Attendance> Attendances { get; set; } = new List<Attendance>();
     }
 }
