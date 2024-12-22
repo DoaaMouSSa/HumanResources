@@ -127,9 +127,6 @@ IAttendanceService attendanceService)
             await AddOrUpdateAttendanceDetailAsync(attendance, employee, dateOnly, timeOnly);
 
         }
-
-
-
         private async Task RecalculateMonthlyWorkingHours(int employeeCode, int year, int month)
         {
             var attendance = await _context.AttendanceTbl
@@ -149,7 +146,6 @@ IAttendanceService attendanceService)
             // Aggregate total working hours and minutes manually, including delays subtraction
             decimal totalHours = 0;
             long totalMinutes = 0;
-            decimal totalDelaysHours = attendance.DelaysHours ?? 0; // Get total delays (if any)
            // long totalDelaysMinutes = (long)(attendance.DelaysTime?.TotalMinutes ?? 0); // Get total delay minutes
 
             foreach (var detail in detailsForMonth)
@@ -173,7 +169,32 @@ IAttendanceService attendanceService)
             {
                 attendance.TotalWorkingHoursBeforeDelays = totalHours;
             }
-            
+
+            attendance.TotalWorkingHours = attendance.TotalWorkingHoursBeforeDelays - attendance.DelaysHours;
+            const int DEFAULTWORKINGHOURS= 48;
+            if (attendance.TotalWorkingHours > DEFAULTWORKINGHOURS)
+            {
+                attendance.CalculatedSalary = (DEFAULTWORKINGHOURS * attendance.hourSalary);
+                attendance.OverTimeHours=attendance.TotalWorkingHours- DEFAULTWORKINGHOURS;
+                attendance.OverTimeSalary = attendance.OverTimeHours * attendance.OverTimeHourSalary;
+                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalary + attendance.OverTimeSalary);
+            }
+            else if(attendance.TotalWorkingHours < DEFAULTWORKINGHOURS || attendance.TotalWorkingHours == DEFAULTWORKINGHOURS)
+            {
+                attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
+                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalary);
+
+            }
+            else
+            {
+                attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
+                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalary);
+
+            }
+
+
+
+
             //decimal? totalWorkingHours= (attendance.TotalWorkingHoursBeforeDelays)-totalDelaysHours;
             //decimal? overTimeHours=0;
             //if(totalWorkingHours.HasValue && (totalWorkingHours.Value ==48 ||totalWorkingHours.Value <48))
@@ -203,7 +224,6 @@ IAttendanceService attendanceService)
             // Save the delay information
             await _context.SaveChangesAsync();
         }
-
 
         private async Task UpdateAttendanceDetailCheckOut(AttendanceDetails detail, TimeSpan checkOutTime)
         {
@@ -297,7 +317,7 @@ IAttendanceService attendanceService)
                 Year = year,
                 Month = month,
                 hourSalary = grossSalary / weeklyWorkHours,
-                OverTimeSalary = (grossSalary / weeklyWorkHours) * (3/2),
+                OverTimeHourSalary = (grossSalary / weeklyWorkHours) * 1.5m,
                 daySalary = grossSalary / workDaysPerWeek,
                 DelaysHours = 0,
                 OverTimeHours=0,
@@ -325,9 +345,8 @@ IAttendanceService attendanceService)
                 AddNewAttendanceDetail(attendance, date, time, delay);
 
                 // Update cumulative delays in the Attendance record only for new details
-             
-                    await UpdateAttendanceDelays(attendance, delay);
 
+                await UpdateAttendanceDelays(attendance, delay);
                 
             }
             await CalculateWorkingDays((int)attendance.EmployeeCode, attendance.Year.Value, attendance.Month.Value);
@@ -352,7 +371,6 @@ IAttendanceService attendanceService)
                 ? actualCheckInTime - expectedCheckInTime
                 : null;
         }
-
 
         private async Task UpdateAttendanceDelays(Attendance attendance, TimeSpan? delay)
         {
@@ -453,7 +471,6 @@ IAttendanceService attendanceService)
             Console.WriteLine($"Working Days for Employee {employeeCode} in {year}-{month}: {workingDays}");
         }
 
-
         private async Task<bool> IsEmployeeExist(int employeeCode)
         {
             employee = await _context.EmployeeTbl.FirstOrDefaultAsync(e => e.Code == employeeCode);
@@ -467,7 +484,6 @@ IAttendanceService attendanceService)
             var startOfWeek = date.AddDays(-diff).Date;
             return startOfWeek;
         }
-
 
         public async Task<IActionResult> Index()
         {
