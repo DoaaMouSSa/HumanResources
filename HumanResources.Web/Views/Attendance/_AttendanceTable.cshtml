@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Attendance>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="display:none;"> # </th>
+                <th> الموظف </th>
+                <th>السنة </th>
+                <th> الشهر </th>
+                <th>المرتب الأساسى</th>
+                <th> ايام الحضور </th>
+                <th> اجمالى الساعات </th>
+                <th> اليومية </th>
+                <th> الساعه </th>
+                <th> التأخيرات </th>
+                <th> صافى المرتب </th>
+                <th> التفاصيل </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td style="display:none;">@obj.Id</td>
+                    <td>@obj.EmployeeCode</td>
+                    <td> @obj.Year</td>
+                    <td> @obj.Month</td>
+                    <td> @obj.Employee.GrossSalary</td>
+                    <td> @obj.WorkingDays</td>
+                    <td> @obj.TotalWorkingHours</td>
+                    <td> @obj.daySalary</td>
+                    <td> @obj.hourSalary</td>
+                    <td> @obj.DelaysTime</td>
+                    <td> @obj.NetSalary</td>
+                    <td>
+                        <a asp-controller="Attendance" asp-action="Details" asp-route-id="@obj.Id">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

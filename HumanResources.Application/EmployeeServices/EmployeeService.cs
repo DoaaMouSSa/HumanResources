@@ -153,6 +153,7 @@ namespace HumanResources.Application.EmployeeServices
             var data = new EmployeeDtoForShow
             {
                 Id=employee.Id,
+                Code=employee.Code,
                 Name = employee.Name,
                 Address = employee.Address,
                 Phone = employee.Phone,

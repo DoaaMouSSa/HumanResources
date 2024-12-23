@@ -487,20 +487,42 @@ IAttendanceService attendanceService)
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Attendance> data = _context.AttendanceTbl.Include("Employee").AsEnumerable();
-            IEnumerable<WeekDto> weeks = await _weekService.GetAll();
-            ViewData["WeekLst"] = new SelectList(weeks, "Id", "Date");
+            ViewBag.WeekLst = new SelectList(await _context.WeekTbl.OrderByDescending(w=>w.Id).ToListAsync(), "Id", "CreatedDateTime");
+            int? lastWeekId = _context.WeekTbl.Max(a => a.Id);
+
+            var data = _context.AttendanceTbl.Where(a => a.WeekId == lastWeekId).Include(a => a.Employee)
+                .Include(a => a.AttendanceDetails).ToList();
             return View(data);
         }
-        public IActionResult Print()
+        [HttpGet]         
+        public async Task<IActionResult> GetAttendanceByWeek(int weekId)
         {
+            var data = await _context.AttendanceTbl
+                .Include(a => a.Employee)
+                .Include(a => a.AttendanceDetails)
+                .Where(a => a.WeekId == weekId)
+                .ToListAsync();
+
+            if (data == null || !data.Any())
+            {
+                // Handle no data scenario
+                return Content("<p>No attendance data available for this week.</p>");
+            }
+
+            return PartialView("_AttendanceTable", data);
+        }
+
+
+        public IActionResult Print(int weekId)
+        {
+            string weekDate = _context.WeekTbl.Where(w => w.Id == weekId).FirstOrDefault().CreatedDate.ToString();
             var attendanceDT = new DataTable();
-            attendanceDT = GetAttendanceForReport();
+            attendanceDT = GetAttendanceForReport(weekId);
             string mimetype = "";
             int extension = 1;
             var path = $"{this._webHostEnvironment.WebRootPath}\\Reports\\attendanceReport.rdlc";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("prm", "تقرير المرتبات");
+            parameters.Add("date", weekDate);
             LocalReport localReport = new LocalReport(path);
             localReport.AddDataSource("attendanceDataSet", attendanceDT);
             var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimetype);
@@ -512,20 +534,38 @@ IAttendanceService attendanceService)
             Attendance data = _context.AttendanceTbl.Where(att => att.Id == id).Include("AttendanceDetails").Include("Employee").FirstOrDefault();
             return View(data);
         }
-        public DataTable GetAttendanceForReport()
+        public DataTable GetAttendanceForReport(int weekId)
         {
             DataTable dt = new DataTable();
             dt.Columns.Add("Id");
             dt.Columns.Add("Name");
             dt.Columns.Add("Salary");
+            dt.Columns.Add("attendanceDays");
+            dt.Columns.Add("daySalary");
+            dt.Columns.Add("hourSalary");
+            dt.Columns.Add("delays");
+            dt.Columns.Add("overtime");
+            dt.Columns.Add("hoursWeek");
+            dt.Columns.Add("discount");
+            dt.Columns.Add("totalHour");
+            dt.Columns.Add("netSalary");
             DataRow row;
-            List<AttendanceDtoForReport> data = _attendanceService.GetForReport();
+            List<AttendanceDtoForReport> data = _attendanceService.GetForReport(weekId);
             for(int i = 0; i < data.Count(); i++)
             {
                 row = dt.NewRow();
                 row["Id"] = data[i].Id;
                 row["Name"] = data[i].Name;
                 row["Salary"] = data[i].Salary;
+                row["attendanceDays"] = data[i].attendanceDays;
+                row["daySalary"] = data[i].daySalary;
+                row["hourSalary"] = data[i].hourSalary;
+                row["delays"] = data[i].delays;
+                row["overtime"] = data[i].overtime;
+                row["hoursWeek"] = data[i].hoursWeek;
+                row["discount"] = data[i].discount;
+                row["totalHour"] = data[i].totalHour;
+                row["netSalary"] = data[i].netSalary;
                 dt.Rows.Add(row);
             }
             return dt;

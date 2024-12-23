@@ -11,6 +11,6 @@ namespace HumanResources.Application.AttendanceServices
 {
     public interface IAttendanceService
     {
-        List<AttendanceDtoForReport> GetForReport();
+        List<AttendanceDtoForReport> GetForReport(int weekId);
     }
 }

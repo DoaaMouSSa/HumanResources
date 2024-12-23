@@ -28,14 +28,24 @@ namespace HumanResources.Application.AttendanceServices
             _context = context;
         }
 
-        public List<AttendanceDtoForReport> GetForReport()
+        public List<AttendanceDtoForReport> GetForReport(int weekId)
         {
-            List<AttendanceDtoForReport> attendanceDtoForReports = (from q in _context.AttendanceTbl.Include("Employee")
+            List<AttendanceDtoForReport> attendanceDtoForReports = (from q in _context.AttendanceTbl.Where(q=>q.WeekId==weekId).Include("Employee").Include("Week")
                        select new AttendanceDtoForReport
                        {
+                           weekDate=q.Week.CreatedDate.ToString(),
                            Id = (int)q.Id,
                            Name = q.Employee.Name,
                            Salary = q.Employee.GrossSalary,
+                           attendanceDays=q.WorkingDays,
+                           daySalary=q.daySalary,
+                           hourSalary=q.hourSalary,
+                           delays=q.DelaysHours,
+                           discount=0,
+                           hoursWeek=48,
+                           overtime=q.OverTimeHours,
+                           totalHour=q.TotalWorkingHours,
+                           netSalary=q.NetSalary,
                        }).ToList();
             return attendanceDtoForReports;
         }

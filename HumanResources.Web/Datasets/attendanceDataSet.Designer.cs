@@ -287,6 +287,24 @@ namespace HumanResources.Web.Datasets {
             
             private global::System.Data.DataColumn columnSalary;
             
+            private global::System.Data.DataColumn columnattendanceDays;
+            
+            private global::System.Data.DataColumn columndaySalary;
+            
+            private global::System.Data.DataColumn columnhourSalary;
+            
+            private global::System.Data.DataColumn columndelays;
+            
+            private global::System.Data.DataColumn columnovertime;
+            
+            private global::System.Data.DataColumn columnhoursWeek;
+            
+            private global::System.Data.DataColumn columndiscount;
+            
+            private global::System.Data.DataColumn columntotalHour;
+            
+            private global::System.Data.DataColumn columnnetSalary;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public attendanceDataSetDataTable() {
@@ -348,6 +366,78 @@ namespace HumanResources.Web.Datasets {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn attendanceDaysColumn {
+                get {
+                    return this.columnattendanceDays;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn daySalaryColumn {
+                get {
+                    return this.columndaySalary;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn hourSalaryColumn {
+                get {
+                    return this.columnhourSalary;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn delaysColumn {
+                get {
+                    return this.columndelays;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn overtimeColumn {
+                get {
+                    return this.columnovertime;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn hoursWeekColumn {
+                get {
+                    return this.columnhoursWeek;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn discountColumn {
+                get {
+                    return this.columndiscount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn totalHourColumn {
+                get {
+                    return this.columntotalHour;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn netSalaryColumn {
+                get {
+                    return this.columnnetSalary;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -383,12 +473,21 @@ namespace HumanResources.Web.Datasets {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public attendanceDataSetRow AddattendanceDataSetRow(string Id, string Name, string Salary) {
+            public attendanceDataSetRow AddattendanceDataSetRow(string Id, string Name, string Salary, string attendanceDays, string daySalary, string hourSalary, string delays, string overtime, string hoursWeek, string discount, string totalHour, string netSalary) {
                 attendanceDataSetRow rowattendanceDataSetRow = ((attendanceDataSetRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Id,
                         Name,
-                        Salary};
+                        Salary,
+                        attendanceDays,
+                        daySalary,
+                        hourSalary,
+                        delays,
+                        overtime,
+                        hoursWeek,
+                        discount,
+                        totalHour,
+                        netSalary};
                 rowattendanceDataSetRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowattendanceDataSetRow);
                 return rowattendanceDataSetRow;
@@ -414,6 +513,15 @@ namespace HumanResources.Web.Datasets {
                 this.columnId = base.Columns["Id"];
                 this.columnName = base.Columns["Name"];
                 this.columnSalary = base.Columns["Salary"];
+                this.columnattendanceDays = base.Columns["attendanceDays"];
+                this.columndaySalary = base.Columns["daySalary"];
+                this.columnhourSalary = base.Columns["hourSalary"];
+                this.columndelays = base.Columns["delays"];
+                this.columnovertime = base.Columns["overtime"];
+                this.columnhoursWeek = base.Columns["hoursWeek"];
+                this.columndiscount = base.Columns["discount"];
+                this.columntotalHour = base.Columns["totalHour"];
+                this.columnnetSalary = base.Columns["netSalary"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -425,6 +533,24 @@ namespace HumanResources.Web.Datasets {
                 base.Columns.Add(this.columnName);
                 this.columnSalary = new global::System.Data.DataColumn("Salary", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSalary);
+                this.columnattendanceDays = new global::System.Data.DataColumn("attendanceDays", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnattendanceDays);
+                this.columndaySalary = new global::System.Data.DataColumn("daySalary", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndaySalary);
+                this.columnhourSalary = new global::System.Data.DataColumn("hourSalary", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnhourSalary);
+                this.columndelays = new global::System.Data.DataColumn("delays", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndelays);
+                this.columnovertime = new global::System.Data.DataColumn("overtime", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnovertime);
+                this.columnhoursWeek = new global::System.Data.DataColumn("hoursWeek", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnhoursWeek);
+                this.columndiscount = new global::System.Data.DataColumn("discount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndiscount);
+                this.columntotalHour = new global::System.Data.DataColumn("totalHour", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntotalHour);
+                this.columnnetSalary = new global::System.Data.DataColumn("netSalary", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnetSalary);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_attendanceDataSet");
                 this.ExtendedProperties.Add("Generator_UserTableName", "attendanceDataSet");
             }
@@ -617,6 +743,150 @@ namespace HumanResources.Web.Datasets {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string attendanceDays {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.attendanceDaysColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'attendanceDays\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.attendanceDaysColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string daySalary {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.daySalaryColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'daySalary\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.daySalaryColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string hourSalary {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.hourSalaryColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'hourSalary\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.hourSalaryColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string delays {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.delaysColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'delays\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.delaysColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string overtime {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.overtimeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'overtime\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.overtimeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string hoursWeek {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.hoursWeekColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'hoursWeek\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.hoursWeekColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string discount {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.discountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'discount\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.discountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string totalHour {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.totalHourColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'totalHour\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.totalHourColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string netSalary {
+                get {
+                    try {
+                        return ((string)(this[this.tableattendanceDataSet.netSalaryColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'netSalary\' in table \'attendanceDataSet\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableattendanceDataSet.netSalaryColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsIdNull() {
                 return this.IsNull(this.tableattendanceDataSet.IdColumn);
             }
@@ -649,6 +919,114 @@ namespace HumanResources.Web.Datasets {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetSalaryNull() {
                 this[this.tableattendanceDataSet.SalaryColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsattendanceDaysNull() {
+                return this.IsNull(this.tableattendanceDataSet.attendanceDaysColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetattendanceDaysNull() {
+                this[this.tableattendanceDataSet.attendanceDaysColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsdaySalaryNull() {
+                return this.IsNull(this.tableattendanceDataSet.daySalaryColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetdaySalaryNull() {
+                this[this.tableattendanceDataSet.daySalaryColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IshourSalaryNull() {
+                return this.IsNull(this.tableattendanceDataSet.hourSalaryColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SethourSalaryNull() {
+                this[this.tableattendanceDataSet.hourSalaryColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsdelaysNull() {
+                return this.IsNull(this.tableattendanceDataSet.delaysColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetdelaysNull() {
+                this[this.tableattendanceDataSet.delaysColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsovertimeNull() {
+                return this.IsNull(this.tableattendanceDataSet.overtimeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetovertimeNull() {
+                this[this.tableattendanceDataSet.overtimeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IshoursWeekNull() {
+                return this.IsNull(this.tableattendanceDataSet.hoursWeekColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SethoursWeekNull() {
+                this[this.tableattendanceDataSet.hoursWeekColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsdiscountNull() {
+                return this.IsNull(this.tableattendanceDataSet.discountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetdiscountNull() {
+                this[this.tableattendanceDataSet.discountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IstotalHourNull() {
+                return this.IsNull(this.tableattendanceDataSet.totalHourColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SettotalHourNull() {
+                this[this.tableattendanceDataSet.totalHourColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsnetSalaryNull() {
+                return this.IsNull(this.tableattendanceDataSet.netSalaryColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetnetSalaryNull() {
+                this[this.tableattendanceDataSet.netSalaryColumn] = global::System.Convert.DBNull;
             }
         }
         

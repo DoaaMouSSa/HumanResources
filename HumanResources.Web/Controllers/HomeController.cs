@@ -17,16 +17,11 @@ namespace HumanResources.Web.Controllers
 
         public IActionResult Index()
         {
-            bool globalValue = GlobalVariables.IsAuthenticated;
-            if (globalValue)
-            {
-                ViewBag.IsAuthenticated = globalValue;
+         
 
                 return View();
 
-            }
-            else { return RedirectToAction("Login", "Auth"); }
-        }
+             }
 
         public IActionResult Privacy()
         {
