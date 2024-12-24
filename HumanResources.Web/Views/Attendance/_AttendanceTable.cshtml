@@ -5,12 +5,12 @@
         <thead>
             <tr>
                 <th style="display:none;"> # </th>
-                <th> الموظف </th>
-                <th>السنة </th>
-                <th> الشهر </th>
-                <th>المرتب الأساسى</th>
-                <th> ايام الحضور </th>
-                <th> اجمالى الساعات </th>
+                <th>الموظف</th>
+                <th>السنة</th>
+                <th>الشهر</th>
+                <th>الأساسى</th>
+                <th> الحضور</th>
+                <th> الساعات</th>
                 <th> اليومية </th>
                 <th> الساعه </th>
                 <th> التأخيرات </th>
@@ -23,7 +23,7 @@
             {
                 <tr>
                     <td style="display:none;">@obj.Id</td>
-                    <td>@obj.EmployeeCode</td>
+                    <td>@obj.EmployeeCode-@obj.Employee.Name</td>
                     <td> @obj.Year</td>
                     <td> @obj.Month</td>
                     <td> @obj.Employee.GrossSalary</td>

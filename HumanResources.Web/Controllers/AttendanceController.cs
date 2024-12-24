@@ -131,7 +131,7 @@ IAttendanceService attendanceService)
         {
             var attendance = await _context.AttendanceTbl
                 .Include(a => a.AttendanceDetails)
-                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month);
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month && a.WeekId==weekId);
 
             if (attendance == null || attendance.AttendanceDetails == null)
                 return;
@@ -155,6 +155,12 @@ IAttendanceService attendanceService)
                     totalHours += detail.WorkingHoursAday.Value.Hours;
                     totalMinutes += detail.WorkingHoursAday.Value.Minutes;
                 }
+            }
+            //to get pure minutes
+            if(totalMinutes > 59)
+            {
+                totalHours += (totalMinutes / 60);
+                totalMinutes = (totalMinutes % 60);
             }
             if(totalMinutes >= 20 && totalMinutes <= 49)
             {
@@ -191,8 +197,23 @@ IAttendanceService attendanceService)
                 attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalary);
 
             }
+            // Modify the first digit of NetSalary
+            // Adjust the last digit of NetSalary based on specific conditions
+            int? baseValue = attendance.NetSalary / 10 * 10; // Get the first two digits as the base (e.g., 20X -> 200)
+            int? lastDigit = attendance.NetSalary % 10;     // Get the last digit (unit place)
 
-
+            if (lastDigit >= 3 && lastDigit <= 7)
+            {
+                attendance.NetSalary = baseValue + 5; // Set the last digit to 5
+            }
+            else if (lastDigit == 1 || lastDigit == 2)
+            {
+                attendance.NetSalary = baseValue + 0; // Set the last digit to 0
+            }
+            else if (lastDigit == 8 || lastDigit == 9)
+            {
+                attendance.NetSalary = baseValue + 10; // Set the last digit to 0
+            }
 
 
             //decimal? totalWorkingHours= (attendance.TotalWorkingHoursBeforeDelays)-totalDelaysHours;

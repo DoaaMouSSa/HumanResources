@@ -19,7 +19,7 @@ namespace HumanResources.Application.Dtos
             public decimal? hourSalary { get; set; }
             public decimal? delays { get; set; }
             public decimal? overtime { get; set; }
-            public int hoursWeek { get; set; }
+            public decimal? hoursWeek { get; set; }
             public decimal? discount { get; set; }
             public decimal? totalHour { get; set; }
             public int? netSalary { get; set; }

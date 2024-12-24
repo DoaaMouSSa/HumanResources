@@ -42,7 +42,7 @@ namespace HumanResources.Application.AttendanceServices
                            hourSalary=q.hourSalary,
                            delays=q.DelaysHours,
                            discount=0,
-                           hoursWeek=48,
+                           hoursWeek=q.TotalWorkingHours,
                            overtime=q.OverTimeHours,
                            totalHour=q.TotalWorkingHours,
                            netSalary=q.NetSalary,
