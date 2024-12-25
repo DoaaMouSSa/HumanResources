@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HumanResources.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.StaticFiles;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -69,7 +70,16 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+// Serve .rdlc files from wwwroot
+app.UseStaticFiles(new StaticFileOptions
+{
+    ServeUnknownFileTypes = true,
+    DefaultContentType = "application/xml",
+    ContentTypeProvider = new FileExtensionContentTypeProvider
+    {
+        Mappings = { [".rdlc"] = "application/xml" }
+    }
+});
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

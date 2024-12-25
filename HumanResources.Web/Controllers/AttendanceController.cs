@@ -554,7 +554,7 @@ IAttendanceService attendanceService)
             attendanceDT = GetAttendanceForReport(weekId);
             string mimetype = "";
             int extension = 1;
-            var path = $"{this._webHostEnvironment.WebRootPath}\\Reports\\attendanceReport.rdlc";
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, "Reports", "attendanceReport.rdlc");
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("date", weekDate);
             LocalReport localReport = new LocalReport(path);
