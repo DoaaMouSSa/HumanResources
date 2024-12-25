@@ -1,4 +1,4 @@
-﻿
+﻿@model States
     <div class="row">
         <div class="col-sm-12">
             <div class="home-tab">
@@ -19,30 +19,30 @@
                                 <div class="statistics-details d-flex align-items-center justify-content-between">
                                     <div>
                                         <p class="statistics-title">الأقسام</p>
-                                        <h3 class="rate-percentage">7</h3>
-                                        <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>-0.5%</span></p>
+                                        <h3 class="rate-percentage">@Model.Department.Count</h3>
+                                    <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>@Model.Department.Percentage %</span></p>
                                     </div>
                                     <div>
                                         <p class="statistics-title">الموظفين</p>
-                                        <h3 class="rate-percentage">51</h3>
-                                        <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>+0.1%</span></p>
+                                    <h3 class="rate-percentage">@Model.Employee.Count</h3>
+                                    <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>@Model.Employee.Percentage %</span></p>
                                     </div>
                                     <div>
                                         <p class="statistics-title">الأسابيع</p>
-                                        <h3 class="rate-percentage">4</h3>
-                                        <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>
-                                    </div>
-                                    <div class="d-none d-md-block">
-                                        <p class="statistics-title">التقارير</p>
-                                        <h3 class="rate-percentage">4</h3>
-                                        <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>+0.8%</span></p>
-                                    </div>
-                                    <div class="d-none d-md-block">
-                                        <p class="statistics-title">المستخدمين</p>
-                                        <h3 class="rate-percentage">2</h3>
-                                        <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>
+                                    <h3 class="rate-percentage">@Model.Week.Count</h3>
+                                    <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>@Model.Week.Percentage %</span></p>
                                     </div>
                                    
+                                    <div class="d-none d-md-block">
+                                        <p class="statistics-title">المستخدمين</p>
+                                    <h3 class="rate-percentage">3</h3>
+                                    <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>1.2 %</span></p>
+                                    </div>
+                                <div class="d-none d-md-block">
+                                    <p class="statistics-title">المكافأت</p>
+                                    <h3 class="rate-percentage">@Model.Bouns.Count</h3>
+                                    <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>@Model.Bouns.Count %</span></p>
+                                </div>
                                 </div>
                             </div>
                         </div>

@@ -6,9 +6,17 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">الحضور والانصراف </h4>
+            @if (TempData["ErrorMessage"] != null)
+{
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            }
+
             <form id="uploadForm" asp-action="Create" asp-controller="Attendance" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" />
-                <button class="btn btn-primary" type="submit">Import</button>
+                <input type="file" name="file" value="اختر ملف"/>
+                <button class="btn btn-primary" type="submit">تصدير</button>
             </form>
             <div id="loading-spinner" style="display:none;">
                 <button class="btn btn-info" type="button" disabled>
@@ -26,5 +34,7 @@
             // Show the loading spinner
             document.getElementById("loading-spinner").style.display = "block";
         });
+          
     </script>
+
 }

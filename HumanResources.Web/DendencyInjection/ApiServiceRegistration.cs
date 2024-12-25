@@ -5,6 +5,7 @@ using HumanResources.Application.DepartmentServices;
 using HumanResources.Application.EmployeeServices;
 using HumanResources.Application.FileServices;
 using HumanResources.Application.LoanServices;
+using HumanResources.Application.StatesServices;
 using HumanResources.Application.WeekServices;
 
 namespace HumanResources.Web.DendencyInjection
@@ -23,6 +24,7 @@ namespace HumanResources.Web.DendencyInjection
             services.AddScoped<IAttendanceService, AttendanceService>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<IBonusService, BonusService>();
+            services.AddScoped<IStatesService, StatesService>();
 
             // Other API-specific dependencies can be added here
         }

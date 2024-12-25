@@ -175,5 +175,20 @@ namespace HumanResources.Application.EmployeeServices
         {
             return _context.EmployeeTbl.FirstAsync(e=>e.Id==id);
         }
+
+        public async Task<IEnumerable<EmployeeDtoForSelect>> GetAllForSelect()
+        {
+            var data = await _context.EmployeeTbl
+        .Where(e => !e.IsDeleted) // Filter out deleted records
+        .OrderBy(e => e.Name)     // Order by Name in ascending order
+        .Select(q => new EmployeeDtoForSelect
+        {
+            Code = q.Code,
+            Name = q.Name,
+        })
+        .ToListAsync();            // Asynchronously fetch the results as a list
+
+            return data;
+        }
     }
 }

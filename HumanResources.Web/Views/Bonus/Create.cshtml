@@ -1,5 +1,37 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿ @model BonusDtoForAdd
+
+<div class="col-md-6 grid-margin stretch-card" dir="rtl">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">المكافأت</h4>
+            <p class="card-description"> اضافة مكافأة لموظف معين </p>
+            <form method="post" class="forms-sample material-form">
+                <div class="form-group">
+                    <input type="number" min="0" max="10000" asp-for="amount" />
+                    <label asp-for="amount" class="control-label">قيمة المكافأة </label>
+                    <i class="bar"></i>
+                    <span asp-validation-for="amount" class="text-danger"></span>
+
+                </div>
+                <div class="form-group">
+                    <label asp-for="EmployeeCode" class="label-control">الموظفين</label>
+                    <select asp-for="EmployeeCode" class="form-control" asp-items="ViewBag.EmployeeLst">
+                    </select>
+                    <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" class="button btn btn-success"><span>حفظ</span></button>
+                    <a asp-controller="Bonus" asp-action="Index" class="button btn btn-light">الرجوع</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
 }

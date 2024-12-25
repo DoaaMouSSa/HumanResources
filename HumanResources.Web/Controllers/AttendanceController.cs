@@ -57,22 +57,34 @@ IAttendanceService attendanceService)
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile file)
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 if (file == null || file.Length <= 0)
                     return BadRequest("File is not provided or empty.");
 
+                // Save the uploaded file and process it
                 string filePath = SaveUploadedFile(file);
                 await ProcessExcelFile(filePath);
+
+                await transaction.CommitAsync();
+                TempData["SuccessMessage"] = "File processed successfully!";
 
                 return RedirectToAction("Index", "Attendance");
             }
             catch (Exception ex)
             {
-                //message of worng excel sheet
-                throw new Exception($"Error processing file: {ex.Message}");
+                // Rollback the transaction if there's an error
+                await transaction.RollbackAsync();
+
+                // Optionally, log the exception here for debugging purposes
+
+                // Return a friendly error message or redirect with TempData
+                TempData["ErrorMessage"] = "يرجى مراجعة ملف البصمة جيدا ثم حاول ثانية";
+                return View();
             }
         }
+
         private string SaveUploadedFile(IFormFile file)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -91,6 +103,7 @@ IAttendanceService attendanceService)
         }
         private async Task ProcessExcelFile(string filePath)
         {
+
             DateTime dateTime = DateTime.Now;
             Week week = new Week()
             {

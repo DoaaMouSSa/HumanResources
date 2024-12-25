@@ -145,5 +145,10 @@ namespace HumanResources.Application.Dtos
 
             public string DepartmentName { get; set; } // Foreign Key
         }
+        public class EmployeeDtoForSelect
+        {
+            public int Code { get; set; }
+            public string Name { get; set; }
+        }
     }
 }
