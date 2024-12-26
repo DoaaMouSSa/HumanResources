@@ -547,20 +547,52 @@ IAttendanceService attendanceService)
         }
 
 
+        //public IActionResult Print(int weekId)
+        //{
+        //    string weekDate = _context.WeekTbl.Where(w => w.Id == weekId).FirstOrDefault().CreatedDate.ToString();
+        //    var attendanceDT = new DataTable();
+        //    attendanceDT = GetAttendanceForReport(weekId);
+        //    string mimetype = "";
+        //    int extension = 1;
+        //    var path = Path.Combine(_webHostEnvironment.WebRootPath, "Reports", "attendanceReport.rdlc");
+        //    Dictionary<string, string> parameters = new Dictionary<string, string>();
+        //    parameters.Add("date", weekDate);
+        //    LocalReport localReport = new LocalReport(path);
+        //    localReport.AddDataSource("attendanceDataSet", attendanceDT);
+        //    var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimetype);
+        //    return File(result.MainStream, "application/pdf");
+        //}
         public IActionResult Print(int weekId)
         {
-            string weekDate = _context.WeekTbl.Where(w => w.Id == weekId).FirstOrDefault().CreatedDate.ToString();
-            var attendanceDT = new DataTable();
-            attendanceDT = GetAttendanceForReport(weekId);
-            string mimetype = "";
-            int extension = 1;
+            // Retrieve the week's created date as a string
+            string weekDate = _context.WeekTbl
+                .Where(w => w.Id == weekId)
+                .Select(w => w.CreatedDate.ToString())
+                .FirstOrDefault();
+
+            // Get the attendance data for the report
+            var attendanceDT = GetAttendanceForReport(weekId);
+
+            // Define the RDLC report path
             var path = Path.Combine(_webHostEnvironment.WebRootPath, "Reports", "attendanceReport.rdlc");
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("date", weekDate);
+
+            // Prepare report parameters
+            Dictionary<string, string> parameters = new Dictionary<string, string>
+    {
+        { "date", weekDate }
+    };
+
+            // Load and configure the local report
             LocalReport localReport = new LocalReport(path);
             localReport.AddDataSource("attendanceDataSet", attendanceDT);
+
+            // Generate the report as a PDF
+            string mimetype = "application/pdf";
+            int extension = 1;
             var result = localReport.Execute(RenderType.Pdf, extension, parameters, mimetype);
-            return File(result.MainStream, "application/pdf");
+
+            // Return the PDF file as a downloadable response
+            return File(result.MainStream, mimetype, "AttendanceReport.pdf");
         }
 
         public IActionResult Details(int id)

@@ -34,6 +34,8 @@ namespace HumanResources.Infrastructure.DbContext
                 .HasPrincipalKey(e => e.Code) // Reference the unique key
                 .OnDelete(DeleteBehavior.Restrict); // Prevent cascading deletes
 
+
+
         }
         public DbSet<Department> DepartmentTbl { get; set; }
         public DbSet<Employee> EmployeeTbl { get; set; }
@@ -41,6 +43,6 @@ namespace HumanResources.Infrastructure.DbContext
         public DbSet<Attendance> AttendanceTbl { get; set; }
         public DbSet<AttendanceDetails> AttendanceDetailsTbl { get; set; }
         public DbSet<Loan> LoanTbl { get; set; }
-        public DbSet<Bonus> BonusTbl { get; set; }
+       public DbSet<Bonus> BonusTbl { get; set; }
     }
 }

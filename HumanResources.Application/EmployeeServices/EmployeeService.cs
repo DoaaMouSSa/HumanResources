@@ -183,7 +183,7 @@ namespace HumanResources.Application.EmployeeServices
         .OrderBy(e => e.Name)     // Order by Name in ascending order
         .Select(q => new EmployeeDtoForSelect
         {
-            Code = q.Code,
+            Id = q.Id,
             Name = q.Name,
         })
         .ToListAsync();            // Asynchronously fetch the results as a list

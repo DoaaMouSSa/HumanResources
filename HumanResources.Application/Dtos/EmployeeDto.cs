@@ -147,7 +147,7 @@ namespace HumanResources.Application.Dtos
         }
         public class EmployeeDtoForSelect
         {
-            public int Code { get; set; }
+            public int Id { get; set; }
             public string Name { get; set; }
         }
     }

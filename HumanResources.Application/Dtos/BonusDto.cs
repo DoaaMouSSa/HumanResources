@@ -12,12 +12,14 @@ namespace HumanResources.Application.Dtos
         {
             public decimal amount { get; set; }
             public bool IsDone { get; set; }
-            public int EmployeeCode { get; set; } 
+            public int EmployeeId { get; set; } 
         }
         public class BonusDtoForShow
         {
+            public int Id { get; set; }
+
             public decimal amount { get; set; }
-            public string IsDone { get; set; }
+            public bool IsDone { get; set; }
             public string EmployeeName { get; set; }
         }
     }

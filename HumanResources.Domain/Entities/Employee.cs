@@ -35,9 +35,9 @@ namespace HumanResources.Domain.Entities
         public TimeSpan CheckOutTime { get; set; }
         public int DepartmentId { get; set; } // Foreign Key
         public Department? Department { get; set; } // Navigation Property
-        public ICollection<Attendance> Attendances { get; set; }
-        public ICollection<Loan> Loans { get; set; }
-        public ICollection<Bonus> Bonuses { get; set; }
+        public List<Attendance> Attendances { get; set; }
+        public List<Loan> Loans { get; set; }
+        public List<Bonus> Bonuses { get; set; }
 
     }
 }
