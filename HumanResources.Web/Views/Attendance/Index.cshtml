@@ -2,20 +2,6 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title text-center">تقرير الحضور </h4>
-            <div class="row">
-                <div class="col-md-4">
-                    <label>اختر اسبوع </label>
-                    <select id="weekSelect" class="form-control" asp-items="ViewBag.WeekLst">
-                    </select>
-                </div>
-                <div class="col-md-6"></div>
-                <div class="col-md-2">
-                    <a id="printLink" class="btn btn-primary" target="_blank" onclick="updatePrintLink(event)">
-                        طباعة
-                        <i class="icon-printer"></i>
-                    </a>
-                </div>
-            </div>
             <br />
             <div id="attendanceTable">
                 <partial name="_AttendanceTable"/>
@@ -65,4 +51,5 @@
             printLink.href = `/Attendance/Print?weekId=${weekId}`;
         }
     }
+  
 </script>

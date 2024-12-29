@@ -1,21 +1,21 @@
 ﻿@model IEnumerable<Attendance>
 
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" > </script >
 <div class="table-responsive">
-    <table class="table table-striped">
+    <table class="table table-striped" id="example">
         <thead>
-            <tr>
+            <tr dir="rtl" style="text-align:right;">
                 <th style="display:none;"> # </th>
-                <th>الموظف</th>
-                <th>السنة</th>
-                <th>الشهر</th>
-                <th>الأساسى</th>
+                <th style="text-align:right;">الموظف</th>
+                <th style="text-align:right;">الأساسى</th>
                 <th> الحضور</th>
                 <th> الساعات</th>
                 <th> اليومية </th>
                 <th> الساعه </th>
                 <th> التأخيرات </th>
                 <th> صافى المرتب </th>
-                <th> التفاصيل </th>
+                <th class="exclude-from-export"> التفاصيل </th>
             </tr>
         </thead>
         <tbody>
@@ -23,9 +23,7 @@
             {
                 <tr>
                     <td style="display:none;">@obj.Id</td>
-                    <td>@obj.EmployeeCode-@obj.Employee.Name</td>
-                    <td> @obj.Year</td>
-                    <td> @obj.Month</td>
+                    <td>@obj.Employee.Name</td>
                     <td> @obj.Employee.GrossSalary</td>
                     <td> @obj.WorkingDays</td>
                     <td> @obj.TotalWorkingHours</td>
@@ -44,3 +42,67 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "oLanguage": {
+                "sSearch": "بحث"
+            },
+            dom: 'Bfrtip',
+            buttons: [
+
+                {
+                    extend: 'excel',
+                    text: 'تصدير الى الاكسل <i class="fa fa-book"></i> ',
+                    className: 'btn btn-success', // Add Bootstrap button classes
+                    exportOptions: {
+                        columns: ':visible:not(.exclude-from-export)' // Exclude columns with the class `exclude-from-export`
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml']; // Access the Excel sheet
+                        $(sheet).find('sheetViews sheetView').attr('rightToLeft', '1');
+                        // Add RTL direction to the worksheet
+                        $('row', sheet).attr('s', '52'); // Apply custom styles for RTL (style ID 52 is hypothetical)
+                        $('row c[r]', sheet).attr('s', '52'); // Adjust cells
+                    }
+                
+                },
+                {
+                    extend: 'print',
+                    text: 'طباعة <i class="icon-printer"></i> ',
+                    className: 'btn btn-primary', // Add Bootstrap button classes
+                    exportOptions: {
+                        columns: ':visible:not(.exclude-from-export)' // Exclude columns with the class `exclude-from-export`
+                    },
+                    customize: function (win) {
+                        $(win.document.body).css('direction', 'rtl')
+                            .css('text-align', 'right'); // Align text to the right for RTL languages
+                        // Insert a heading at the top of the print view
+                        const currentDateTime = new Date();
+                        const formattedDateTime = currentDateTime.toLocaleString('ar-EG', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false // 24-hour format
+                        });
+
+                        // Add a custom heading with the current time
+                        $(win.document.body).prepend(
+                            '<h2 style="text-align: center;color:blue;">تقرير المرتبات الأسبوعية</h2>' +
+                            '<h3 style="text-align: center;color:DarkRed">' + formattedDateTime + '</h3>'
+                        ); $(win.document.body).find('h1').remove(); // Remove any existing headers
+
+                        $(win.document.body).find('table')
+                            .addClass('table table-striped')
+                            .css('direction', 'rtl')
+                            .css('text-align', 'right'); // Adjust table alignment
+                    }
+                }
+            ]
+        });
+    });
+
+</script>
