@@ -1,25 +1,26 @@
-﻿ @model LoanDtoForAdd
+﻿ @model DeductionDtoForAdd
 
 <div class="col-md-6 grid-margin stretch-card" dir="rtl">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">السلف</h4>
-            <p class="card-description"> تأييد سلفة لموظف معين </p>
+            <h4 class="card-title">الخصم</h4>
+            <p class="card-description"> تأييد خصم لموظف معين </p>
             <form method="post" class="forms-sample material-form">
                 <div class="form-group">
                     <input type="number" min="1" max="10000" asp-for="amount" />
-                    <label asp-for="amount" class="control-label">قيمة السلفة </label>
+                    <label asp-for="amount" class="control-label">قيمة/عدد الخصم </label>
                     <i class="bar"></i>
                     <span asp-validation-for="amount" class="text-danger"></span>
 
                 </div>
                 <div class="form-group">
-                    <input type="numberofpayment" value="1" min="1" max="10" asp-for="numberofpayment" />
-                    <label asp-for="numberofpayment" class="control-label">الدفعات</label>
-                    <i class="bar"></i>
-                    <span asp-validation-for="numberofpayment" class="text-danger"></span>
+                    <label asp-for="DeductionType" class="label-control">الموظفين</label>
+                    <select asp-for="DeductionType" class="form-control" asp-items="Html.GetEnumSelectList<DeductionType>()">
+                    </select>
+                    <span asp-validation-for="DeductionType" class="text-danger"></span>
 
                 </div>
+
                 <div class="form-group">
                     <label asp-for="EmployeeId" class="label-control">الموظفين</label>
                     <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeLst">

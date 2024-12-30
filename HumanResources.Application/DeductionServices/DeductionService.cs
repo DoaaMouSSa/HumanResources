@@ -9,50 +9,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static HumanResources.Application.Dtos.BonusDto;
+using static HumanResources.Application.Dtos.DeductionDto;
 using static HumanResources.Application.Dtos.LoanDto;
 
 namespace HumanResources.Application.LoanServices
 {
-    public class LoanService : ILoanService
+    public class DeductionService : IDeductionService
     {
         
-            private readonly IGenericRepository<Loan> _loanRepository;
+            private readonly IGenericRepository<Deduction> _deductionRepository;
             private readonly IUnitOfWork _unitOfWork;
             private readonly ApplicationDbContext _context;
 
-            public LoanService(IGenericRepository<Loan> loanRepository
+            public DeductionService(IGenericRepository<Deduction> deductionRepository
                 , IUnitOfWork unitOfWork,
                 ApplicationDbContext context)
             {
-            _loanRepository = loanRepository;
+            _deductionRepository = deductionRepository;
                 _unitOfWork = unitOfWork;
                 _context = context;
             }
-            public async Task Create(LoanDtoForAdd dto)
+            public async Task Create(DeductionDtoForAdd dto)
         {
-            Loan newLoan = new Loan
+            Deduction newDeduction = new Deduction
             {
                 amount = dto.amount,
                 Done = false,
                 EmployeeId = dto.EmployeeId,
-                numberofpayment=dto.numberofpayment,
-                payment=dto.amount/dto.numberofpayment,
+                DeductionType=dto.DeductionType,
                 CreatedAt = DateOnly.FromDateTime(DateTime.Now)
             };
-            _loanRepository.Add(newLoan);
+            _deductionRepository.Add(newDeduction);
             _unitOfWork.SaveChanges();
         }
 
-        public async Task<IEnumerable<LoanDtoForShow>> GetAll()
+        public async Task<IEnumerable<DeductionDtoForShow>> GetAll()
         {
-            var data = _context.LoanTbl.Where(b => b.IsDeleted == false).Include("Employee")
-                           .Select(q => new LoanDtoForShow
+            var data = _context.DeductionTbl.Where(b => b.IsDeleted == false).Include("Employee")
+                           .Select(q => new DeductionDtoForShow
                            {
                                Id = q.Id,
                                amount = q.amount,
                                EmployeeName = q.Employee.Name,
-                               numberofpayment=q.numberofpayment,
-                               payment=q.payment,
+                               DeductionType=q.DeductionType,
                                IsDone = q.Done
                            }).AsEnumerable();
             return data;

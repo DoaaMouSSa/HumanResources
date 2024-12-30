@@ -31,6 +31,11 @@ namespace HumanResources.Domain.Enums
             أعزب,
             متزوج,
         }
+        public enum DeductionType
+        {
+            نقدى,
+            ساعات,
+        }
         public enum Governorate
         {
             القاهرة,

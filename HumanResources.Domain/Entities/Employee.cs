@@ -38,6 +38,7 @@ namespace HumanResources.Domain.Entities
         public List<Attendance> Attendances { get; set; }
         public List<Loan> Loans { get; set; }
         public List<Bonus> Bonuses { get; set; }
+        public List<Deduction> Deductions { get; set; }
 
     }
 }

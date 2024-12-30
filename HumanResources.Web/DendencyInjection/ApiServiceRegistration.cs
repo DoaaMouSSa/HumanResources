@@ -24,6 +24,7 @@ namespace HumanResources.Web.DendencyInjection
             services.AddScoped<IAttendanceService, AttendanceService>();
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<IBonusService, BonusService>();
+            services.AddScoped<IDeductionService, DeductionService>();
             services.AddScoped<IStatesService, StatesService>();
 
             // Other API-specific dependencies can be added here

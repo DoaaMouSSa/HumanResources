@@ -5,21 +5,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using static HumanResources.Application.Dtos.LoanDto;
 using static HumanResources.Application.Dtos.EmployeeDto;
 using HumanResources.Application.LoanServices;
+using static HumanResources.Application.Dtos.DeductionDto;
 
 namespace HumanResources.Web.Controllers
 {
-    public class LoanController : Controller
+    public class DeductionController : Controller
     {
         private readonly IEmployeeService _employeeService;
-        private readonly ILoanService _loanService;
-        public LoanController(IEmployeeService employeeService, ILoanService loanService)
+        private readonly IDeductionService _deductionService;
+        public DeductionController(IEmployeeService employeeService, IDeductionService deductionService)
         {
             _employeeService = employeeService;
-            _loanService = loanService;
+            _deductionService = deductionService;
         }
         public async Task<IActionResult> Index()
         {
-            var data = await _loanService.GetAll();
+            var data = await _deductionService.GetAll();
             return View(data);
         }
         [HttpGet]
@@ -30,13 +31,13 @@ namespace HumanResources.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(LoanDtoForAdd dto)
+        public async Task<IActionResult> Create(DeductionDtoForAdd dto)
         {
 
             if (ModelState.IsValid)
             {
 
-                _loanService.Create(dto);
+                _deductionService.Create(dto);
 
                 TempData["Created"] = "تم الاضافة بنجاح";
                 return RedirectToAction("Index");

@@ -4,6 +4,7 @@ using HumanResources.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241229193958_loan_1")]
+    partial class loan_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,45 +165,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.ToTable("BonusTbl");
                 });
 
-            modelBuilder.Entity("HumanResources.Domain.Entities.Deduction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
-
-                    b.Property<int>("DeductionType")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("DeletedAt")
-                        .HasColumnType("date");
-
-                    b.Property<bool>("Done")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
-
-                    b.Property<decimal>("amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("DeductionTbl");
-                });
-
             modelBuilder.Entity("HumanResources.Domain.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -339,12 +303,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<DateOnly?>("DeletedAt")
                         .HasColumnType("date");
 
-                    b.Property<bool>("Done")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -354,15 +312,13 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<decimal>("amount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("finished")
+                        .HasColumnType("bit");
+
                     b.Property<int>("numberofpayment")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("payment")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.ToTable("LoanTbl");
                 });
@@ -627,17 +583,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("HumanResources.Domain.Entities.Deduction", b =>
-                {
-                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
-                        .WithMany("Deductions")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("HumanResources.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("HumanResources.Domain.Entities.Department", "Department")
@@ -647,17 +592,6 @@ namespace HumanResources.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("HumanResources.Domain.Entities.Loan", b =>
-                {
-                    b.HasOne("HumanResources.Domain.Entities.Employee", "Employee")
-                        .WithMany("Loans")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -726,10 +660,6 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Navigation("Attendances");
 
                     b.Navigation("Bonuses");
-
-                    b.Navigation("Deductions");
-
-                    b.Navigation("Loans");
                 });
 
             modelBuilder.Entity("HumanResources.Domain.Entities.Week", b =>

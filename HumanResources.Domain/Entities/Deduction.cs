@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static HumanResources.Domain.Enums.Enums;
 
 namespace HumanResources.Domain.Entities
 {
-    public class Loan : BaseEntity
+    public class Deduction : BaseEntity
     {
         public decimal amount { get; set; }
-        public int numberofpayment { get; set; }
-        public decimal payment { get; set; }
+        public DeductionType DeductionType { get; set; }
         public bool Done { get; set; }
         // العلاقة مع الموظف
         public int EmployeeId { get; set; } // Foreign Key referencing Employee.id

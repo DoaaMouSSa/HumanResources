@@ -1,12 +1,12 @@
-﻿@model IEnumerable<LoanDtoForShow>
+﻿@model IEnumerable<DeductionDtoForShow>
 
 <partial name="_Toastr" />
 
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">  جميع السلف</h4>
-            <a class="btn btn-primary btn-rounded btn-fw" asp-controller="Loan" asp-action="Create">  تأييد سلفة جديدة</a>
+            <h4 class="card-title">  جميع الخصومات</h4>
+            <a class="btn btn-primary btn-rounded btn-fw" asp-controller="Deduction" asp-action="Create">  تأييد خصم</a>
             @if (Model.Count() > 0)
             {
                 <div class="table-responsive">
@@ -16,9 +16,8 @@
                             <tr>
                                 <th> # </th>
                                 <th> الاسم </th>
-                                <th> قيمة السلفة </th>
-                                <th> الدفعات</th>
-                                <th>الدفعة الواحده</th>
+                                <th> قيمة/عدد الخصم </th>
+                                <th> نوع الخصم</th>
                                 <th> الحالة</th>
                                 <!-- <th> تعديل </th>
                                  <th> حذف </th>
@@ -32,8 +31,7 @@
                                     <td>@obj.Id</td>
                                     <td> @obj.EmployeeName</td>
                                     <td> @obj.amount</td>
-                                    <td> @obj.numberofpayment</td>
-                                    <td> @obj.payment</td>
+                                    <td> @obj.DeductionType</td>
                                     <td>
                                         <span class="badge @((obj.IsDone) ? "bg-success" : "bg-danger")">
                                             @((obj.IsDone) ? "معتمد" : "غير معتمد")
