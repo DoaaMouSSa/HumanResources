@@ -14,7 +14,10 @@
                 <th> اليومية </th>
                 <th> الساعه </th>
                 <th> التأخيرات </th>
+                <th>الاجمالى</th>
+                <th> المكافأة </th>
                 <th> صافى المرتب </th>
+
                 <th class="exclude-from-export"> التفاصيل </th>
             </tr>
         </thead>
@@ -29,7 +32,9 @@
                     <td> @obj.TotalWorkingHours</td>
                     <td> @obj.daySalary</td>
                     <td> @obj.hourSalary</td>
-                    <td> @obj.DelaysTime</td>
+                    <td> @obj.DelaysHours</td>
+                    <td> @obj.CalculatedSalary</td>
+                    <td> @obj.Bonus</td>
                     <td> @obj.NetSalary</td>
                     <td>
                         <a asp-controller="Attendance" asp-action="Details" asp-route-id="@obj.Id">

@@ -25,12 +25,16 @@ namespace HumanResources.Domain.Entities
         public decimal? SalaryBeforeAdditon { get; set; }
         public int? NetSalary { get; set; }
         public decimal? CalculatedSalary { get; set; }
+        public decimal? CalculatedSalaryAfterAdditonals { get; set; }
         public decimal? OverTimeSalary { get; set; }
         public decimal? OverTimeHours { get; set; }
         public decimal? DelaysHours { get; set; }
         public TimeSpan? DelaysTime { get; set; }
         public int? WeekId { get; set; }
         public Week? Week { get; set; }
+        public decimal Bonus { get; set; }
+        public decimal Deduction { get; set; }
+        public decimal Loan { get; set; }
 
         public List<AttendanceDetails>? AttendanceDetails { get; set; } = new List<AttendanceDetails>();
 

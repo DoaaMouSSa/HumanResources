@@ -191,23 +191,27 @@ IAttendanceService attendanceService)
 
             attendance.TotalWorkingHours = attendance.TotalWorkingHoursBeforeDelays - attendance.DelaysHours;
             const int DEFAULTWORKINGHOURS= 48;
+            //calculate salary
             if (attendance.TotalWorkingHours > DEFAULTWORKINGHOURS)
             {
                 attendance.CalculatedSalary = (DEFAULTWORKINGHOURS * attendance.hourSalary);
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus;
                 attendance.OverTimeHours=attendance.TotalWorkingHours- DEFAULTWORKINGHOURS;
                 attendance.OverTimeSalary = attendance.OverTimeHours * attendance.OverTimeHourSalary;
-                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalary + attendance.OverTimeSalary);
+                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals + attendance.OverTimeSalary);
             }
             else if(attendance.TotalWorkingHours < DEFAULTWORKINGHOURS || attendance.TotalWorkingHours == DEFAULTWORKINGHOURS)
             {
                 attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
-                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalary);
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus;
+                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals);
 
             }
             else
             {
                 attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
-                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalary);
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus;
+                attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals);
 
             }
             // Modify the first digit of NetSalary
@@ -228,34 +232,6 @@ IAttendanceService attendanceService)
                 attendance.NetSalary = baseValue + 10; // Set the last digit to 0
             }
 
-
-            //decimal? totalWorkingHours= (attendance.TotalWorkingHoursBeforeDelays)-totalDelaysHours;
-            //decimal? overTimeHours=0;
-            //if(totalWorkingHours.HasValue && (totalWorkingHours.Value ==48 ||totalWorkingHours.Value <48))
-            //{
-            //    attendance.TotalWorkingHours = totalWorkingHours;
-
-            //}
-            //else if (totalWorkingHours.HasValue && (totalWorkingHours.Value > 48))
-            //{
-            //    const decimal WORKING_HOURS= 48;
-            //    overTimeHours = totalWorkingHours - WORKING_HOURS;
-            //    attendance.OverTimeHours = overTimeHours;
-            //    attendance.TotalWorkingHours = WORKING_HOURS;
-
-            //}
-            //attendance.CalculatedSalary = attendance.TotalWorkingHours * attendance.hourSalary;
-            //attendance.SalaryBeforeAdditon = (int)attendance.CalculatedSalary;
-            //const decimal OVERTIMEHOURSALARY = 1.5m;
-            //attendance.OverTimeHourSalary = attendance.hourSalary * OVERTIMEHOURSALARY;
-            //attendance.OverTimeSalary = attendance.OverTimeHourSalary * attendance.OverTimeHours;
-            //attendance.NetSalary =(int?) (attendance.SalaryBeforeAdditon + attendance.OverTimeSalary);
-
-            //if (attendance.NetSalary % 5==0)
-            //{
-            //    //تقريب المرتب
-            //}
-            // Save the delay information
             await _context.SaveChangesAsync();
         }
 
@@ -344,7 +320,17 @@ IAttendanceService attendanceService)
         {
             const int weeklyWorkHours = 48;
             const int workDaysPerWeek = 6;
-
+            int employeeId = _context.EmployeeTbl.Where(e => e.IsDeleted == false && e.Code == employeeCode).AsNoTracking().FirstOrDefault().Id;
+            Bonus bonus = _context.BonusTbl
+    .Where(b => b.Done == false && b.EmployeeId == employeeId)
+    .FirstOrDefault();
+            if(bonus!=null)
+            {
+                bonus.Done = true;
+                _context.BonusTbl.Update(bonus);
+                _context.SaveChanges();
+            }
+           
             return new Attendance
             {
                 EmployeeCode = employeeCode,
@@ -353,6 +339,8 @@ IAttendanceService attendanceService)
                 hourSalary = grossSalary / weeklyWorkHours,
                 OverTimeHourSalary = (grossSalary / weeklyWorkHours) * 1.5m,
                 daySalary = grossSalary / workDaysPerWeek,
+                Bonus = (bonus != null)?bonus.amount : 0, // If bonus is null, set Bonus_Amount to 0
+
                 DelaysHours = 0,
                 OverTimeHours=0,
                 DelaysTime = TimeSpan.Zero,
