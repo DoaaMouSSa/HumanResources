@@ -34,21 +34,30 @@ namespace HumanResources.Application.StatesServices
             data.Department.Count = _context.DepartmentTbl.Where(s => s.IsDeleted == false).Distinct().Count();
             // Get the Department count added in the current month
             decimal curentMonthCountDepartment = _context.DepartmentTbl.Count(s => s.CreatedAt.Month >= currentMonth);
-        decimal DepartmentPercentage = (curentMonthCountDepartment / Convert.ToDecimal(data.Department.Count)) * 100;
-        data.Department.Percentage = Math.Round(DepartmentPercentage, 2);
+            if (curentMonthCountDepartment != 0)
+            {
+                decimal DepartmentPercentage = (curentMonthCountDepartment / Convert.ToDecimal(data.Department.Count)) * 100;
+                data.Department.Percentage = Math.Round(DepartmentPercentage, 2);
+            }
             //Employee
             data.Employee.Count = _context.EmployeeTbl.Where(e=>e.IsDeleted==false).Count();
             // Get the Employee count added in the current month
             decimal curentMonthCountEmployee = _context.EmployeeTbl.Count(s => s.CreatedAt.Month >= currentMonth);
-        decimal EmployeePercentage = (curentMonthCountEmployee / Convert.ToDecimal(data.Employee.Count)) * 100;
-        data.Employee.Percentage = Math.Round(EmployeePercentage, 2);
+            if (curentMonthCountEmployee != 0)
+            {
+                decimal EmployeePercentage = (curentMonthCountEmployee / Convert.ToDecimal(data.Employee.Count)) * 100;
+                data.Employee.Percentage = Math.Round(EmployeePercentage, 2);
+            }
 
             //Week
             data.Week.Count = _context.WeekTbl.Distinct().Count();
             // Get the Week count added in the current month
             decimal curentMonthCountWeek = _context.WeekTbl.Count(s => s.CreatedDate.Value.Month >= currentMonth);
-        decimal WeekPercentage = (curentMonthCountWeek / Convert.ToDecimal(data.Week.Count)) * 100;
-        data.Week.Percentage = Math.Round(WeekPercentage, 2);
+            if (curentMonthCountWeek != 0)
+            {
+                decimal WeekPercentage = (curentMonthCountWeek / Convert.ToDecimal(data.Week.Count)) * 100;
+                data.Week.Percentage = Math.Round(WeekPercentage, 2);
+            }
 
 
             //Bouns

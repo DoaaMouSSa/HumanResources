@@ -57,7 +57,7 @@ IAttendanceService attendanceService)
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile file)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+           using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 if (file == null || file.Length <= 0)
@@ -119,15 +119,30 @@ IAttendanceService attendanceService)
 
             while (reader.Read())
             {
-                int employeeCode = Convert.ToInt32(reader.GetValue(0)?.ToString());
-                DateTime dateTimeValue = DateTime.Parse(reader.GetValue(1)?.ToString());
+                // Check if the first column value is null or empty
+                if (reader.GetValue(0) == null || string.IsNullOrWhiteSpace(reader.GetValue(0).ToString()))
+                    continue;
 
-                if (await IsEmployeeExist(employeeCode))
+                // Check if the second column value is null or empty
+                if (reader.GetValue(1) == null || string.IsNullOrWhiteSpace(reader.GetValue(1).ToString()))
+                    continue;
+
+                // Try parsing the employee code and date-time value
+                if (int.TryParse(reader.GetValue(0).ToString(), out int employeeCode) &&
+                    DateTime.TryParse(reader.GetValue(1).ToString(), out DateTime dateTimeValue))
                 {
-                    employeeCodeGeneral = employeeCode;
-                    await AddOrUpdateAttendanceDetails(employeeCode, dateTimeValue);
+                    if (await IsEmployeeExist(employeeCode))
+                    {
+                        employeeCodeGeneral = employeeCode;
+                        await AddOrUpdateAttendanceDetails(employeeCode, dateTimeValue);
+                    }
+                }
+                else
+                {
+                    // Optionally log or handle invalid data rows
                 }
             }
+
         }
         private async Task AddOrUpdateAttendanceDetails(int employeeCode, DateTime dateTimeValue)
         {
@@ -144,7 +159,7 @@ IAttendanceService attendanceService)
         {
             var attendance = await _context.AttendanceTbl
                 .Include(a => a.AttendanceDetails)
-                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month && a.WeekId==weekId);
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.WeekId==weekId);
 
             if (attendance == null || attendance.AttendanceDetails == null)
                 return;
@@ -284,7 +299,8 @@ IAttendanceService attendanceService)
                 AttendanceDate = date,
                 CheckInTime = checkInTime,
                 AttendanceId = attendance.Id,
-                Delay = delay
+                Delay = delay,
+                
             };
 
             _context.Add(newDetail);
@@ -293,7 +309,7 @@ IAttendanceService attendanceService)
         {
             var attendance = await _context.AttendanceTbl
                 .Include(a => a.AttendanceDetails)
-                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == dateTimeValue.Year && a.Month == dateTimeValue.Month&&a.WeekId==weekId);
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode &&a.WeekId==weekId);
 
             if (attendance == null)
             {
@@ -345,7 +361,9 @@ IAttendanceService attendanceService)
                 OverTimeHours=0,
                 DelaysTime = TimeSpan.Zero,
                 WeekId = weekId,
-                TotalWorkingHours = 0
+                TotalWorkingHours = 0,
+                SalaryBeforeAdditon = 0,
+                
             };
         }
 
@@ -474,7 +492,7 @@ IAttendanceService attendanceService)
             // Retrieve the attendance record for the employee in the specified year and month
             var attendance = await _context.AttendanceTbl
                 .Include(a => a.AttendanceDetails)
-                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode && a.Year == year && a.Month == month&&a.WeekId==weekId);
+                .FirstOrDefaultAsync(a => a.EmployeeCode == employeeCode &&a.WeekId==weekId);
 
             if (attendance == null || attendance.AttendanceDetails == null)
             {
