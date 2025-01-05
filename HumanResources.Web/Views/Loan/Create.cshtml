@@ -7,14 +7,14 @@
             <p class="card-description"> تأييد سلفة لموظف معين </p>
             <form method="post" class="forms-sample material-form">
                 <div class="form-group">
-                    <input type="number" min="1" max="10000" asp-for="amount" />
-                    <label asp-for="amount" class="control-label">قيمة السلفة </label>
+                    <input type="number" min="1" max="10000" asp-for="loan_amount" />
+                    <label asp-for="loan_amount" class="control-label">قيمة السلفة </label>
                     <i class="bar"></i>
-                    <span asp-validation-for="amount" class="text-danger"></span>
+                    <span asp-validation-for="loan_amount" class="text-danger"></span>
 
                 </div>
                 <div class="form-group">
-                    <input type="numberofpayment" value="1" min="1" max="10" asp-for="numberofpayment" />
+                    <input type="number" value="1" min="1" max="10" asp-for="numberofpayment" />
                     <label asp-for="numberofpayment" class="control-label">الدفعات</label>
                     <i class="bar"></i>
                     <span asp-validation-for="numberofpayment" class="text-danger"></span>

@@ -35,6 +35,7 @@ namespace HumanResources.Domain.Entities
         public decimal Bonus { get; set; }
         public decimal Deduction { get; set; }
         public decimal Loan { get; set; }
+        public decimal Loanleft { get; set; }
 
         public List<AttendanceDetails>? AttendanceDetails { get; set; } = new List<AttendanceDetails>();
 

@@ -4,6 +4,7 @@ using HumanResources.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250105085246_add-bonus-done-date")]
+    partial class addbonusdonedate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,9 +55,6 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Loan")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Loanleft")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("Month")
@@ -372,17 +372,11 @@ namespace HumanResources.Infrastructure.Migrations
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
 
-                    b.Property<decimal>("left")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("loan_amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("numberofpayment")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("paid")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("payment_unit")
                         .HasColumnType("decimal(18,2)");

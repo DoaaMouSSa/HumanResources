@@ -165,7 +165,6 @@ IAttendanceService attendanceService)
                 return;
 
             var detailsForMonth = attendance.AttendanceDetails
-                .Where(detail => detail.AttendanceDate.Value.Year == year && detail.AttendanceDate.Value.Month == month)
                 .ToList();
 
             if (!detailsForMonth.Any())
@@ -210,7 +209,7 @@ IAttendanceService attendanceService)
             if (attendance.TotalWorkingHours > DEFAULTWORKINGHOURS)
             {
                 attendance.CalculatedSalary = (DEFAULTWORKINGHOURS * attendance.hourSalary);
-                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus;
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus -attendance.Loan;
                 attendance.OverTimeHours=attendance.TotalWorkingHours- DEFAULTWORKINGHOURS;
                 attendance.OverTimeSalary = attendance.OverTimeHours * attendance.OverTimeHourSalary;
                 attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals + attendance.OverTimeSalary);
@@ -218,14 +217,14 @@ IAttendanceService attendanceService)
             else if(attendance.TotalWorkingHours < DEFAULTWORKINGHOURS || attendance.TotalWorkingHours == DEFAULTWORKINGHOURS)
             {
                 attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
-                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus;
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus - attendance.Loan;
                 attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals);
 
             }
             else
             {
                 attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
-                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus;
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus - attendance.Loan;
                 attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals);
 
             }
@@ -340,13 +339,38 @@ IAttendanceService attendanceService)
             Bonus bonus = _context.BonusTbl
     .Where(b => b.Done == false && b.EmployeeId == employeeId)
     .FirstOrDefault();
-            if(bonus!=null)
+            Loan loan = _context.LoanTbl
+  .Where(b => b.Done == false && b.EmployeeId == employeeId)
+  .FirstOrDefault();
+           
+            if (bonus!=null)
             {
                 bonus.Done = true;
+                bonus.DoneDate = DateOnly.FromDateTime(DateTime.Now);
                 _context.BonusTbl.Update(bonus);
                 _context.SaveChanges();
             }
-           
+            if (loan != null && loan.numberofpayment==1)
+            {
+                loan.paid = loan.loan_amount;
+                loan.left = 0;
+                loan.Done = true;
+                loan.DoneDate = DateOnly.FromDateTime(DateTime.Now);
+                _context.LoanTbl.Update(loan);
+                _context.SaveChanges();
+            }else if(loan != null && loan.numberofpayment > 1)
+            {
+                loan.paid = loan.paid+loan.payment_unit;
+                loan.left = loan.left- loan.payment_unit;
+                _context.LoanTbl.Update(loan);
+                _context.SaveChanges();
+                if(loan.left==0)
+                {
+                    loan.Done = true;
+                    loan.DoneDate = DateOnly.FromDateTime(DateTime.Now);
+                }
+            }
+
             return new Attendance
             {
                 EmployeeCode = employeeCode,
@@ -356,7 +380,8 @@ IAttendanceService attendanceService)
                 OverTimeHourSalary = (grossSalary / weeklyWorkHours) * 1.5m,
                 daySalary = grossSalary / workDaysPerWeek,
                 Bonus = (bonus != null)?bonus.amount : 0, // If bonus is null, set Bonus_Amount to 0
-
+                Loan = (loan != null)? loan.payment_unit : 0, // If bonus is null, set Bonus_Amount to 0
+                Loanleft = (loan != null)? loan.left : 0, // If bonus is null, set Bonus_Amount to 0
                 DelaysHours = 0,
                 OverTimeHours=0,
                 DelaysTime = TimeSpan.Zero,

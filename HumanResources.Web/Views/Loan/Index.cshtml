@@ -19,7 +19,13 @@
                                 <th> قيمة السلفة </th>
                                 <th> الدفعات</th>
                                 <th>الدفعة الواحده</th>
+                                <th>المدفوع</th>
+                                <th>المتبقى</th>
                                 <th> الحالة</th>
+
+                                <th> تاريخ الاضافة</th>
+                                <th> تاريخ الاعتماد</th>
+                               
                                 <!-- <th> تعديل </th>
                                  <th> حذف </th>
                                  -->
@@ -31,15 +37,19 @@
                                 <tr>
                                     <td>@obj.Id</td>
                                     <td> @obj.EmployeeName</td>
-                                    <td> @obj.amount</td>
+                                    <td> @obj.loan_amount</td>
                                     <td> @obj.numberofpayment</td>
-                                    <td> @obj.payment</td>
+                                    <td> @obj.payment_unit</td>
+                                    <td> @obj.paid</td>
+                                    <td> @obj.left</td>
                                     <td>
                                         <span class="badge @((obj.IsDone) ? "bg-success" : "bg-danger")">
                                             @((obj.IsDone) ? "معتمد" : "غير معتمد")
                                         </span>
                                     </td>
-                                   
+                                    <td> @obj.added_date</td>
+                                    <td> @obj.done_date</td>
+
 
 
                                     <!--   <td>

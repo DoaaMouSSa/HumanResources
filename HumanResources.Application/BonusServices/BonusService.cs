@@ -47,7 +47,10 @@ namespace HumanResources.Application.BonusServices
                     Id = q.Id,  
                     amount=q.amount,
                     EmployeeName=q.Employee.Name,
-                    IsDone=q.Done
+                    IsDone=q.Done,
+                    added_date = q.CreatedAt.ToString(),
+                    done_date = (q.DoneDate == null) ? "----" : q.DoneDate.ToString(),
+
                 }).AsEnumerable();
             return data;
         }

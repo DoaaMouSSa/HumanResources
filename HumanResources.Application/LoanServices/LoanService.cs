@@ -30,17 +30,39 @@ namespace HumanResources.Application.LoanServices
             }
             public async Task Create(LoanDtoForAdd dto)
         {
-            Loan newLoan = new Loan
+            if(dto.numberofpayment==1)
             {
-                amount = dto.amount,
-                Done = false,
-                EmployeeId = dto.EmployeeId,
-                numberofpayment=dto.numberofpayment,
-                payment=dto.amount/dto.numberofpayment,
-                CreatedAt = DateOnly.FromDateTime(DateTime.Now)
-            };
-            _loanRepository.Add(newLoan);
-            _unitOfWork.SaveChanges();
+                Loan newLoan = new Loan
+                {
+                    loan_amount = dto.loan_amount,
+                    numberofpayment = dto.numberofpayment,
+                    payment_unit = (dto.loan_amount / dto.numberofpayment),
+                    paid=0,
+                    left=0,
+                    Done = false,
+                    EmployeeId = dto.EmployeeId,
+                    CreatedAt = DateOnly.FromDateTime(DateTime.Now)
+                };
+                _loanRepository.Add(newLoan);
+                _unitOfWork.SaveChanges();
+            }
+            else if (dto.numberofpayment > 1)
+            {
+                Loan newLoan = new Loan
+                {
+                    loan_amount = dto.loan_amount,
+                    numberofpayment = dto.numberofpayment,
+                    payment_unit = (dto.loan_amount / dto.numberofpayment),
+                    paid = 0,
+                    left = dto.loan_amount,
+                    Done = false,
+                    EmployeeId = dto.EmployeeId,
+                    CreatedAt = DateOnly.FromDateTime(DateTime.Now)
+                };
+                _loanRepository.Add(newLoan);
+                _unitOfWork.SaveChanges();
+            }
+
         }
 
         public async Task<IEnumerable<LoanDtoForShow>> GetAll()
@@ -49,11 +71,16 @@ namespace HumanResources.Application.LoanServices
                            .Select(q => new LoanDtoForShow
                            {
                                Id = q.Id,
-                               amount = q.amount,
                                EmployeeName = q.Employee.Name,
-                               numberofpayment=q.numberofpayment,
-                               payment=q.payment,
-                               IsDone = q.Done
+                               numberofpayment = q.numberofpayment,
+                               loan_amount = q.loan_amount,
+                               payment_unit = q.payment_unit,
+                              paid=q.paid,
+                              left=q.left,
+                               added_date = q.CreatedAt.ToString(),
+                               IsDone = q.Done,
+                               done_date = (q.DoneDate == null) ?"----------": q.DoneDate.ToString(),
+
                            }).AsEnumerable();
             return data;
         }
