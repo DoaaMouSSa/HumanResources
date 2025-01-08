@@ -19,7 +19,7 @@ namespace HumanResources.Application.Dtos
             public State Employee { get; set; }
             public State Week { get; set; }
             public State Bouns { get; set; }
-            public State User { get; set; }
+            public State Loan { get; set; }
         }
     }
 }

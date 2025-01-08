@@ -28,6 +28,7 @@ namespace HumanResources.Application.StatesServices
         data.Employee = new State();
         data.Week = new State();
         data.Bouns = new State();
+        data.Loan = new State();
         var currentMonth = DateTime.UtcNow.Month;
 
             //Department
@@ -68,6 +69,15 @@ namespace HumanResources.Application.StatesServices
             {
                 decimal BounsPercentage = (curentMonthCountBouns / Convert.ToDecimal(data.Bouns.Count)) * 100;
                 data.Bouns.Percentage = Math.Round(BounsPercentage, 2);
+            }
+            //loan
+            data.Loan.Count = _context.LoanTbl.Where(s => s.IsDeleted == false).Count();
+            // Get the Bouns count added in the current month
+            decimal curentMonthCountLoan = _context.BonusTbl.Count(s => s.CreatedAt.Month >= currentMonth);
+            if (curentMonthCountLoan != 0)
+            {
+                decimal LoanPercentage = (curentMonthCountLoan / Convert.ToDecimal(data.Loan.Count)) * 100;
+                data.Loan.Percentage = Math.Round(LoanPercentage, 2);
             }
 
             // Get the user count added in the current month

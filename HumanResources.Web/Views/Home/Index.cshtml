@@ -32,17 +32,17 @@
                                     <h3 class="rate-percentage">@Model.Week.Count</h3>
                                     <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>@Model.Week.Percentage %</span></p>
                                     </div>
-                                   
-                                    <div class="d-none d-md-block">
-                                        <p class="statistics-title">المستخدمين</p>
-                                    <h3 class="rate-percentage">3</h3>
-                                    <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>1.2 %</span></p>
-                                    </div>
                                 <div class="d-none d-md-block">
                                     <p class="statistics-title">المكافأت</p>
                                     <h3 class="rate-percentage">@Model.Bouns.Count</h3>
                                     <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>@Model.Bouns.Count %</span></p>
                                 </div>
+                                    <div class="d-none d-md-block">
+                                        <p class="statistics-title">السلف</p>
+                                    <h3 class="rate-percentage">@Model.Loan.Count</h3>
+                                    <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>@Model.Loan.Count %</span></p>
+                                    </div>
+                               
                                 </div>
                             </div>
                         </div>
