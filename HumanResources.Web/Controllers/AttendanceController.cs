@@ -209,7 +209,7 @@ IAttendanceService attendanceService)
             if (attendance.TotalWorkingHours > DEFAULTWORKINGHOURS)
             {
                 attendance.CalculatedSalary = (DEFAULTWORKINGHOURS * attendance.hourSalary);
-                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus -attendance.Loan;
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus -attendance.Loan- attendance.Deduction;
                 attendance.OverTimeHours=attendance.TotalWorkingHours- DEFAULTWORKINGHOURS;
                 attendance.OverTimeSalary = attendance.OverTimeHours * attendance.OverTimeHourSalary;
                 attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals + attendance.OverTimeSalary);
@@ -217,14 +217,14 @@ IAttendanceService attendanceService)
             else if(attendance.TotalWorkingHours < DEFAULTWORKINGHOURS || attendance.TotalWorkingHours == DEFAULTWORKINGHOURS)
             {
                 attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
-                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus - attendance.Loan;
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus - attendance.Loan - attendance.Deduction;
                 attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals);
 
             }
             else
             {
                 attendance.CalculatedSalary = (attendance.TotalWorkingHours * attendance.hourSalary);
-                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus - attendance.Loan;
+                attendance.CalculatedSalaryAfterAdditonals = attendance.CalculatedSalary + attendance.Bonus - attendance.Loan - attendance.Deduction;
                 attendance.NetSalary = Convert.ToInt16(attendance.CalculatedSalaryAfterAdditonals);
 
             }
@@ -339,10 +339,13 @@ IAttendanceService attendanceService)
             Bonus bonus = _context.BonusTbl
     .Where(b => b.Done == false && b.EmployeeId == employeeId)
     .FirstOrDefault();
-            Loan loan = _context.LoanTbl
+           List<Loan> loans = _context.LoanTbl
   .Where(b => b.Done == false && b.EmployeeId == employeeId)
+  .ToList();
+            Deduction deduction = _context.DeductionTbl
+  .Where(d => d.Done == false && d.EmployeeId == employeeId)
   .FirstOrDefault();
-           
+
             if (bonus!=null)
             {
                 bonus.Done = true;
@@ -350,25 +353,43 @@ IAttendanceService attendanceService)
                 _context.BonusTbl.Update(bonus);
                 _context.SaveChanges();
             }
-            if (loan != null && loan.numberofpayment==1)
+            decimal loanPaid = 0;
+            decimal loanLeft = 0;
+            if (loans.Count() > 0)
             {
-                loan.paid = loan.loan_amount;
-                loan.left = 0;
-                loan.Done = true;
-                loan.DoneDate = DateOnly.FromDateTime(DateTime.Now);
-                _context.LoanTbl.Update(loan);
-                _context.SaveChanges();
-            }else if(loan != null && loan.numberofpayment > 1)
-            {
-                loan.paid = loan.paid+loan.payment_unit;
-                loan.left = loan.left- loan.payment_unit;
-                _context.LoanTbl.Update(loan);
-                _context.SaveChanges();
-                if(loan.left==0)
+                foreach (Loan loan in loans)
                 {
-                    loan.Done = true;
-                    loan.DoneDate = DateOnly.FromDateTime(DateTime.Now);
+                    if (loan.numberofpayment == 1)
+                    {
+                        loan.paid = loan.loan_amount;
+                        loan.left = 0;
+                        loan.Done = true;
+                        loan.DoneDate = DateOnly.FromDateTime(DateTime.Now);
+                        _context.LoanTbl.Update(loan);
+                        _context.SaveChanges();
+                    }
+                    else if (loan.numberofpayment > 1)
+                    {
+                        loan.paid = loan.paid + loan.payment_unit;
+                        loan.left = loan.left - loan.payment_unit;
+                        _context.LoanTbl.Update(loan);
+                        _context.SaveChanges();
+                        if (loan.left == 0)
+                        {
+                            loan.Done = true;
+                            loan.DoneDate = DateOnly.FromDateTime(DateTime.Now);
+                        }
+                    }
+                    loanPaid =loanPaid+ loan.payment_unit;
+                    loanLeft = loanLeft + loan.left;
                 }
+            }
+            if (deduction != null)
+            {
+                deduction.Done = true;
+                deduction.DoneDate = DateOnly.FromDateTime(DateTime.Now);
+                _context.DeductionTbl.Update(deduction);
+                _context.SaveChanges();
             }
 
             return new Attendance
@@ -380,8 +401,9 @@ IAttendanceService attendanceService)
                 OverTimeHourSalary = (grossSalary / weeklyWorkHours) * 1.5m,
                 daySalary = grossSalary / workDaysPerWeek,
                 Bonus = (bonus != null)?bonus.amount : 0, // If bonus is null, set Bonus_Amount to 0
-                Loan = (loan != null)? loan.payment_unit : 0, // If bonus is null, set Bonus_Amount to 0
-                Loanleft = (loan != null)? loan.left : 0, // If bonus is null, set Bonus_Amount to 0
+                Loan = loanPaid, // If bonus is null, set Bonus_Amount to 0
+                Loanleft = loanLeft, // If bonus is null, set Bonus_Amount to 0
+                Deduction= (deduction != null) ? deduction.amount : 0,
                 DelaysHours = 0,
                 OverTimeHours=0,
                 DelaysTime = TimeSpan.Zero,
