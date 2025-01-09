@@ -14,11 +14,9 @@ namespace HumanResources.Application.StatesServices
     public class StatesService: IStatesService
     { 
      private readonly ApplicationDbContext _context;
-     private readonly UserManager<IdentityUser> _userManager;
-    public StatesService(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+    public StatesService(ApplicationDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
             public async Task<States> GetStates()
     {

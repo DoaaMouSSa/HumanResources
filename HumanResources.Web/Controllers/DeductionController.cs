@@ -6,9 +6,12 @@ using static HumanResources.Application.Dtos.LoanDto;
 using static HumanResources.Application.Dtos.EmployeeDto;
 using HumanResources.Application.LoanServices;
 using static HumanResources.Application.Dtos.DeductionDto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HumanResources.Web.Controllers
 {
+    [Authorize]
+
     public class DeductionController : Controller
     {
         private readonly IEmployeeService _employeeService;

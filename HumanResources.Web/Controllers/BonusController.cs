@@ -2,6 +2,7 @@
 using HumanResources.Application.Dtos;
 using HumanResources.Application.EmployeeServices;
 using HumanResources.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,8 @@ using static HumanResources.Application.Dtos.EmployeeDto;
 
 namespace HumanResources.Web.Controllers
 {
+    [Authorize]
+
     public class BonusController : Controller
     {
         private readonly IEmployeeService _employeeService;

@@ -45,5 +45,6 @@ namespace HumanResources.Infrastructure.DbContext
         public DbSet<Loan> LoanTbl { get; set; }
        public DbSet<Deduction> DeductionTbl { get; set; }
        public DbSet<Bonus> BonusTbl { get; set; }
+       public DbSet<ApplicationUser> UserTbl { get; set; }
     }
 }

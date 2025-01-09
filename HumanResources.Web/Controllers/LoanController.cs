@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using static HumanResources.Application.Dtos.LoanDto;
 using static HumanResources.Application.Dtos.EmployeeDto;
 using HumanResources.Application.LoanServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HumanResources.Web.Controllers
 {
+    [Authorize]
+
     public class LoanController : Controller
     {
         private readonly IEmployeeService _employeeService;

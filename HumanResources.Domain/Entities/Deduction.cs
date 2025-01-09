@@ -9,6 +9,7 @@ namespace HumanResources.Domain.Entities
 {
     public class Deduction : BaseEntity
     {
+        public decimal hours { get; set; }
         public decimal amount { get; set; }
         public DeductionType DeductionType { get; set; }
         public bool Done { get; set; }

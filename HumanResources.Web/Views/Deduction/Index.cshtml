@@ -16,7 +16,8 @@
                             <tr>
                                 <th> # </th>
                                 <th> الاسم </th>
-                                <th> قيمة/عدد الخصم </th>
+                                <th> عدد الساعات </th>
+                                <th> قيمة الخصم </th>
                                 <th> نوع الخصم</th>
                                 <th> الحالة</th>
                                 <!-- <th> تعديل </th>
@@ -30,6 +31,9 @@
                                 <tr>
                                     <td>@obj.Id</td>
                                     <td> @obj.EmployeeName</td>
+                                    <td>
+                                       @((obj.hours==0) ? "-----------":@obj.hours)
+                                    </td>
                                     <td> @obj.amount</td>
                                     <td> @obj.DeductionType</td>
                                     <td>

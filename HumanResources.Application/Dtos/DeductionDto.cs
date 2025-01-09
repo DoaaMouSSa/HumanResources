@@ -11,6 +11,8 @@ namespace HumanResources.Application.Dtos
     {
         public class DeductionDtoForAdd
         {
+            public decimal hours { get; set; }
+
             public decimal amount { get; set; }
             public DeductionType DeductionType { get; set; }
             public bool Done { get; set; }
@@ -19,6 +21,8 @@ namespace HumanResources.Application.Dtos
         public class DeductionDtoForShow
         {
             public int Id { get; set; }
+            public decimal hours { get; set; }
+
             public decimal amount { get; set; }
             public DeductionType DeductionType { get; set; }
             public string added_date { get; set; }

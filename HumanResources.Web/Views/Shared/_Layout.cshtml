@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@{
+    var userName = User?.Identity?.IsAuthenticated == true
+        ? User.FindFirst(ClaimTypes.Name)?.Value
+        : "مستخدم";
+    var email = User?.Identity?.IsAuthenticated == true
+           ? User.FindFirst(ClaimTypes.Email)?.Value
+           : "مستخدم";
+}
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <!-- Required meta tags -->
@@ -43,11 +52,14 @@
             <div class="navbar-menu-wrapper d-flex align-items-top">
                 <ul class="navbar-nav">
                     <li class="nav-item fw-semibold d-none d-lg-block ms-0">
-                        <h1 class="welcome-text"> اهلا بك <span class="text-black fw-bold"></span></h1>
-                        <h3 class="welcome-text text-info" dir="rtl">
-                            @DateTime.Now.ToString("F", new System.Globalization.CultureInfo("ar-SA")) -
-                            @DateTime.Now.ToString("yyyy/MM/dd", new System.Globalization.CultureInfo("en-US"))
-                        </h3>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+
+                            <h1 class="welcome-text" dir="rtl"> اهلا بك <span class="text-black fw-bold">@userName</span></h1>
+
+                        }
+
+                        <h3 class="welcome-sub-text"> @DateTime.Now.ToString("yyyy/MM/dd", new System.Globalization.CultureInfo("ar-EG"))</h3>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -63,9 +75,13 @@
                             <img class="img-xs rounded-circle" src="~/assets/images/auth/user.jpg" alt="Profile image">
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-                              <form asp-controller="Auth" asp-action="Logout" method="post">
+                            <div class="dropdown-header text-center">
+                                <p class="mb-1 mt-3 fw-semibold">@userName</p>
+                                <p class="fw-light text-muted mb-0">@email</p>
+                            </div>
+                            <form asp-action="Logout" asp-controller="Auth" method="post">
                                 <button type="submit" class="dropdown-item">
-                            <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>تسجيل الخروج</a>
+                                  <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>تسجيل الخروج
                             </button>
                             </form>
                         </div>

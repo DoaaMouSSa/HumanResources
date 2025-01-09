@@ -21,6 +21,7 @@ using static HumanResources.Domain.Enums.Enums;
 
 namespace HumanResources.Web.Controllers
 {
+    [Authorize]
 
     public class AttendanceController : Controller
     {
@@ -29,7 +30,6 @@ namespace HumanResources.Web.Controllers
         private readonly IWeekService _weekService;
         private readonly IAttendanceService _attendanceService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
         public AttendanceController(ApplicationDbContext context
             , IWeekService weekService,
 IWebHostEnvironment webHostEnvironment,

@@ -12,6 +12,8 @@ using static HumanResources.Domain.Enums.Enums;
 
 namespace HumanResources.Web.Controllers
 {
+    [Authorize]
+
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;

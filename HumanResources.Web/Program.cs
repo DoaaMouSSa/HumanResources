@@ -11,17 +11,14 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.StaticFiles;
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
   .AddEntityFrameworkStores<ApplicationDbContext>()
   .AddDefaultTokenProviders()
   .AddSignInManager();
-// Add Authentication and Authorization
-
-
-builder.Services.AddDbContext<ApplicationDbContext>(o =>
-{
-    o.UseSqlServer(builder.Configuration.GetConnectionString("HRConnection")).LogTo(Console.WriteLine, LogLevel.Information);
-});
+// Register infrastructure dependencies
+builder.Services.AddInfrastructureDependencies();
+// Register services for api dependencies
+builder.Services.AddApiDependencies();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.User.RequireUniqueEmail = false;
@@ -31,32 +28,27 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 4;
 });
-// Register infrastructure dependencies
-builder.Services.AddInfrastructureDependencies();
-// Register services for api dependencies
-builder.Services.AddApiDependencies();
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-// Configure JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
+// Add cookie-based authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = "CookieAuth";
+    options.DefaultChallengeScheme = "CookieAuth";
 })
-.AddJwtBearer(options =>
+.AddCookie("CookieAuth", options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
-    };
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
 });
+builder.Services.AddDbContext<ApplicationDbContext>(o =>
+{
+    o.UseSqlServer(builder.Configuration.GetConnectionString("HRConnection")).LogTo(Console.WriteLine, LogLevel.Information);
+});
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
 
 var app = builder.Build();
 
@@ -87,6 +79,4 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}");
-   // pattern: "{controller=Loan}/{action=Index}/{id?}");
-
 app.Run();

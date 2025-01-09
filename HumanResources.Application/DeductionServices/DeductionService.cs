@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using static HumanResources.Application.Dtos.BonusDto;
 using static HumanResources.Application.Dtos.DeductionDto;
 using static HumanResources.Application.Dtos.LoanDto;
+using static HumanResources.Domain.Enums.Enums;
 
 namespace HumanResources.Application.LoanServices
 {
@@ -31,15 +32,50 @@ namespace HumanResources.Application.LoanServices
             }
             public async Task Create(DeductionDtoForAdd dto)
         {
-            Deduction newDeduction = new Deduction
+            Deduction newDeduction = null;
+
+            if (dto.DeductionType==DeductionType.ساعات)
             {
-                amount = dto.amount,
-                Done = false,
-                EmployeeId = dto.EmployeeId,
-                DeductionType=dto.DeductionType,
-                CreatedAt = DateOnly.FromDateTime(DateTime.Now)
-            };
-            _deductionRepository.Add(newDeduction);
+                decimal grossSalary = _context.EmployeeTbl.Where(e => e.Id == dto.EmployeeId)
+                    .FirstOrDefault().GrossSalary;
+                decimal hourSalary = grossSalary / 48;
+                 newDeduction = new Deduction
+                {
+                    hours =dto.amount,
+                    amount = hourSalary*dto.amount,
+                    Done = false,
+                    EmployeeId = dto.EmployeeId,
+                    DeductionType = dto.DeductionType,
+                    CreatedAt = DateOnly.FromDateTime(DateTime.Now)
+                };
+            }
+          
+            else if (dto.DeductionType == DeductionType.نقدى)
+            {
+                 newDeduction = new Deduction
+                {
+                    hours=0,
+                    amount = dto.amount,
+                    Done = false,
+                    EmployeeId = dto.EmployeeId,
+                    DeductionType = dto.DeductionType,
+                    CreatedAt = DateOnly.FromDateTime(DateTime.Now)
+                };
+            }
+            else
+            {
+                newDeduction = new Deduction
+                {
+                    hours = 0,
+                    amount = dto.amount,
+                    Done = false,
+                    EmployeeId = dto.EmployeeId,
+                    DeductionType = dto.DeductionType,
+                    CreatedAt = DateOnly.FromDateTime(DateTime.Now)
+                };
+            }
+
+                _deductionRepository.Add(newDeduction);
             _unitOfWork.SaveChanges();
         }
 
@@ -50,6 +86,7 @@ namespace HumanResources.Application.LoanServices
                            {
                                Id = q.Id,
                                amount = q.amount,
+                               hours=q.hours,
                                EmployeeName = q.Employee.Name,
                                DeductionType=q.DeductionType,
                                IsDone = q.Done

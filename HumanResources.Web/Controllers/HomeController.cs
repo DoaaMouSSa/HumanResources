@@ -10,6 +10,8 @@ using static HumanResources.Application.Dtos.EmployeeDto;
 
 namespace HumanResources.Web.Controllers
 {
+    [Authorize]
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

@@ -1,102 +1,99 @@
-﻿using HumanResources.Application.AuthServices;
+﻿using AspNetCore.ReportingServices.ReportProcessing.ReportObjectModel;
 using HumanResources.Domain.Entities;
 using HumanResources.Web.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using static HumanResources.Application.Dtos.AuthDto;
 
 namespace HumanResources.Web.Controllers
 {
+
     public class AuthController : Controller
     {
-        private readonly IAuthService _authService;
 
-        public AuthController(IAuthService authService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            _authService = authService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
+
+        // Register GET
         [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+        public IActionResult Register() => View();
 
+        // Register POST
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(Login model)
-        {
-            bool IsAuthenticated = false;
-
-            if (ModelState.IsValid)
-            {
-                var login = new Login
-                {
-                    Email = model.Email,
-                    Password = model.Password,
-                };
-                var result = await _authService.LoginAsync(login);
-
-                if (result==true)
-                {
-                    GlobalVariables.IsAuthenticated = true;
-                    // Redirect to the desired page on success
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    // Handle failure
-                    IsAuthenticated = false;
-
-                    ModelState.AddModelError(string.Empty, "خطأ فى اسم المستخدم او كلمة السر");
-                    return View(model);
-                }
-            }
-
-            return View(model);
-        }
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(Register model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model);
+                var user = new ApplicationUser { Name=model.Name,UserName = model.Email, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Login", "Auth");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
-
-            var result = await _authService.RegisterAsync(model);
-
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Login", "Auth"); // Redirect on successful registration
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return View(model); // Return the form with validation errors
+            return View(model);
         }
-        // Logout action
+
+        // Login GET
+        [HttpGet]
+        public IActionResult Login() => View();
+
+        // Login POST
+        [HttpPost]
+        public async Task<IActionResult> Login(Login model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+
+                if (result.Succeeded)
+                {
+                    // Retrieve the user by email
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    {
+                        // Issue authentication cookie with username claim
+                        var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Name), // Add the username as a claim
+                    new Claim(ClaimTypes.Email, user.Email) // Optional: Add email as a claim
+                };
+
+                        var identity = new ClaimsIdentity(claims, "CookieAuth");
+                        var principal = new ClaimsPrincipal(identity);
+
+                        await HttpContext.SignInAsync("CookieAuth", principal);
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+
+
+                    ModelState.AddModelError("", "Invalid login attempt.");
+            }
+            return View(model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _authService.LogoutAsync();
-            GlobalVariables.IsAuthenticated = false;
-
-            return RedirectToAction("Login");
-        }
-
-        // Access Denied
-        public IActionResult AccessDenied()
-        {
-            return View();
+            await HttpContext.SignOutAsync("CookieAuth");
+            return RedirectToAction("Login", "Auth");
         }
 
     }

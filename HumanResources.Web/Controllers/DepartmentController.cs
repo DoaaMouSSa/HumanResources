@@ -7,6 +7,8 @@ using static HumanResources.Application.Dtos.DepartementDto;
 
 namespace HumanResources.Web.Controllers
 {
+    [Authorize]
+
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departmentService;
