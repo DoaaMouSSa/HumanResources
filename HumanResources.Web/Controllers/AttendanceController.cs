@@ -404,6 +404,7 @@ IAttendanceService attendanceService)
                 Loan = loanPaid, // If bonus is null, set Bonus_Amount to 0
                 Loanleft = loanLeft, // If bonus is null, set Bonus_Amount to 0
                 Deduction= (deduction != null) ? deduction.amount : 0,
+                DeductionHours= (deduction != null) ? deduction.hours : 0,
                 DelaysHours = 0,
                 OverTimeHours=0,
                 DelaysTime = TimeSpan.Zero,

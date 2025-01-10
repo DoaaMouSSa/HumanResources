@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<Attendance>
-
+<style>
+    thead th, tbody td {
+        text-align: center !important;
+        vertical-align: middle;
+    }
+</style>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js" > </script >
 <div class="table-responsive">
@@ -18,6 +23,7 @@
                 <th>الاجمالى</th>
                 <th> المكافأة </th>
                 <th> الخصم </th>
+                <th> ساعات الخصم </th>
                 <th> السلفة </th>
                 <th> سلفة مرحلة </th>
                 <th> صافى المرتب </th>
@@ -42,7 +48,8 @@
                     <td> @obj.CalculatedSalary</td>
                     <td> @obj.Bonus</td>
                     <td> @obj.Deduction</td>
-                    <td> @obj.Loan</td>
+                   <td> @obj.DeductionHours</td>
+                  <td> @obj.Loan</td>
                     <td> @obj.Loanleft</td>
                     <td> @obj.NetSalary</td>
                     <td>

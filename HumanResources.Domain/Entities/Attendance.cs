@@ -34,6 +34,7 @@ namespace HumanResources.Domain.Entities
         public Week? Week { get; set; }
         public decimal Bonus { get; set; }
         public decimal Deduction { get; set; }
+        public decimal DeductionHours { get; set; }
         public decimal Loan { get; set; }
         public decimal Loanleft { get; set; }
 

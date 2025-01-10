@@ -1,104 +1,93 @@
 ﻿@model Attendance
+<style>
+    .table-primary {
+        --bs-table-color: white!important;
+        --bs-table-bg: #1C2A48 !important;
+    }
+  
+    .table tfoot {
+        font-weight: bold;
+    }
 
+    .tfoot div {
+        padding: 10px;
+    }
+
+    .text-end {
+        direction: rtl;
+    }
+
+</style>
 <partial name="_Toastr" />
 
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">تقرير الحضور</h4>
-            <div class="row">
-                <div class="col-md-4"><h4> الكود: <span class="text-danger text-bold">@Model.Employee.Code</span></h4></div>
-                <div class="col-md-4"><h4> الموظف: <span class="text-danger text-bold">@Model.Employee.Name</span></h4></div>
-                <div class="col-md-2"><h4> الشهر : <span class="text-danger text-bold">@Model.Month</span></h4></div>
-                <div class="col-md-2"><h4> السنة : <span class="text-danger text-bold">@Model.Year</span></h4></div>
-            </div>
-
             @if (Model != null)
             {
                 <div class="table-responsive">
-
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th> التاريخ </th>
-                                <th> وقت الحضور </th>
-                                <th>وقت الانصراف </th>
-                                <th> ساعات العمل </th>
-                                <th>التأخيرات </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var obj in Model.AttendanceDetails)
-                            {
+                        <!-- Table for Employee Attendance -->
+                        <table class="table table-bordered">
+                            <!-- Employee Information -->
+                            <thead class="table-primary text-center">
                                 <tr>
-                                    <td>@obj.AttendanceDate</td>
-                                    <td>@(obj.CheckInTime == null ? "-------" : obj.CheckInTime)</td>
-                                    <td>@(obj.CheckOutTime == null ? "-------" : obj.CheckOutTime)</td>
-                                    <td>@(obj.WorkingHoursAday == null ? "-------" : obj.WorkingHoursAday)</td>
-                                    <td>@(obj.Delay == null ? "-------" : obj.Delay)</td>
-                                   
+                            <th style="background-color:#f8f9fa;color:black;" colspan="5" class="text-end">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                    <div><strong>الكود:</strong> @Model.EmployeeCode</div>
+                                            <div><strong>الموظف:</strong> @Model.Employee.Name</div>
+                                    <div>@Model.Month \ @Model.Year</div>
 
+                                        </div>
+                                    </th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-2"><h6>قبل التأخيرات:<span class="text-danger text-bold">@Model.TotalWorkingHoursBeforeDelays</span></h6></div>
-                    <div class="col-md-2">
-                        <h6>
-                            التأخيرات:<span class="text-danger text-bold">
+                                <!-- Table Column Headers -->
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>وقت الحضور</th>
+                                    <th>وقت الانصراف</th>
+                                    <th>ساعات العمل</th>
+                                    <th>التأخيرات</th>
+                                </tr>
+                            </thead>
+                            <!-- Attendance Data -->
+                            <tbody class="text-center">
+                                @foreach (var attendance in Model.AttendanceDetails)
+                                {
+                                    <tr>
+                                        <td>@attendance.AttendanceDate</td>
+                                        <td>@attendance.CheckInTime</td>
+                                        <td>@attendance.CheckOutTime</td>
+                                        <td>@attendance.WorkingHoursAday</td>
+                                        <td>@(attendance.Delay == null ? "-------" : attendance.Delay)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <!-- Summary Footer -->
+                            <tfoot class="table-light text-center">
+                                <tr>
+                                    <td colspan="5" class="text-end">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <strong> قبل التأخيرات:</strong> @Model.TotalWorkingHoursBeforeDelays<br>
+                                                <strong>التأخيرات:</strong> @Model.DelaysHours<br>
+                                                <strong>ساعات العمل المعتمدة:</strong> @Model.TotalWorkingHours<br>
+                                            </div>
+                                            <div>
+                                                <strong>الخصم:</strong> @Model.Deduction<br>
+                                                <strong>السلف:</strong> @Model.Loan<br>
 
-                                @Model.DelaysHours
-                            </span>
-                        </h6>
+                                                <strong>المكافأة:</strong> @Model.Bonus<br>
+                                            </div>
+                                            <div>
+                                                <strong>الإضافي:</strong> @Model.OverTimeHours<br>
+                                                <strong>إجمالي المرتب:</strong> @Model.CalculatedSalary<br>
+                                                <strong>صافى المرتب:</strong> @Model.NetSalary<br>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-                    <div class="col-md-3"><h6>ساعات العمل المعتمدة:<span class="text-danger text-bold">@Model.TotalWorkingHours</span></h6></div>
-                    <div class="col-md-2">
-                        <h6>
-                             الاضافى:<span class="text-danger text-bold">
-
-                                @(Model.OverTimeHours.HasValue ? Model.OverTimeHours.ToString() : "---")
-                            </span>
-                        </h6>
-                    </div>
-                  
-                </div>
-                 <div class="row">
-                    <div class="col-md-4"><h6>اجمالى المرتب:<span class="text-danger text-bold">@Model.CalculatedSalary</span></h6></div>
-                    <div class="col-md-4">
-                        <h6>
-                            راتب الساعات الاضافية:<span class="text-danger text-bold">
-                                @(Model.OverTimeSalary.HasValue ? Model.OverTimeSalary.ToString() : "---")
-                            </span>
-                        </h6>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>
-                              المكافأة:<span class="text-danger text-bold">
-                                @Model.Bonus
-                            </span>
-                        </h6>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>
-                            السلفة:<span class="text-danger text-bold">
-                                @Model.Loan
-                            </span>
-                        </h6>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>
-                            الخصم:<span class="text-danger text-bold">
-                                @Model.Deduction
-                            </span>
-                        </h6>
-                    </div>
-                    <div class="col-md-4"><h6>صافى المرتب:<span class="text-danger text-bold">@Model.NetSalary</span></h6></div>
-                  
-             
-                </div>
             }
             else
             {
@@ -108,4 +97,4 @@
             }
         </div>
     </div>
-</div>
+
