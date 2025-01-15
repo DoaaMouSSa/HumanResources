@@ -342,9 +342,9 @@ IAttendanceService attendanceService)
            List<Loan> loans = _context.LoanTbl
   .Where(b => b.Done == false && b.EmployeeId == employeeId)
   .ToList();
-            Deduction deduction = _context.DeductionTbl
+            List<Deduction> deductions = _context.DeductionTbl
   .Where(d => d.Done == false && d.EmployeeId == employeeId)
-  .FirstOrDefault();
+  .ToList();
 
             if (bonus!=null)
             {
@@ -384,12 +384,20 @@ IAttendanceService attendanceService)
                     loanLeft = loanLeft + loan.left;
                 }
             }
-            if (deduction != null)
+            decimal deductionAmount = 0;
+            decimal deductionHours = 0;
+            if (deductions.Count() > 0)
             {
-                deduction.Done = true;
-                deduction.DoneDate = DateOnly.FromDateTime(DateTime.Now);
-                _context.DeductionTbl.Update(deduction);
-                _context.SaveChanges();
+                foreach(var deduction in deductions)
+                {
+                    deductionAmount += deduction.amount;
+                    deductionHours += deduction.hours;
+                    deduction.Done = true;
+                    deduction.DoneDate = DateOnly.FromDateTime(DateTime.Now);
+                    _context.DeductionTbl.Update(deduction);
+                    _context.SaveChanges();
+                }
+              
             }
 
             return new Attendance
@@ -403,8 +411,8 @@ IAttendanceService attendanceService)
                 Bonus = (bonus != null)?bonus.amount : 0, // If bonus is null, set Bonus_Amount to 0
                 Loan = loanPaid, // If bonus is null, set Bonus_Amount to 0
                 Loanleft = loanLeft, // If bonus is null, set Bonus_Amount to 0
-                Deduction= (deduction != null) ? deduction.amount : 0,
-                DeductionHours= (deduction != null) ? deduction.hours : 0,
+                Deduction= deductionAmount,
+                DeductionHours= deductionHours,
                 DelaysHours = 0,
                 OverTimeHours=0,
                 DelaysTime = TimeSpan.Zero,

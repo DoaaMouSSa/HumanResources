@@ -47,8 +47,8 @@
 
                     <td> @obj.CalculatedSalary</td>
                     <td> @obj.Bonus</td>
-                    <td> @obj.Deduction</td>
-                   <td> @obj.DeductionHours</td>
+                    <td>@(obj.DeductionHours > 0 ? "0" : obj.Deduction)</td>
+                    <td> @obj.DeductionHours</td>
                   <td> @obj.Loan</td>
                     <td> @obj.Loanleft</td>
                     <td> @obj.NetSalary</td>
