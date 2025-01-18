@@ -4,6 +4,7 @@ using HumanResources.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HumanResources.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250115202400_update-attendance-2tbl")]
+    partial class updateattendance2tbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,9 +46,6 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DeductionHours")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("DeductionHoursAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("DelaysHours")
@@ -104,6 +104,9 @@ namespace HumanResources.Infrastructure.Migrations
 
                     b.Property<decimal>("hourSalary")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("isDeductionBoth")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -219,9 +222,6 @@ namespace HumanResources.Infrastructure.Migrations
                         .HasColumnType("date");
 
                     b.Property<decimal>("amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("amountHours")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("hours")

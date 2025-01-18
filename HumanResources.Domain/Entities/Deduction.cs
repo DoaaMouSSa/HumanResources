@@ -11,6 +11,7 @@ namespace HumanResources.Domain.Entities
     {
         public decimal hours { get; set; }
         public decimal amount { get; set; }
+        public decimal amountHours { get; set; }
         public DeductionType DeductionType { get; set; }
         public bool Done { get; set; }
         public DateOnly? DoneDate { get; set; }

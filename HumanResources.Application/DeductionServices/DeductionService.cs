@@ -43,6 +43,7 @@ namespace HumanResources.Application.LoanServices
                 {
                     hours =dto.amount,
                     amount = hourSalary*dto.amount,
+                    amountHours= hourSalary * dto.amount,
                     Done = false,
                     EmployeeId = dto.EmployeeId,
                     DeductionType = dto.DeductionType,

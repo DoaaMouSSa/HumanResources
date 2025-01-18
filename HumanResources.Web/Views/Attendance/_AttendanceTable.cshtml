@@ -14,21 +14,21 @@
                 <th style="display:none;"> # </th>
                 <th style="text-align:right;">الموظف</th>
                 <th style="text-align:right;">الأساسى</th>
-                <th> الحضور</th>
-                <th> الساعات</th>
-                <th> اليومية </th>
-                <th> الساعه </th>
-                <th> التأخيرات </th>
-                <th> الاضافى </th>
-                <th>الاجمالى</th>
-                <th> المكافأة </th>
-                <th> الخصم </th>
-                <th> ساعات الخصم </th>
-                <th> السلفة </th>
-                <th> سلفة مرحلة </th>
-                <th> صافى المرتب </th>
+                <th style="text-align:right;"> الحضور</th>
+                <th style="text-align:right;"> الساعات</th>
+                <th style="text-align:right;"> اليومية </th>
+                <th style="text-align:right;"> الساعه </th>
+                <th style="text-align:right;"> التأخيرات </th>
+                <th style="text-align:right;"> الاضافى </th>
+                <th style="text-align:right;">الاجمالى</th>
+                <th style="text-align:right;"> المكافأة </th>
+                <th style="text-align:right;"> الخصم </th>
+                <th style="text-align:right;"> ساعات الخصم </th>
+                <th style="text-align:right;"> السلفة </th>
+                <th style="text-align:right;"> سلفة مرحلة </th>
+                <th style="text-align:right;"> صافى المرتب </th>
 
-                <th class="exclude-from-export"> التفاصيل </th>
+                <th style="text-align:right;" class="exclude-from-export"> التفاصيل </th>
             </tr>
         </thead>
         <tbody>
@@ -36,23 +36,44 @@
             {
                 <tr>
                     <td style="display:none;">@obj.Id</td>
-                    <td>@obj.Employee.Name</td>
-                    <td> @obj.Employee.GrossSalary</td>
-                    <td> @obj.WorkingDays</td>
-                    <td> @obj.TotalWorkingHours</td>
-                    <td> @obj.daySalary</td>
-                    <td> @obj.hourSalary</td>
-                    <td> @obj.DelaysHours</td>
-                    <td> @obj.OverTimeHours</td>
+                    <td style="text-align:right;">@obj.Employee.Name</td>
+                    <td style="text-align:right;"> @obj.Employee.GrossSalary</td>
+                    <td style="text-align:right;"> @obj.WorkingDays</td>
+                    <td style="text-align:right;"> @obj.TotalWorkingHours</td>
+                    <td style="text-align:right;"> @obj.daySalary</td>
+                    <td style="text-align:right;"> @obj.hourSalary</td>
+                    <td style="text-align:right;"> @obj.DelaysHours</td>
+                    <td style="text-align:right;"> @obj.OverTimeHours</td>
 
-                    <td> @obj.CalculatedSalary</td>
-                    <td> @obj.Bonus</td>
-                    <td>@(obj.DeductionHours > 0 ? "0" : obj.Deduction)</td>
-                    <td> @obj.DeductionHours</td>
-                  <td> @obj.Loan</td>
-                    <td> @obj.Loanleft</td>
-                    <td> @obj.NetSalary</td>
-                    <td>
+                    <td style="text-align:right;"> @obj.CalculatedSalary</td>
+                    <td style="text-align:right;"> @obj.Bonus</td>
+                   
+                    @if(obj.DeductionHours>0)
+                    {
+                        <td style="text-align:right;">  0.00  </td>
+                        <td style="text-align:right;">  @obj.DeductionHours  </td>
+
+                    }
+                    else if (obj.DeductionHours == 0 && obj.Deduction > 0)
+                    {
+                        <td style="text-align:right;">  @obj.Deduction  </td>
+                        <td style="text-align:right;">  0.00  </td>
+                    }
+                    else if (obj.DeductionHours > 0 && obj.Deduction > 0)
+
+                    {
+                        <td style="text-align:right;">  @obj.Deduction  </td>
+                        <td style="text-align:right;">  @obj.DeductionHours</td>
+                    }
+                    else
+                    {
+                        <td style="text-align:right;">  @obj.Deduction  </td>
+                        <td style="text-align:right;">  @obj.DeductionHours</td>
+                    }
+                    <td style="text-align:right;"> @obj.Loan</td>
+                    <td style="text-align:right;"> @obj.Loanleft</td>
+                    <td style="text-align:right;"> @obj.NetSalary</td>
+                    <td style="text-align:right;">
                         <a asp-controller="Attendance" asp-action="Details" asp-route-id="@obj.Id">
                             <i class="fa fa-external-link"></i>
                         </a>
@@ -72,34 +93,79 @@
             },
             dom: 'Bfrtip',
             buttons: [
-
                 {
                     extend: 'excel',
                     text: 'تصدير الى الاكسل <i class="fa fa-book"></i> ',
-                    className: 'btn btn-success', // Add Bootstrap button classes
+                    className: 'btn btn-success',
                     exportOptions: {
-                        columns: ':visible:not(.exclude-from-export)' // Exclude columns with the class `exclude-from-export`
+                        columns: ':visible:not(.exclude-from-export)'
                     },
                     customize: function (xlsx) {
-                        var sheet = xlsx.xl.worksheets['sheet1.xml']; // Access the Excel sheet
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        const sheetData = $(sheet).find('sheetData');
+
+                        // Get the actual header row (first non-empty row)
+                        const headerRow = $('row:eq(1)', sheetData).clone();
+
+                        // Store all data rows
+                        const dataRows = $('row:gt(1)', sheetData).clone();
+
+                        // Clear the sheetData
+                        sheetData.empty();
+
+                        let rowCounter = 1; // Start from the first row
+
+                        // Add the header row at the very beginning
+                        const initialHeaderRow = headerRow.clone();
+                        initialHeaderRow.attr('r', rowCounter);
+                        initialHeaderRow.find('c').each(function (colIndex) {
+                            $(this).attr('r', String.fromCharCode(65 + colIndex) + rowCounter);
+                        });
+                        sheetData.append(initialHeaderRow);
+
+                        rowCounter++;
+
+                        // Process each data row
+                        dataRows.each(function (index) {
+                            const row = $(this);
+
+                            // Insert a header row before each employee's data block
+                            const newHeaderRow = headerRow.clone();
+                            newHeaderRow.attr('r', rowCounter);
+                            newHeaderRow.find('c').each(function (colIndex) {
+                                $(this).attr('r', String.fromCharCode(65 + colIndex) + rowCounter);
+                            });
+                            sheetData.append(newHeaderRow);
+
+                            rowCounter++;
+
+                            // Update and insert data row
+                            row.attr('r', rowCounter);
+                            row.find('c').each(function (colIndex) {
+                                $(this).attr('r', String.fromCharCode(65 + colIndex) + rowCounter);
+
+                            });
+                            sheetData.append(row);
+
+                            rowCounter++;
+                        });
+
+                        // Ensure the worksheet is set to RTL
                         $(sheet).find('sheetViews sheetView').attr('rightToLeft', '1');
-                        // Add RTL direction to the worksheet
-                        $('row', sheet).attr('s', '52'); // Apply custom styles for RTL (style ID 52 is hypothetical)
-                        $('row c[r]', sheet).attr('s', '52'); // Adjust cells
                     }
-                
                 },
                 {
                     extend: 'print',
                     text: 'طباعة <i class="icon-printer"></i> ',
-                    className: 'btn btn-primary', // Add Bootstrap button classes
+                    className: 'btn btn-primary',
                     exportOptions: {
-                        columns: ':visible:not(.exclude-from-export)' // Exclude columns with the class `exclude-from-export`
+                        columns: ':visible:not(.exclude-from-export)'
                     },
                     customize: function (win) {
-                        $(win.document.body).css('direction', 'rtl')
-                            .css('text-align', 'right'); // Align text to the right for RTL languages
-                        // Insert a heading at the top of the print view
+                        $(win.document.body).css({
+                            'direction': 'rtl',
+                            'text-align': 'right'
+                        });
                         const currentDateTime = new Date();
                         const formattedDateTime = currentDateTime.toLocaleString('ar-EG', {
                             year: 'numeric',
@@ -107,19 +173,53 @@
                             day: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit',
-                            hour12: false // 24-hour format
+                            hour12: false
                         });
 
-                        // Add a custom heading with the current time
                         $(win.document.body).prepend(
-                            '<h2 style="text-align: center;color:blue;">تقرير المرتبات الأسبوعية</h2>' +
-                            '<h3 style="text-align: center;color:DarkRed">' + formattedDateTime + '</h3>'
-                        ); $(win.document.body).find('h1').remove(); // Remove any existing headers
-
+                            '<br><h2 style="text-align: center;">تقرير المرتبات الأسبوعية</h2>' +
+                            '<h3 style="text-align: center;">' + formattedDateTime + '</h3><br>'
+                        );
+                        $(win.document.body).find('h1').remove();
+                        // Style the table
                         $(win.document.body).find('table')
                             .addClass('table table-striped')
-                            .css('direction', 'rtl')
-                            .css('text-align', 'right'); // Adjust table alignment
+                            .css({
+                                'direction': 'rtl',
+                                'text-align': 'right',
+                                'width': '100%'
+                            });
+
+                      
+
+                        // Additional specific styling for headers
+                        $(win.document.body).find('th').css({
+                            'font-weight': 'normal',
+                            'text-align': 'center',
+                        });
+                        // Additional specific styling for headers
+                        $(win.document.body).find('td').css({
+                            'font-weight': 'normal',
+                            'text-align': 'center',
+                        });
+
+                        // Force text alignment for cells with numbers
+                        $(win.document.body).find('td').each(function () {
+                            const cellContent = $(this).text().trim();
+                            if (!isNaN(cellContent) && cellContent !== '') {
+                                $(this).css({
+                                    'text-align': 'right',
+                                    'direction': 'ltr',  // For numbers
+                                    'unicode-bidi': 'bidi-override'
+                                });
+                            }
+                        });
+
+                        const theadHtml = $(win.document.body).find('thead').html();
+                        $(win.document.body).find('tbody tr').each(function () {
+                            $(this).before('<tr>' + theadHtml + '</tr>');
+                        });
+                        $(win.document.body).find('thead').remove();
                     }
                 }
             ]

@@ -355,6 +355,7 @@ IAttendanceService attendanceService)
             }
             decimal loanPaid = 0;
             decimal loanLeft = 0;
+
             if (loans.Count() > 0)
             {
                 foreach (Loan loan in loans)
@@ -386,12 +387,16 @@ IAttendanceService attendanceService)
             }
             decimal deductionAmount = 0;
             decimal deductionHours = 0;
+            decimal deductionHoursAmount = 0;
             if (deductions.Count() > 0)
             {
+                
                 foreach(var deduction in deductions)
                 {
+                   
                     deductionAmount += deduction.amount;
                     deductionHours += deduction.hours;
+                    deductionHoursAmount += (deduction.DeductionType==DeductionType.ساعات)? deduction.hours:0;
                     deduction.Done = true;
                     deduction.DoneDate = DateOnly.FromDateTime(DateTime.Now);
                     _context.DeductionTbl.Update(deduction);
@@ -399,7 +404,6 @@ IAttendanceService attendanceService)
                 }
               
             }
-
             return new Attendance
             {
                 EmployeeCode = employeeCode,
@@ -413,6 +417,7 @@ IAttendanceService attendanceService)
                 Loanleft = loanLeft, // If bonus is null, set Bonus_Amount to 0
                 Deduction= deductionAmount,
                 DeductionHours= deductionHours,
+                DeductionHoursAmount= deductionHoursAmount,
                 DelaysHours = 0,
                 OverTimeHours=0,
                 DelaysTime = TimeSpan.Zero,
