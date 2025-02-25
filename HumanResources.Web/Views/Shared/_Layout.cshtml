@@ -33,12 +33,18 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
     <!-- endinject -->
     <link rel="shortcut icon" href="~/assets/icons/iconHR.png" />
+    <style>
+        .nav-item.active {
+            background-color: transparent !important;
+            color: inherit !important;
+        }
 
+    </style>
 </head>
 <body class="with-welcome-text">
     <div class="container-scroller">
         <!-- partial:partials/_navbar.html -->
-        <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+        <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row ">
            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
                   <div>
                         <a class="navbar-brand brand-logo">
@@ -49,7 +55,7 @@
                     </a>
                     </div>
                </div>
-            <div class="navbar-menu-wrapper d-flex align-items-top">
+            <div class="navbar-menu-wrapper d-flex align-items-top justify-content-between" style="justify-content:space-between;">
                 <ul class="navbar-nav">
                     <li class="nav-item fw-semibold d-none d-lg-block ms-0">
                         @if (User.Identity.IsAuthenticated)
@@ -62,7 +68,7 @@
                         <h3 class="welcome-sub-text"> @DateTime.Now.ToString("yyyy/MM/dd", new System.Globalization.CultureInfo("ar-EG"))</h3>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav">
                 
                     <li class="nav-item">
                       
@@ -115,39 +121,38 @@
                             <span class="menu-title m-2">الموظفين</span>
                         </a>
                     </li>
-                      <li class="nav-item">
-                        <a class="nav-link" asp-controller="Attendance" asp-action="Create">
-                            <i class="menu-icon  fa fa-user"></i>
-                            <span class="menu-title m-2">الحضور</span>
-                        </a>
-                    </li>
-                 
-                 
-                 <li class="nav-item">
-                         <a class="nav-link" asp-controller="Attendance" asp-action="Index">
-                             <i class="menu-icon  fa fa-cog"></i>
-                             <span class="menu-title m-2">التقارير</span>
-                         </a>
-                     </li>
+                     
+                
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Bonus" asp-action="Index">
-                            <i class="menu-icon icon-share"></i>
-                            <span class="menu-title m-2">المكافآت</span>
+                        <a class="nav-link" href="#salary">
+                            <i class="menu-icon fa fa-user"></i>
+                            <span class="menu-title m-2 fw-bold">البصمة</span>
+                            <i class="menu-arrow"></i>
                         </a>
+                        <div class="collapse" id="salary">
+                            <ul class="nav flex-column sub-menu">
+                                <li class=""> <a class="nav-link fw-semibold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendance/Create" ? "" : "")" href="/Attendance/Create">الاكسل</a></li>
+                                <li class=""> <a class="nav-link fw-semibold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendance/Index" ? "" : "")" href="/Attendance/Index">المرتبات</a></li>
+
+                            </ul>
+                        </div>
                     </li>
-                       
-                            <li class="nav-item">
-                          <a class="nav-link" asp-controller="Loan" asp-action="Index">
-                            <i class="menu-icon fa fa-briefcase"></i>
-                              <span class="menu-title m-2">السلف</span>
-                          </a>
-                      </li>
-                                         <li class="nav-item">
-                          <a class="nav-link" asp-controller="Deduction" asp-action="Index">
-                            <i class="menu-icon fa fa-flag"></i>
-                              <span class="menu-title m-2">الخصم</span>
-                          </a>
-                          </li>
+                    <li class="nav-item">
+                        <a class="nav-link"  href="#settings">
+                            <i class="menu-icon fa fa-cog"></i>
+                            <span class="menu-title m-2 fw-bold">الاعدادات</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="settings">
+                            <ul class="nav flex-column sub-menu">
+                                <li class=""> <a class="nav-link fw-semibold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Bonus" ? "" : "")" href="/Bonus/Index">المكافآت</a></li>
+                                <li class=""> <a class="nav-link fw-semibold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loan" ? "" : "")" href="/Loan/Index">السلف</a></li>
+                                <li class=""> <a class="nav-link fw-semibold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Deduction" ? "" : "")" href="/Deduction/Index">الخصم</a></li>
+
+                            </ul>
+                        </div>
+                    </li>
+                
                 </ul>
             </nav>
             <div class="main-panel p-5">
