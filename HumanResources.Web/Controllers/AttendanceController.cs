@@ -202,8 +202,9 @@ IAttendanceService attendanceService)
             {
                 attendance.TotalWorkingHoursBeforeDelays = totalHours;
             }
+            // attendance.TotalWorkingHours = attendance.TotalWorkingHoursBeforeDelays - attendance.DelaysHours;
 
-           // attendance.TotalWorkingHours = attendance.TotalWorkingHoursBeforeDelays - attendance.DelaysHours;
+            attendance.TotalWorkingHours = attendance.TotalWorkingHoursBeforeDelays;
             const int DEFAULTWORKINGHOURS= 48;
             //calculate salary
             if (attendance.TotalWorkingHours > DEFAULTWORKINGHOURS)
